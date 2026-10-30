@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { getConsent } from '../consent.js';
 import { getTheme, setTheme } from '../theme.js';
 import SegmentedTabs from './SegmentedTabs.vue';
+import Icon from './Icon.vue';
 // 站点标志：走构建产物，文件名带 hash，可长期缓存
 import logoMark from '../assets/logo-mark.png';
 
@@ -138,6 +139,16 @@ function setThemeMode(v) {
 
       <div class="topbar-controls">
         <slot name="actions" />
+        <a
+          class="topbar-github"
+          href="https://github.com/yuanshen-123-ui/CTYFLY-WEB"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="GitHub 开源仓库"
+          aria-label="GitHub 开源仓库"
+        >
+          <Icon name="github" :size="16" />
+        </a>
         <SegmentedTabs collapsible :options="tzOptions" :model-value="tz" @update:model-value="setTz" />
         <!-- 主题控件：pointerdown 记录点击位置，供「圆形扩散」过渡作为圆心 -->
         <span ref="themeControlEl" class="theme-control" @pointerdown="rememberThemePoint">

@@ -187,6 +187,27 @@
 }
 .topbar-tz { font-size: 11px; color: var(--gray); }
 .topbar-controls { display: flex; gap: 10px; flex-wrap: wrap; }
+/* GitHub 开源入口：与分段控件同高的圆形按钮，悬停微抬，避免抢时钟的视觉重心 */
+.topbar-github {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-2);
+  text-decoration: none;
+  transition: color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+.topbar-github:hover {
+  color: var(--text);
+  background: var(--surface-strong);
+  transform: translateY(-1px);
+}
+.topbar-github:active { transform: scale(0.94); }
+.topbar-github:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 
 /* ---------- 滑动分段控件，iOS 风格 ----------*/
 .seg {
