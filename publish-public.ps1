@@ -79,6 +79,11 @@ Write-Host "保留公开版: $($KeepPublic -join ', ')"
 Write-Host ''
 Write-Host '=== 本次将产生的变更（相对公开仓库）==='
 git -C $Src diff --stat "$Remote/$Branch" $tree | Select-Object -Last 50
+if (-not (git -C $Src diff --name-only "$Remote/$Branch" $tree)) {
+  Write-Host '与公开仓库已一致，无需发布。'
+  exit 0
+}
+
 Write-Host ''
 
 if (-not $Execute) {
