@@ -261,3 +261,17 @@ Copyright (C) 2026 CTYFLY Contributors
 ### 第三方素材例外
 
 `frontend/public/pet/` 下的桌宠素材来自开源项目 dsh-pet，适用上游的独立许可，**不属于 GPLv3 覆盖范围**，详见 [NOTICE-dsh-pet.md](NOTICE-dsh-pet.md)。再分发这些素材时必须遵守上游许可，尤其是禁止商用条款。若不需要桌宠，可以整体删除 `frontend/public/pet/` 与 `frontend/src/deskpet/`。
+
+---
+
+## 贡献
+
+欢迎参与！请先阅读 [CONTRIBUTING.md](CONTRIBUTING.md)；
+提交 PR 即视为同意 [CLA.md](CLA.md)（你保留自己贡献的版权，同时授予项目发起人再许可能力）。
+
+## 许可证
+
+本项目采用 **GNU General Public License v3.0**（GPL-3.0）开源，完整条款见 [LICENSE](LICENSE)。
+
+版权归**所有著作人**（项目发起人及所有贡献者）所有。
+Copyright (C) 2026 全体著作人（All contributors）
