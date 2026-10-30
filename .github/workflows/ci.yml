@@ -10,12 +10,10 @@ on:
   push:
     paths-ignore:
       - '**/*.md'              # 交接文档等 Markdown
-      - 'deploy/legacy/**'     # 首装脚本归档，不参与构建
       - '.gitignore'
   pull_request:
     paths-ignore:
       - '**/*.md'
-      - 'deploy/legacy/**'
       - '.gitignore'
   workflow_dispatch:      # 也可以在 GitHub 网页上手动触发（排查环境差异时用；不受 paths-ignore 影响）
 

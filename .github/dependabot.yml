@@ -17,12 +17,6 @@ updates:
           - minor
           - patch
 
-  - package-ecosystem: npm
-    directory: /deploy/smoke
-    schedule:
-      interval: monthly
-    open-pull-requests-limit: 3
-
   - package-ecosystem: pip
     directory: /backend
     schedule:

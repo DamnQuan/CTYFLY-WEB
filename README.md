@@ -109,13 +109,6 @@ CTYFLY-WEB/
 │   ├── public/  scripts/        # 静态资源与构建脚本
 │   ├── package.json             # dev / build / lint / test / preview / check:pet
 │   └── vite.config.js / vitest.config.js
-├── deploy/                      # 部署资产
-│   ├── ctyfly.service / ctyfly-test.service   # systemd
-│   ├── nginx-ccflysim.cn.conf / nginx-test.ccflysim.cn.conf
-│   ├── deploy.ps1 / deploy-test.ps1 / step1-nginx.sh / step4-backup.sh / remote-swap.sh
-│   ├── install-airdata.ps1 / install-airdata.sh
-│   └── smoke.ps1                # 部署后冒烟检查
-├── 交接文档/                     # 历次交接与功能历史（含恢复演练记录）
 ├── check-all.ps1                # 一键检查（前端 lint/test + 后端 pytest 等）
 └── README.md
 ```
@@ -214,24 +207,14 @@ pwsh ./check-all.ps1                            # 一键全检查
 
 ## 六、部署
 
-```bash
-# 构建前端
-cd frontend && npm run build
+公开仓库不包含生产部署脚本、Nginx 配置、systemd 单元与备份脚本，这些资产保留在私有运维仓库中。
 
-# 部署（Windows PowerShell 脚本）
-pwsh ./deploy/deploy.ps1                        # 生产
-pwsh ./deploy/deploy-test.ps1                   # 测试环境
-pwsh ./deploy/smoke.ps1                         # 冒烟检查
+通用部署方式：
 
-# 服务器侧（Linux）
-sudo systemctl daemon-reload
-sudo systemctl enable --now ctyfly.service      # 或 ctyfly-test.service
-sudo systemctl status ctyfly.service
-```
-
-- Nginx：`deploy/nginx-ccflysim.cn.conf`（生产）、`deploy/nginx-test.ccflysim.cn.conf`（测试）
-- 部署脚本包含：`step1-nginx.sh`（Nginx 配置）、`step4-backup.sh`（备份）、`remote-swap.sh`（远端切换）、`install-airdata.*`（导航数据）
-- 备份：`deploy/step4-backup.sh`；数据库为单文件 SQLite（`backend/data/ctyfly.db`），直接复制即可
+- 前端：`cd frontend && npm run build`，把 `dist/` 交给 Nginx 或任意静态托管
+- 后端：`cd backend && pip install -r requirements.lock`，用 `python run.py` 启动，前面放 Nginx 反向代理
+- 数据库：SQLite 单文件，备份直接复制 `backend/data/ctyfly.db`
+- 生产必须设置 `ADMIN_PASSWORD` 与 `JWT_SECRET`，并保持 `POW_CAPTCHA_ALLOW_LOCALHOST=false`
 
 ---
 
