@@ -1,0 +1,96 @@
+/* ============================================================
+   诊断提示，iOS 风格毛玻璃卡片
+   仅在崩溃级错误时出现，随明暗主题自动适配
+   ============================================================*/
+@keyframes diag-mask-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes diag-sheet-in {
+  from { opacity: 0; transform: scale(0.9) translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+.diag-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 99998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.26);
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  animation: diag-mask-in 0.2s ease both;
+}
+
+.diag-sheet {
+  width: 100%;
+  max-width: 400px;
+  max-height: 76vh;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 22px 18px;
+  border-radius: var(--radius);
+  background: var(--modal-bg);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.3);
+  animation: diag-sheet-in 0.36s cubic-bezier(0.32, 1.4, 0.5, 1) both;
+}
+
+/* iOS 风格图标徽标 */
+.diag-badge {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 59, 48, 0.12);
+  color: var(--red);
+}
+.diag-badge.is-warn { background: rgba(255, 149, 0, 0.14); color: #ff9500; }
+
+.diag-title {
+  font-size: 17.5px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  text-align: center;
+  color: var(--text);
+}
+.diag-sub {
+  margin-top: 5px;
+  font-size: 13px;
+  line-height: 1.55;
+  text-align: center;
+  color: var(--text-2);
+}
+
+.diag-body {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font: 12px/1.65 ui-monospace, SFMono-Regular, Consolas, monospace;
+  color: var(--text-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow: auto;
+  max-height: 38vh;
+  user-select: text;
+}
+
+.diag-meta {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--gray);
+}
+
+.diag-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+.diag-actions .btn { flex: 1; }

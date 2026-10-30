@@ -1,0 +1,78 @@
+name: CI
+
+# 触发：所有推送与 PR。目的是让「测试与 lint」成为合并前的硬门槛，
+# 而不是靠人工记得在本地跑一遍，2026-10-11 站长评审：零自动化测试/零 CI 是最大短板。
+#
+# paths-ignore，2026-10-16 站长要求：只改文档/归档脚本时不必跑 CI。
+# 注意语义是「**所有**改动文件都命中忽略列表才跳过」—— 只要有一处代码改动就会照常跑，
+# 所以不会漏测。判断标准：这些路径不可能影响构建或测试结果。
+on:
+  push:
+    paths-ignore:
+      - '**/*.md'              # 交接文档等 Markdown
+      - 'deploy/legacy/**'     # 首装脚本归档，不参与构建
+      - '.gitignore'
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - 'deploy/legacy/**'
+      - '.gitignore'
+  workflow_dispatch:      # 也可以在 GitHub 网页上手动触发（排查环境差异时用；不受 paths-ignore 影响）
+
+# 连续推送时取消上一轮未完成的运行：省资源，也避免一次改动收到多封邮件。
+# 被取消的运行结论是 cancelled，GitHub 不会当失败发通知。
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: 后端测试 + lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements.lock
+            backend/requirements.txt
+            backend/requirements-dev.txt
+      - name: 安装依赖（按 lock 安装，保证 CI 与生产同版本）
+        run: |
+          python -m pip install --upgrade pip
+          # requirements.lock 是「可安装的精确锁」，只含应用依赖 + 关键传递依赖，版本对齐生产；
+          # requirements.snapshot.txt 只是环境基线快照，含 apt 系统包，不要拿来安装。
+          pip install -r requirements.lock -r requirements-dev.txt
+      - name: lint（ruff，只拦真错误）
+        run: python -m ruff check .
+      - name: 单元/回归测试（pytest，使用临时库，绝不碰生产数据）
+        run: python -m pytest -q
+
+  frontend:
+    name: 前端构建
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: 安装依赖（严格按 lockfile）
+        run: npm ci
+      - name: 桌宠素材一致性（目录权重/引用/文件齐全，见 scripts/check-pet-assets.mjs）
+        run: npm run check:pet
+      - name: lint（ESLint 9 flat config，essential 级：只拦真错误）
+        run: npm run lint
+      - name: 前端纯逻辑测试（vitest）
+        run: npm run test
+      - name: 构建（也兜住模板语法/导入错误）
+        run: npm run build

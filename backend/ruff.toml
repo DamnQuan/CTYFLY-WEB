@@ -1,0 +1,13 @@
+# 后端 lint 配置，起步只拦「真错误」
+# 纯风格规则，行宽/命名等先不开：9.3k 行存量代码一次全改会淹没真实问题。
+# 想更严：把 select 加上 "I"，导入排序、"UP"，语法升级、"B"，bugbear，逐步修。
+line-length = 120
+target-version = "py311"
+extend-exclude = ["venv", "data", "navdata-planner"]
+
+[lint]
+select = ["F", "E9", "W6"]
+ignore = []
+
+[lint.per-file-ignores]
+"tests/*" = ["E501"]

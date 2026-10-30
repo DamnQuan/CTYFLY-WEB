@@ -1,0 +1,5 @@
+# 开发/CI 专用依赖，生产依赖见 requirements.txt
+# 与 requirements.txt 不同：这里**锁定版本**，保证 CI 与本地跑的是同一套工具，
+# 避免「本地通过、CI 因新版规则新增告警而失败」这类噪声。
+pytest==9.1.1
+ruff==0.17.0

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- 站点图标：翅膀取自「垂天云集团」标志；完整 logo 是三行，缩到 16px 会糊 -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- PWA：玩家可把 CTYFLY 添加到手机主屏幕，全屏打开，飞行上报更顺手-->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#0a84ff" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 头像来自腾讯 QQ 头像服务，属于跨域第三方域名：
+         提前做 DNS 解析与连接，省掉每个头像首次加载时的 DNS + TLS 往返。
+         弱网下这部分开销往往比图片本身还大。 -->
+    <link rel="preconnect" href="https://q1.qlogo.cn" crossorigin />
+    <link rel="dns-prefetch" href="https://q1.qlogo.cn" />
+    <!--
+      飞控 AUTO 模式跟随系统，系统深色则自动深色，浅色则自动浅色——由 main.css 的 prefers-color-scheme 原生实现
+      欢迎使用 CTYFLY，祝大家飞行愉快
+      我们拥有虚拟商城系统，用飞行工资购买称号与徽章，展示在你的账号上
+    -->
+    <title>CTYFLY</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

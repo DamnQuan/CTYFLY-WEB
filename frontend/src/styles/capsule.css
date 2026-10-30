@@ -1,0 +1,37 @@
+/* ============================================================
+   收纳式胶囊，顶栏时区/主题切换：默认只显示选中项，
+   悬停时其余选项以弹性曲线从选中项向两侧展开，移开后收缩。
+   防抖：收起带 0.12s 延迟，快速移入移出不闪烁；
+   visibility 延迟隐藏，display 无法过渡，用 visibility 保持动画链。
+   ============================================================*/
+.seg.collapsible { overflow: hidden; }
+.seg.collapsible .seg-btn {
+  max-width: 0;
+  opacity: 0;
+  padding-left: 0;
+  padding-right: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: max-width 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+              padding 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.2s ease,
+              visibility 0s linear 0.32s;
+}
+.seg.collapsible.expanded .seg-btn,
+.seg.collapsible .seg-btn.on {
+  max-width: 110px;
+  opacity: 1;
+  padding-left: 12px;
+  padding-right: 12px;
+  pointer-events: auto;
+  visibility: visible;
+  transition: max-width 0.36s cubic-bezier(0.34, 1.25, 0.4, 1),
+              padding 0.36s cubic-bezier(0.34, 1.25, 0.4, 1),
+              opacity 0.26s ease 0.06s,
+              visibility 0s;
+}
+
+/* 页面内选项卡，复用滑动分段控件*/
+.seg.lg { padding: 4px; }
+.seg.lg .seg-btn { padding: 7px 18px; font-size: 13.5px; }
+.seg.lg + .seg.lg, .seg.lg { margin-bottom: 20px; }

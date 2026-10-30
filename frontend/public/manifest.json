@@ -1,0 +1,24 @@
+{
+  "name": "CTYFLY - 垂天云飞友集团",
+  "short_name": "CTYFLY",
+  "description": "垂天云飞友集团：虚拟航司、飞行签派、航情查询与连飞活动",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0b1120",
+  "theme_color": "#0a84ff",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

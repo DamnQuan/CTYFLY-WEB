@@ -1,0 +1,27 @@
+/* ============================================================
+   液态玻璃无障碍降级：「降低透明度」时导航层退化为实底。
+   !important 同时覆盖 lib/liquidGlass.js 注入的内联 backdrop-filter。
+   ============================================================ */
+@media (prefers-reduced-transparency: reduce) {
+  .topbar,
+  .sidebar,
+  .modal-panel,
+  .glass,
+  .diag-sheet,
+  .modal-mask,
+  .diag-mask {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .sidebar,
+  .modal-panel {
+    background: var(--surface-solid);
+  }
+  /* 顶栏：顶部态保持无背景，「与页面融合」是设计本体，不算可读性问题；
+     收拢成胶囊后才退化为实底 + 描边，保证悬浮态可读*/
+  .topbar-shell.compact {
+    background: var(--surface-solid);
+    border: 1px solid var(--border);
+    box-shadow: none;
+  }
+}

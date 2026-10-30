@@ -1,0 +1,61 @@
+/* ============================================================
+   手机端细化，必须位于文件末尾：CSS 同优先级后者覆盖，
+   本块此前放在文件中部，被 .page/.btn/.stat/.table 等后续定义
+   静默覆盖，导致一批手机端适配从未生效
+   ============================================================*/
+/* ---------- 手机端细化 ---------- */
+@media (max-width: 620px) {
+  .page { padding: 18px 14px 44px; }
+  .page-title { font-size: 23px; }
+  .page-header { margin-bottom: 16px; }
+  .card { padding: 17px 14px; }
+  .card-title { font-size: 15.5px; }
+
+  /* 输入行允许换行，避免输入框被按钮挤压 */
+  .input-row { flex-wrap: wrap; }
+  .input-row .input, .input-row .textarea, .input-row .select { flex: 1 1 150px; min-width: 0; }
+  .input-row .btn { flex: 0 0 auto; }
+  /* 表单字段在窄屏下整行堆叠，覆盖行内 flex:1，避免多列挤压*/
+  .input-row .field { flex: 1 1 100% !important; }
+
+  /* 列表条目：动作区换行到信息下方，修复文字列被挤成竖排。
+     list-main 给足最小基准宽度，宁可让动作区换行也不把信息列挤成 0 宽*/
+  .list-item { flex-wrap: wrap; row-gap: 10px; }
+  .list-item > .list-main { flex: 1 1 180px; }
+  .list-item > div:last-child:not(.list-main) {
+    flex: 1 1 100%;
+    justify-content: flex-start !important;
+  }
+
+  /* 分段标签条：窄屏下可横向滑动，航司详情多页签等*/
+  .seg {
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .seg::-webkit-scrollbar { display: none; }
+
+  /* 数据表格：窄屏下表格自身横向滚动，不再撑破页面 */
+  .table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 手机端禁止页面横向平移：装饰层，aurora/侧栏遮罩与溢出内容一律裁掉，
+     需要横向看的内容，表格/标签条都已有自身滚动容器*/
+  html, body { overflow-x: hidden; }
+
+  .btn { padding: 9px 16px; }
+  .btn-lg { padding: 11px 22px; font-size: 14.5px; }
+  .modal-panel { padding: 20px 16px; }
+  .stat { padding: 14px 16px; }
+  .stat-num { font-size: 22px; }
+  .table { font-size: 12.5px; }
+  .table th, .table td { padding: 8px 8px; }
+  .list-item { gap: 10px; }
+  .toast { max-width: calc(100vw - 24px); font-size: 13px; }
+
+  /* iOS Safari：输入控件字号 <16px 时聚焦会强制放大页面，统一提到 16px */
+  .input, .select, .textarea { font-size: 16px; padding: 10px 13px; }
+}

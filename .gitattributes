@@ -1,0 +1,12 @@
+# 统一换行符处理
+* text=auto eol=lf
+
+# 二进制文件
+*.db binary
+*.db3 binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.exe binary

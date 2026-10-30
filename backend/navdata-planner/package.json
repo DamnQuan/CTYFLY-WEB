@@ -1,0 +1,23 @@
+{
+  "name": "ifr-high-route-planner",
+  "version": "0.1.0",
+  "private": true,
+  "description": "IFR high airway route planner using AIRAC SQLite navdata and multi-source multi-target A*",
+  "type": "commonjs",
+  "scripts": {
+    "route": "node cli.js",
+    "start": "node server.js",
+    "test": "node --test",
+    "build:exe": "node build-exe.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1",
+    "postject": "^1.0.0-alpha.6"
+  }
+}

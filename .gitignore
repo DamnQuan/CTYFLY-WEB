@@ -1,0 +1,48 @@
+# ---------- 依赖与构建产物 ----------
+node_modules/
+frontend/dist/
+*.log
+npm-debug.log*
+
+# ---------- Python ----------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# ---------- 密钥与环境变量，严禁提交 ----------
+.env
+.env.local
+backend/.env
+
+# ---------- 运行时数据库，含用户数据，不入库 ----------
+backend/data/*.db
+backend/data/*.db-wal
+backend/data/*.db-shm
+
+# ---------- 用户上传文件，航司 Logo / 工单附件 / 活动海报等，绝不入仓 ----------
+backend/data/uploads/
+backend/data/attachments/
+
+# ---------- 服务器端日志归档，logretention 产出，仅存在于服务器/本地运行数据 ----------
+backend/data/log-archive/
+
+# ---------- AIRAC 导航数据库，100MB+，单独分发，不入库 ----------
+backend/navdata-planner/Navdata/*.db3
+backend/navdata-planner/Navdata/*.db3-wal
+backend/navdata-planner/Navdata/*.db3-shm
+
+# ---------- 编辑器 / 系统 ----------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ---------- 临时部署目录，打包产物含服务器 .env 等密钥，严禁提交 ----------
+_deploy/
+
+# 机场图 GIS 数据，约 1GB，不进仓库
+backend/data/airport-gis/
+
+# 本地审计工作区，截图/诊断脚本临时产物
+.audit-tmp/

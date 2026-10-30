@@ -1,0 +1,98 @@
+/* ============================================================
+   CTY 飞控 · Apple Design 风格 + 毛玻璃 Glassmorphism
+   ============================================================*/
+:root {
+  --blue: #0071e3;
+  --blue-hover: #0077ed;
+  --green: #30d158;
+  --orange: #ff9f0a;
+  --red: #ff3b30;
+  --gray: #86868b;
+  --text: #1d1d1f;
+  --text-2: #6e6e73;
+  --bg: #f5f5f7;
+  /* 高透明玻璃：透过卡片能看见天空场景，用户明确要「透明的」*/
+  --glass: rgba(255, 255, 255, 0.44);
+  --glass-strong: rgba(255, 255, 255, 0.60);
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --shadow: 0 8px 32px var(--border);
+  --radius: 20px;
+  --radius-sm: 12px;
+
+  /* 主题语义变量，深色模式在下方覆盖*/
+  --topbar-bg: rgba(251, 251, 253, 0.52);
+  --topbar-bg-strong: rgba(251, 251, 253, 0.72);
+  /* 滚动收拢后的悬浮胶囊底色，状态二：接近纯白，暗色模式在下方覆盖*/
+  --topbar-pill-bg: rgba(255, 255, 255, 0.9);
+  /* 顶部栏下拉面板：比顶栏更实一点——里面是密集的菜单卡片，透出底下的表单会明显掉可读性 */
+  --nav-panel-bg: #fbfbfd;
+  /* 修复：此前浅色模式自引用，--surface: var --surface 属非法值，
+     导致浅色下 .seg 无底色、--shadow 颜色失效*/
+  --surface: rgba(0, 0, 0, 0.045);
+  --surface-strong: rgba(0, 0, 0, 0.1);
+  --border: rgba(0, 0, 0, 0.09);
+  --input-border: rgba(0, 0, 0, 0.1);
+  --tab-active-bg: #ffffff;
+  --modal-bg: rgba(252, 252, 253, 0.60);
+  --btn-dark-bg: #1d1d1f;
+  --btn-dark-fg: #ffffff;
+  --topbar-h: 56px;
+  --aurora-bg: linear-gradient(180deg, #4f9de0 0%, #8fc3ea 45%, #d9e8f4 78%, #edf1ec 100%);
+
+  /* 液态玻璃 rim/缝，导航层专用；JS 引擎见 lib/liquidGlass.js
+     rim = 玻璃上缘高光，rim-2 = 底缘回光/渐变描边暗端，seam = 玻璃厚度暗缝*/
+  --lg-rim: rgba(255, 255, 255, 0.85);
+  --lg-rim-2: rgba(255, 255, 255, 0.30);
+  --lg-seam: rgba(0, 0, 0, 0.10);
+  --lg-spec: rgba(255, 255, 255, 0.30);
+  --lg-card-edge: linear-gradient(160deg,
+    rgba(255, 255, 255, 0.80), rgba(255, 255, 255, 0.25) 38%,
+    rgba(255, 255, 255, 0.30) 62%, rgba(255, 255, 255, 0.65));
+  --surface-solid: #fbfbfd;
+  /* 认证页，登录/注册/找回背景：与主页同色度的纯平实底 + 白卡实底*/
+  --auth-block: #f5f5f7;
+  --auth-card-bg: #ffffff;
+  --auth-card-shadow: 0 14px 44px rgba(0, 0, 0, 0.12);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* 滚动条主题化：细条半透明，明暗模式自动适配 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-strong) transparent;
+}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--surface-strong);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--gray); }
+
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display',
+    'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* 环境光背景
+   性能说明：这里刻意不用 filter: blur。全屏模糊层会让每个毛玻璃卡片
+   backdrop-filter 在采样背景时重复付出模糊代价，页面元素一多就会明显变卡。
+   直接用「更大的圆形 + 柔和渐变」得到同样的观感，零额外滤镜开销。*/
+/* 纯平色块背景：不要渐变、不要光斑、不要照片 */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--bg);
+}
+.aurora::before,
+.aurora::after { display: none; }

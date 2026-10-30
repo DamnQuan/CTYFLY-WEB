@@ -1,0 +1,30 @@
+{
+  "name": "ctyfly-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint src",
+    "test": "vitest run",
+    "preview": "vite preview",
+    "check:pet": "node scripts/check-pet-assets.mjs"
+  },
+  "dependencies": {
+    "pinia": "^2.1.7",
+    "vue": "^3.4.27",
+    "vue-router": "^4.3.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "eslint": "^9.39.5",
+    "eslint-plugin-vue": "^10.11.1",
+    "globals": "^17.13.0",
+    "jsdom": "^30.1.3",
+    "vite": "^6.4.5",
+    "vitest": "^3.2.7",
+    "vue-eslint-parser": "^10.4.1"
+  },
+  "license": "GPL-3.0-only"
+}

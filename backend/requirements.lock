@@ -1,0 +1,46 @@
+# CTYFLY 后端依赖精确锁（可安装）—— 2026-10-11 由生产环境 venv 实测版本生成
+#
+# 为什么要这个文件：requirements.txt 用 >= 范围（便于升级），但范围意味着「同一份代码在
+# 不同时间/机器上会装出不同版本」。站长 2026-10-11 评审指出后端只有范围、没有可安装的锁。
+# 仓库里原有的 requirements.lock 其实是**环境快照**（含 Ubuntu 系统包，不适合直接安装），
+# 已改名为 requirements.snapshot.txt 专作基线比对，本文件承担「精确锁」职责。
+#
+# 为什么不直接 pip freeze：生产 venv 是 --system-site-packages 桥接模式，
+# freeze 出来 147 个包，混着 certbot / docker-compose / cloud-init / Twisted 等 apt 管理的
+# 系统包 —— 拿它 pip install 会污染环境，也看不出「这个应用到底依赖什么」。
+# 这里只锁应用真正用到的包 + 关键传递依赖，版本与生产逐一对齐（2026-10-11 实测）。
+#
+# 用法：
+#   复现生产环境：pip install -r requirements.lock
+#   开发/CI 额外装：pip install -r requirements-dev.txt（pytest / ruff 已锁版本）
+#   升级依赖：改 requirements.txt 的范围 → 装并测试 → 用 pip freeze 取新版本号更新本文件
+#
+# 已知环境差异（2026-10-24 复核）：test 与生产仍有两个传递依赖版本不同
+#   click: prod 8.5.0 / test 8.4.1
+#   idna:  prod 3.19  / test 3.3
+# certifi 已在 2026-10-24 安全升级中把 test 与生产统一到 2026.10.23。
+# 六个直接依赖（下面第一段）两边完全一致。
+
+# ---- 直接依赖（= requirements.txt 的实装版本）----
+fastapi==0.141.1
+uvicorn==0.53.0
+httpx==0.28.1
+PyJWT==2.14.0
+bcrypt==5.0.0
+python-multipart==0.0.32
+
+# ---- 关键传递依赖（固定住，避免间接漂移）----
+starlette==1.6.0
+pydantic==2.13.5
+pydantic_core==2.46.5
+annotated-types==0.8.0
+typing-inspection==0.4.4
+typing_extensions==4.16.0
+anyio==4.15.1
+h11==0.16.0
+httpcore==1.0.9
+certifi==2026.10.23
+idna==3.19
+click==8.5.0
+cffi==2.1.0
+pycparser==3.0
