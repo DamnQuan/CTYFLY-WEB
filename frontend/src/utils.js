@@ -34,6 +34,13 @@ export function localMonth(d = new Date()) {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}`;
 }
 
+/** 事件发生月份展示：兼容历史 YYYY-MM-DD，只显示到月*/
+export function fmtMonth(value) {
+  const text = String(value || '');
+  const match = text.match(/^(\d{4})-(\d{2})/);
+  return match ? `${match[1]} 年 ${Number(match[2])} 月` : text;
+}
+
 /** 外链协议白名单：仅 http/https 可渲染为链接，javascript: 等一律返回空串，降级纯文本*/
 export function safeHttpUrl(url) {
   if (!url || typeof url !== 'string') return '';

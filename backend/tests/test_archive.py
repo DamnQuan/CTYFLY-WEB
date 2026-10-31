@@ -31,7 +31,7 @@ def auth(conn, user_id: int) -> dict:
 def payload(**over):
     data = {
         "title": "测试飞圈事件标题",
-        "occurred_at": "2026-01-02",
+        "occurred_at": "2026-01",
         "category": "社区与活动",
         "summary": "这是一条用于测试的事件摘要",
         "tags": ["测试", "连飞"],
@@ -79,6 +79,7 @@ def test_public_list_and_detail(client, conn):
 
     detail = client.get(f"/api/archive/{event_id}").json()
     assert detail["title"] == "测试飞圈事件标题"
+    assert detail["occurred_at"] == "2026-01"
     assert detail["blocks"][1]["url"] == "/uploads/archive-test.png"
     assert "disclaimer" in detail
     assert "contact" not in detail

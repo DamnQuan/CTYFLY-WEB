@@ -26,7 +26,7 @@ PAGE_SIZE = 12
 CATEGORIES = ["事故与事件", "平台与规则", "社区与活动", "人物与账号", "其他"]
 PERSONAL_MODES = {"public", "masked", "hidden"}
 QQ_RE = re.compile(r"(?<!\d)([1-9]\d{4,11})(?!\d)")
-DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+MONTH_RE = re.compile(r"^\d{4}-\d{2}$")
 
 
 class BlockBody(BaseModel):
@@ -85,8 +85,11 @@ def _normalise(body: ArchivePayload) -> dict:
     if len(title) < 4:
         raise HTTPException(400, "标题至少需要 4 个字")
     occurred_at = clean(body.occurred_at, 10)
-    if not DATE_RE.match(occurred_at):
-        raise HTTPException(400, "发生时间格式应为 YYYY-MM-DD")
+    # 历史数据与旧前端可能仍传完整日期，统一截断到月份；新数据只要求精确到月
+    if re.match(r"^\d{4}-\d{2}-\d{2}$", occurred_at):
+        occurred_at = occurred_at[:7]
+    if not MONTH_RE.match(occurred_at):
+        raise HTTPException(400, "发生时间请选择到月份，格式 YYYY-MM")
     category = body.category if body.category in CATEGORIES else "其他"
     summary = clean(body.summary, 300)
     tags = []
@@ -675,8 +678,11 @@ def approve_correction(correction_id: int, body: ReviewBody, request: Request,
             value = clean(row["proposed_value"], 8000)
             if field == "summary":
                 value = value[:300]
-            if field == "occurred_at" and not DATE_RE.match(value):
-                raise HTTPException(400, "发生时间格式不正确")
+            if field == "occurred_at":
+                if re.match(r"^\d{4}-\d{2}-\d{2}$", value):
+                    value = value[:7]
+                if not MONTH_RE.match(value):
+                    raise HTTPException(400, "发生时间请选择到月份，格式 YYYY-MM")
             conn.execute(
                 f"UPDATE archive_events SET {field} = ?, updated_at = datetime('now','localtime')"
                 " WHERE id = ?", (value, row["event_id"]),

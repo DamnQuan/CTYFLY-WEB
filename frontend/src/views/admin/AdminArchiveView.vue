@@ -4,7 +4,7 @@
  */
 import { ref } from 'vue';
 import { api } from '../../api.js';
-import { showToast } from '../../utils.js';
+import { fmtMonth, showToast } from '../../utils.js';
 import Icon from '../../components/Icon.vue';
 
 const tab = ref('submissions');
@@ -111,7 +111,7 @@ load();
           <div v-for="row in events" :key="row.id" class="review-item">
             <div class="review-main">
               <div class="review-title">{{ row.title }}</div>
-              <div class="review-sub">{{ row.occurred_at }} · {{ row.category }} · {{ row.status }}</div>
+              <div class="review-sub">{{ fmtMonth(row.occurred_at) }} · {{ row.category }} · {{ row.status }}</div>
             </div>
             <router-link v-if="row.status === 'published'" class="btn btn-ghost btn-sm" :to="`/archive/${row.id}`" target="_blank">查看</router-link>
             <router-link class="btn btn-primary btn-sm" :to="review('event', row.id)">编辑</router-link>

@@ -5,7 +5,7 @@
 import { computed, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from '../api.js';
-import { showToast } from '../utils.js';
+import { fmtMonth, showToast } from '../utils.js';
 import Icon from '../components/Icon.vue';
 import SelectMenu from '../components/SelectMenu.vue';
 
@@ -133,7 +133,7 @@ watch(() => route.query, () => {
             <div class="archive-summary">{{ item.summary || '暂无摘要' }}</div>
             <div class="archive-meta">
               <span class="tag tag-blue">{{ item.category }}</span>
-              <span class="archive-date">{{ item.occurred_at }}</span>
+              <span class="archive-date">{{ fmtMonth(item.occurred_at) }}</span>
               <span v-if="item.source_count" class="archive-source">{{ item.source_count }} 个来源</span>
             </div>
             <div v-if="item.tags?.length" class="archive-tags">

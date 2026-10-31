@@ -118,8 +118,8 @@ defineExpose({ getPayload });
         <input v-model="form.title" class="input" maxlength="120" placeholder="例如：某平台规则调整引发社区讨论" />
       </div>
       <div>
-        <div class="label">发生时间</div>
-        <DatePicker v-model="form.occurred_at" mode="date" placeholder="选择事件发生日期" />
+        <div class="label">发生月份</div>
+        <DatePicker v-model="form.occurred_at" mode="month" placeholder="选择事件发生月份" />
       </div>
     </div>
 

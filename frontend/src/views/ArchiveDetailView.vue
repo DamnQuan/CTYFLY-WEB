@@ -5,7 +5,7 @@
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from '../api.js';
-import { safeHttpUrl, showToast } from '../utils.js';
+import { fmtMonth, safeHttpUrl, showToast } from '../utils.js';
 import { useAuthStore } from '../stores/auth.js';
 import Icon from '../components/Icon.vue';
 import SelectMenu from '../components/SelectMenu.vue';
@@ -23,7 +23,7 @@ const correction = ref({ field: 'title', proposed_value: '', reason: '', source_
 const correctionOptions = [
   { value: 'title', label: '标题' },
   { value: 'summary', label: '摘要' },
-  { value: 'occurred_at', label: '发生时间' },
+  { value: 'occurred_at', label: '发生月份' },
   { value: 'category', label: '分类' },
   { value: 'other', label: '其他内容' },
 ];
@@ -93,7 +93,7 @@ load();
       <div class="glass card detail-card">
         <div class="detail-meta">
           <span class="tag tag-blue">{{ item.category }}</span>
-          <span>{{ item.occurred_at }}</span>
+          <span>{{ fmtMonth(item.occurred_at) }}</span>
           <span v-if="item.source_count">{{ item.source_count }} 个来源</span>
         </div>
         <h1 class="detail-title">{{ item.title }}</h1>
