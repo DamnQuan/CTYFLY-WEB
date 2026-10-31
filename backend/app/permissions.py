@@ -12,6 +12,7 @@ CAPABILITIES = [
     ("manage_permissions", "修改角色/等级能力矩阵"),
     ("manage_notices", "公告增删"),
     ("manage_events", "活动创建 / 取消 / 删除"),
+    ("manage_archive", "飞圈事件检索审核与发布"),
     ("manage_tickets", "工单回复与关闭"),
     ("review_applications", "管制员 / 职员申请审核"),
     ("review_airlines", "虚拟航司建司审核"),
@@ -31,6 +32,7 @@ CAPABILITY_SHORT = {
     "manage_permissions": "权限管理",
     "manage_notices": "公告",
     "manage_events": "活动",
+    "manage_archive": "事件检索",
     "manage_tickets": "工单",
     "review_applications": "申请审核",
     "review_airlines": "航司审核",
@@ -45,9 +47,9 @@ CAPABILITY_SHORT = {
 DEFAULT_MATRIX = {
     "admin": {c for c, _ in CAPABILITIES},
     "sup": {
-        "view_stats", "view_users", "manage_notices", "manage_events", "manage_tickets",
-        "review_applications", "review_airlines", "view_logs", "approve_sensitive",
-        "view_surveys",
+        "view_stats", "view_users", "manage_notices", "manage_events", "manage_archive",
+        "manage_tickets", "review_applications", "review_airlines", "view_logs",
+        "approve_sensitive", "view_surveys",
     },
     "user": set(),
 }
@@ -114,6 +116,7 @@ ADMIN_NODES = [
     ("/admin/applications/staff", "职员申请", "review_applications"),
     ("/admin/airlines", "航司审核", "review_airlines"),
     ("/admin/events", "活动管理", "manage_events"),
+    ("/admin/archive", "事件检索", "manage_archive"),
     ("/admin/tickets", "工单管理", "manage_tickets"),
     ("/admin/notices", "公告管理", "manage_notices"),
     ("/admin/partners", "合作伙伴", "manage_notices"),

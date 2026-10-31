@@ -21,7 +21,7 @@ from .routers import (admin, airlines, applications, auth, captcha, events,
 from .routers import dispatch, pirep, wallet
 from .routers.shop import shop_admin_router
 from .routers import va_shop
-from .routers import bidding, achievements, market, incidents
+from .routers import bidding, achievements, market, incidents, archive
 
 
 def _console(text: str) -> None:
@@ -222,6 +222,8 @@ app.include_router(bidding.router)
 app.include_router(achievements.router)
 app.include_router(market.router)
 app.include_router(incidents.router)
+app.include_router(archive.router)
+app.include_router(archive.admin_router)
 app.include_router(shop.router)
 app.include_router(shop_admin_router)
 app.include_router(uploads.router)

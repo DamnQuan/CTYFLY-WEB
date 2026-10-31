@@ -7,6 +7,9 @@ import { showToast } from '../utils.js';
 const routes = [
   { path: '/', name: 'home', component: () => import('../views/HomeView.vue') },
   { path: '/partners', name: 'partners', component: () => import('../views/PartnersView.vue') },
+  { path: '/archive', name: 'archive', component: () => import('../views/ArchiveView.vue') },
+  { path: '/archive/submit', name: 'archive-submit', component: () => import('../views/ArchiveSubmitView.vue'), meta: { auth: true } },
+  { path: '/archive/:id(\\d+)', name: 'archive-detail', component: () => import('../views/ArchiveDetailView.vue') },
   { path: '/cookies', name: 'cookies', component: () => import('../views/CookiePolicyView.vue') },
   { path: '/privacy', name: 'privacy', component: () => import('../views/PrivacyPolicyView.vue') },
   { path: '/terms', name: 'terms', component: () => import('../views/TermsView.vue') },
@@ -56,6 +59,8 @@ const routes = [
   { path: '/admin/applications/:type(controller|staff)', name: 'admin-applications', component: () => import('../views/admin/AdminApplicationsView.vue'), meta: { auth: true, admin: true } },
   { path: '/admin/airlines', name: 'admin-airlines', component: () => import('../views/admin/AdminAirlinesView.vue'), meta: { auth: true, admin: true } },
   { path: '/admin/events', name: 'admin-events', component: () => import('../views/admin/AdminEventsView.vue'), meta: { auth: true, admin: true } },
+  { path: '/admin/archive', name: 'admin-archive', component: () => import('../views/admin/AdminArchiveView.vue'), meta: { auth: true, admin: true } },
+  { path: '/admin/archive/review/:type(submission|correction|event)/:id(\\d+)', name: 'admin-archive-review', component: () => import('../views/admin/AdminArchiveReviewView.vue'), meta: { auth: true, admin: true } },
   { path: '/admin/tickets', name: 'admin-tickets', component: () => import('../views/admin/AdminTicketsView.vue'), meta: { auth: true, admin: true } },
   { path: '/admin/notices', name: 'admin-notices', component: () => import('../views/admin/AdminNoticesView.vue'), meta: { auth: true, admin: true } },
   { path: '/admin/partners', name: 'admin-partners', component: () => import('../views/admin/AdminPartnersView.vue'), meta: { auth: true, admin: true } },
@@ -124,6 +129,7 @@ const ADMIN_CAPS = {
   '/admin/applications/staff': 'review_applications',
   '/admin/airlines': 'review_airlines',
   '/admin/events': 'manage_events',
+  '/admin/archive': 'manage_archive',
   '/admin/tickets': 'manage_tickets',
   '/admin/notices': 'manage_notices',
   '/admin/partners': 'manage_notices',
@@ -152,7 +158,8 @@ router.beforeEach(async (to, from) => {
   }
   // 细粒度能力校验：无对应能力的后台页 → 提示 + 退回上一页；
   // 直接刷新/直链进入，无上一页则回仪表盘
-  const needCap = ADMIN_CAPS[to.path];
+  const needCap = ADMIN_CAPS[to.path]
+    || (to.path.startsWith('/admin/archive') ? 'manage_archive' : '');
   if (needCap && !auth.can(needCap)) {
     showToast('无权限访问该页面');
     if (from.matched.length && from.fullPath !== to.fullPath) return false;

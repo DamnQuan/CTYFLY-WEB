@@ -102,3 +102,33 @@ async def upload_partner_logo(request: Request, file: UploadFile = File(...),
               detail=f"{len(data) // 1024} KB {ext}",
               ip=client_ip_from_request(request), ua=user_agent(request))
     return {"ok": True, "url": url, "bytes": len(data)}
+
+
+@router.post("/archive-image")
+async def upload_archive_image(request: Request, file: UploadFile = File(...),
+                               user: dict = Depends(require_auth)):
+    """飞圈事件检索图片：登录用户投稿与管理员审核共用，返回同源相对地址"""
+    enforce(request, "upload", 30, 3600)
+
+    head = await file.read(16)
+    if not head:
+        raise HTTPException(400, "请选择要上传的图片")
+
+    ext = sniff_image_ext(head)
+    if not ext:
+        raise HTTPException(400, "仅支持 PNG / JPG / WebP / GIF 格式的图片")
+
+    rest = await file.read(MAX_UPLOAD_BYTES + 1)
+    data = head + rest
+    if len(data) > MAX_UPLOAD_BYTES:
+        raise HTTPException(400, f"图片不能超过 {_limit_text()}")
+
+    name = f"archive-{secrets.token_hex(12)}{ext}"
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    (UPLOAD_DIR / name).write_bytes(data)
+
+    url = f"{UPLOAD_URL_PREFIX}/{name}"
+    log_event("archive", "上传事件图片", actor=user, target_type="upload", target_id=name,
+              detail=f"{len(data) // 1024} KB {ext}",
+              ip=client_ip_from_request(request), ua=user_agent(request))
+    return {"ok": True, "url": url, "bytes": len(data)}

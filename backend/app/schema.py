@@ -785,4 +785,77 @@ CREATE TABLE IF NOT EXISTS survey_responses (
   created_at TEXT NOT NULL DEFAULT (datetime('now','localtime'))
 );
 CREATE INDEX IF NOT EXISTS idx_survey_responses_time ON survey_responses(created_at, id);
+
+-- 飞圈事件检索：公开档案、用户投稿、纠错与修订记录。
+-- blocks / sources / payload 存 JSON 文本，读取时统一解析；search_text 供 LIKE 检索。
+CREATE TABLE IF NOT EXISTS archive_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  summary TEXT NOT NULL DEFAULT '',
+  occurred_at TEXT NOT NULL DEFAULT '',
+  category TEXT NOT NULL DEFAULT '其他',
+  tags TEXT NOT NULL DEFAULT '[]',
+  blocks TEXT NOT NULL DEFAULT '[]',
+  sources TEXT NOT NULL DEFAULT '[]',
+  personal_info_mode TEXT NOT NULL DEFAULT 'public',
+  cover_url TEXT NOT NULL DEFAULT '',
+  search_text TEXT NOT NULL DEFAULT '',
+  status TEXT NOT NULL DEFAULT 'published',
+  created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  reviewed_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  source_submission_id INTEGER,
+  published_at TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+);
+CREATE INDEX IF NOT EXISTS idx_archive_events_status_time
+  ON archive_events(status, occurred_at DESC, id DESC);
+CREATE INDEX IF NOT EXISTS idx_archive_events_category
+  ON archive_events(category, status);
+
+CREATE TABLE IF NOT EXISTS archive_submissions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  payload TEXT NOT NULL DEFAULT '{}',
+  draft TEXT NOT NULL DEFAULT '',
+  status TEXT NOT NULL DEFAULT 'pending',
+  review_note TEXT NOT NULL DEFAULT '',
+  event_id INTEGER REFERENCES archive_events(id) ON DELETE SET NULL,
+  reviewed_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  reviewed_at TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+);
+CREATE INDEX IF NOT EXISTS idx_archive_submissions_status
+  ON archive_submissions(status, id DESC);
+CREATE INDEX IF NOT EXISTS idx_archive_submissions_user
+  ON archive_submissions(user_id, id DESC);
+
+CREATE TABLE IF NOT EXISTS archive_corrections (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_id INTEGER NOT NULL REFERENCES archive_events(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  field TEXT NOT NULL DEFAULT '',
+  current_value TEXT NOT NULL DEFAULT '',
+  proposed_value TEXT NOT NULL DEFAULT '',
+  reason TEXT NOT NULL DEFAULT '',
+  source_url TEXT NOT NULL DEFAULT '',
+  status TEXT NOT NULL DEFAULT 'pending',
+  review_note TEXT NOT NULL DEFAULT '',
+  reviewed_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  reviewed_at TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+);
+CREATE INDEX IF NOT EXISTS idx_archive_corrections_status
+  ON archive_corrections(status, id DESC);
+
+CREATE TABLE IF NOT EXISTS archive_revisions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_id INTEGER NOT NULL REFERENCES archive_events(id) ON DELETE CASCADE,
+  actor_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  action TEXT NOT NULL DEFAULT '',
+  changes TEXT NOT NULL DEFAULT '{}',
+  created_at TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+);
+CREATE INDEX IF NOT EXISTS idx_archive_revisions_event
+  ON archive_revisions(event_id, id DESC);
 """
