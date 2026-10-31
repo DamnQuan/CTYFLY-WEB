@@ -5,7 +5,7 @@
 import { ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from '../api.js';
-import { fmtMonth, safeHttpUrl, showToast } from '../utils.js';
+import { fmtMonth, showToast } from '../utils.js';
 import { useAuthStore } from '../stores/auth.js';
 import Icon from '../components/Icon.vue';
 import SelectMenu from '../components/SelectMenu.vue';
@@ -94,7 +94,6 @@ load();
         <div class="detail-meta">
           <span class="tag tag-blue">{{ item.category }}</span>
           <span>{{ fmtMonth(item.occurred_at) }}</span>
-          <span v-if="item.source_count">{{ item.source_count }} 个来源</span>
         </div>
         <h1 class="detail-title">{{ item.title }}</h1>
         <div v-if="item.summary" class="detail-summary">{{ item.summary }}</div>
@@ -110,21 +109,6 @@ load();
               <figcaption v-if="block.caption">{{ block.caption }}</figcaption>
             </figure>
           </template>
-        </div>
-
-        <div class="detail-sources">
-          <div class="card-title" style="font-size: 15px">资料来源</div>
-          <div v-for="(source, index) in item.sources" :key="index" class="source-item">
-            <a
-              v-if="safeHttpUrl(source.url)"
-              :href="safeHttpUrl(source.url)"
-              target="_blank"
-              rel="noopener noreferrer nofollow"
-              class="source-link"
-            >{{ source.title }} <Icon name="external" :size="12" /></a>
-            <span v-else>{{ source.title }}</span>
-            <span class="source-sub">{{ source.publisher }}<template v-if="source.published_at"> · {{ source.published_at }}</template></span>
-          </div>
         </div>
 
         <div class="detail-footer">
@@ -179,11 +163,6 @@ load();
 .detail-figure { margin: 18px 0; }
 .detail-figure img { width: 100%; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface-solid); }
 .detail-figure figcaption { margin-top: 6px; text-align: center; color: var(--gray); font-size: 12px; }
-.detail-sources { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--border); }
-.source-item { display: flex; flex-direction: column; gap: 3px; padding: 8px 0; border-bottom: 1px dashed var(--border); }
-.source-item:last-child { border-bottom: none; }
-.source-link { color: var(--blue); font-size: 13.5px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
-.source-sub { color: var(--gray); font-size: 12px; }
 .detail-footer { margin-top: 22px; padding-top: 14px; border-top: 1px dashed var(--border); color: var(--gray); font-size: 12px; line-height: 1.7; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .correction-card { margin-top: 16px; }
 .correction-actions { display: flex; gap: 10px; margin-top: 14px; }

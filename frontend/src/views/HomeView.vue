@@ -49,7 +49,7 @@ onMounted(async () => {
         <div class="archive-entry-icon"><Icon name="book" :size="20" /></div>
         <div>
           <div class="archive-entry-title">飞圈事件检索</div>
-          <div class="archive-entry-desc">检索近两年飞圈重要事件与资料，每条都附来源</div>
+          <div class="archive-entry-desc">检索近两年飞圈重要事件与资料</div>
         </div>
       </div>
       <form class="archive-entry-search" @submit.prevent="searchArchive">

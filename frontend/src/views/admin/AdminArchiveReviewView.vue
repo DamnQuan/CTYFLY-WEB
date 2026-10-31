@@ -201,11 +201,6 @@ load();
           <div class="original-title">{{ submission.payload?.title }}</div>
           <div class="original-summary">{{ submission.payload?.summary }}</div>
           <div class="original-text">{{ originalText }}</div>
-          <div v-if="submission.payload?.sources?.length" class="original-sources">
-            <div v-for="(source, index) in submission.payload.sources" :key="index" class="original-source">
-              {{ source.title }} {{ source.url }}
-            </div>
-          </div>
         </div>
 
         <div class="glass card">
@@ -275,8 +270,6 @@ load();
 .original-title { margin-top: 14px; font-size: 17px; font-weight: 600; }
 .original-summary { margin-top: 8px; color: var(--text-2); font-size: 13.5px; line-height: 1.7; }
 .original-text { margin-top: 10px; white-space: pre-wrap; color: var(--text-2); font-size: 13px; line-height: 1.8; max-height: 420px; overflow: auto; }
-.original-sources { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--border); }
-.original-source { color: var(--gray); font-size: 12px; line-height: 1.7; word-break: break-all; }
 .review-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
 .correction-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
 .compare-box { margin-top: 6px; padding: 12px; border-radius: var(--radius-sm); background: var(--surface); font-size: 13px; line-height: 1.7; white-space: pre-wrap; }

@@ -134,7 +134,6 @@ watch(() => route.query, () => {
             <div class="archive-meta">
               <span class="tag tag-blue">{{ item.category }}</span>
               <span class="archive-date">{{ fmtMonth(item.occurred_at) }}</span>
-              <span v-if="item.source_count" class="archive-source">{{ item.source_count }} 个来源</span>
             </div>
             <div v-if="item.tags?.length" class="archive-tags">
               <span v-for="tag in item.tags" :key="tag" class="archive-tag">#{{ tag }}</span>

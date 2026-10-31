@@ -135,8 +135,6 @@ def _normalise(body: ArchivePayload) -> dict:
             "publisher": clean(source.publisher, 80),
             "published_at": clean(source.published_at, 20),
         })
-    if not sources:
-        raise HTTPException(400, "至少填写一个资料来源")
     mode = body.personal_info_mode if body.personal_info_mode in PERSONAL_MODES else "public"
     return {
         "title": title,

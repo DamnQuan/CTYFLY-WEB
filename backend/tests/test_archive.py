@@ -39,7 +39,6 @@ def payload(**over):
             {"type": "text", "text": "事件正文内容，足够十个字以上。"},
             {"type": "image", "url": "/uploads/archive-test.png", "caption": "现场图片"},
         ],
-        "sources": [{"title": "测试来源", "url": "https://example.com/source"}],
         "contact": "123456789",
     }
     data.update(over)
@@ -75,7 +74,6 @@ def test_public_list_and_detail(client, conn):
     listing = client.get("/api/archive", params={"q": "测试"}).json()
     assert listing["total"] == 1
     assert listing["items"][0]["id"] == event_id
-    assert listing["items"][0]["source_count"] == 1
 
     detail = client.get(f"/api/archive/{event_id}").json()
     assert detail["title"] == "测试飞圈事件标题"

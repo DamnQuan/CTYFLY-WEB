@@ -26,7 +26,6 @@ function blank() {
     summary: '',
     tags: [],
     blocks: [{ type: 'text', text: '' }],
-    sources: [{ title: '', url: '', publisher: '', published_at: '' }],
     contact: '',
     personal_info_mode: 'public',
   };
@@ -38,7 +37,6 @@ function clone(value) {
 
 const form = ref({ ...blank(), ...clone(props.initial) });
 if (!form.value.blocks?.length) form.value.blocks = [{ type: 'text', text: '' }];
-if (!form.value.sources?.length) form.value.sources = [{ title: '', url: '', publisher: '', published_at: '' }];
 const tagsText = ref((form.value.tags || []).join('，'));
 const uploading = ref(false);
 
@@ -60,16 +58,6 @@ function moveBlock(index, step) {
   if (target < 0 || target >= form.value.blocks.length) return;
   const list = form.value.blocks;
   [list[index], list[target]] = [list[target], list[index]];
-}
-function addSource() {
-  form.value.sources.push({ title: '', url: '', publisher: '', published_at: '' });
-}
-function removeSource(index) {
-  if (form.value.sources.length <= 1) {
-    showToast('至少保留一个资料来源');
-    return;
-  }
-  form.value.sources.splice(index, 1);
 }
 
 async function pickImage(block, event) {
@@ -103,6 +91,7 @@ function getPayload() {
   return {
     ...clone(form.value),
     tags,
+    sources: [],
     personal_info_mode: props.adminMode ? form.value.personal_info_mode : 'public',
   };
 }
@@ -173,19 +162,6 @@ defineExpose({ getPayload });
       </div>
     </div>
 
-    <div class="editor-section">
-      <div class="editor-head">
-        <div class="label" style="margin: 0">资料来源</div>
-        <button class="btn btn-ghost btn-sm" type="button" @click="addSource"><Icon name="plus" :size="14" /> 添加来源</button>
-      </div>
-      <div v-for="(source, index) in form.sources" :key="index" class="source-row">
-        <input v-model="source.title" class="input" maxlength="120" placeholder="来源标题，必填" />
-        <input v-model="source.url" class="input" maxlength="800" placeholder="https:// 链接，必填" />
-        <input v-model="source.publisher" class="input" maxlength="80" placeholder="发布方，选填" />
-        <button class="btn btn-ghost btn-sm" type="button" @click="removeSource(index)">删除</button>
-      </div>
-    </div>
-
     <div class="grid grid-2" style="margin-top: 14px">
       <div>
         <div class="label">联系 QQ</div>
@@ -224,8 +200,4 @@ defineExpose({ getPayload });
 .block-image { width: 100%; max-height: 320px; object-fit: contain; border-radius: var(--radius-sm); background: var(--surface-solid); margin-bottom: 8px; }
 .block-image-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .block-image-row .input { flex: 1; min-width: 180px; }
-.source-row { display: grid; grid-template-columns: 1.1fr 1.8fr 0.9fr auto; gap: 8px; margin-bottom: 8px; }
-@media (max-width: 800px) {
-  .source-row { grid-template-columns: 1fr; }
-}
 </style>
