@@ -1,19 +1,11 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 import { api } from '../api.js';
 import { fmtTime } from '../utils.js';
 import Icon from '../components/Icon.vue';
 
-const router = useRouter();
 const events = ref([]);
 const loading = ref(true);
-const archiveQuery = ref('');
-
-function searchArchive() {
-  const q = archiveQuery.value.trim();
-  router.push({ name: 'archive', query: q ? { q } : {} });
-}
 
 onMounted(async () => {
   try {
@@ -43,24 +35,6 @@ onMounted(async () => {
         >加入QQ群</a>
       </div>
     </section>
-
-    <div class="glass card archive-entry">
-      <div class="archive-entry-head">
-        <div class="archive-entry-icon"><Icon name="book" :size="20" /></div>
-        <div>
-          <div class="archive-entry-title">飞圈事件检索</div>
-          <div class="archive-entry-desc">检索近两年飞圈重要事件与资料</div>
-        </div>
-      </div>
-      <form class="archive-entry-search" @submit.prevent="searchArchive">
-        <input v-model="archiveQuery" class="input" maxlength="60" placeholder="输入事件名、平台、航司或关键词" />
-        <button class="btn btn-primary" type="submit"><Icon name="search" :size="15" /> 检索</button>
-      </form>
-      <div class="archive-entry-foot">
-        <span>游客可检索，投稿需登录</span>
-        <router-link class="link" to="/archive">查看全部事件</router-link>
-      </div>
-    </div>
 
     <div style="margin-top: 48px">
       <div class="card-title" style="margin-bottom: 14px"><Icon name="calendar" :size="16" /> 近期活动</div>
@@ -112,27 +86,6 @@ onMounted(async () => {
 .hero { padding: 64px 24px; }
 .hero-title { font-size: 44px; font-weight: 700; letter-spacing: -1px; }
 .hero-sub { color: var(--text-2); font-size: 16px; max-width: 520px; margin: 12px auto 28px; }
-.archive-entry { margin-top: 8px; }
-.archive-entry-head { display: flex; align-items: center; gap: 12px; }
-.archive-entry-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: rgba(10, 132, 255, 0.12);
-  color: var(--blue);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-}
-.archive-entry-title { font-size: 17px; font-weight: 600; }
-.archive-entry-desc { margin-top: 3px; color: var(--text-2); font-size: 13px; }
-.archive-entry-search { display: flex; gap: 10px; margin-top: 14px; }
-.archive-entry-search .input { flex: 1; }
-.archive-entry-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; color: var(--gray); font-size: 12px; flex-wrap: wrap; }
-@media (max-width: 620px) {
-  .archive-entry-search { flex-direction: column; }
-}
 @media (max-width: 620px) {
   .hero { padding: 44px 18px; }
   .hero-title { font-size: 32px; }
