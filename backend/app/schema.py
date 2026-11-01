@@ -801,6 +801,12 @@ CREATE TABLE IF NOT EXISTS archive_events (
   cover_url TEXT NOT NULL DEFAULT '',
   search_text TEXT NOT NULL DEFAULT '',
   status TEXT NOT NULL DEFAULT 'published',
+  like_count INTEGER NOT NULL DEFAULT 0,
+  favorite_count INTEGER NOT NULL DEFAULT 0,
+  comment_count INTEGER NOT NULL DEFAULT 0,
+  view_count INTEGER NOT NULL DEFAULT 0,
+  featured INTEGER NOT NULL DEFAULT 0,
+  featured_at TEXT,
   created_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
   reviewed_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
   source_submission_id INTEGER,
@@ -858,4 +864,59 @@ CREATE TABLE IF NOT EXISTS archive_revisions (
 );
 CREATE INDEX IF NOT EXISTS idx_archive_revisions_event
   ON archive_revisions(event_id, id DESC);
+
+-- 论坛化互动：点赞、收藏、评论、举报与浏览去重。
+CREATE TABLE IF NOT EXISTS archive_likes (
+  event_id INTEGER NOT NULL REFERENCES archive_events(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+  PRIMARY KEY (event_id, user_id)
+);
+CREATE INDEX IF NOT EXISTS idx_archive_likes_user ON archive_likes(user_id, event_id);
+
+CREATE TABLE IF NOT EXISTS archive_favorites (
+  event_id INTEGER NOT NULL REFERENCES archive_events(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+  PRIMARY KEY (event_id, user_id)
+);
+CREATE INDEX IF NOT EXISTS idx_archive_favorites_user ON archive_favorites(user_id, event_id);
+
+CREATE TABLE IF NOT EXISTS archive_comments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_id INTEGER NOT NULL REFERENCES archive_events(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  parent_id INTEGER REFERENCES archive_comments(id) ON DELETE CASCADE,
+  content TEXT NOT NULL DEFAULT '',
+  status TEXT NOT NULL DEFAULT 'published',
+  hidden_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  hidden_at TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+);
+CREATE INDEX IF NOT EXISTS idx_archive_comments_event
+  ON archive_comments(event_id, status, id);
+CREATE INDEX IF NOT EXISTS idx_archive_comments_parent
+  ON archive_comments(parent_id, status, id);
+
+CREATE TABLE IF NOT EXISTS archive_comment_reports (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  comment_id INTEGER NOT NULL REFERENCES archive_comments(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  reason TEXT NOT NULL DEFAULT '',
+  status TEXT NOT NULL DEFAULT 'pending',
+  resolution_note TEXT NOT NULL DEFAULT '',
+  resolved_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  resolved_at TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+);
+CREATE INDEX IF NOT EXISTS idx_archive_comment_reports_status
+  ON archive_comment_reports(status, id DESC);
+
+CREATE TABLE IF NOT EXISTS archive_views (
+  event_id INTEGER NOT NULL REFERENCES archive_events(id) ON DELETE CASCADE,
+  visitor_key TEXT NOT NULL,
+  viewed_on TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+  PRIMARY KEY (event_id, visitor_key, viewed_on)
+);
 """

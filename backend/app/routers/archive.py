@@ -6,6 +6,7 @@
 - 审核通过即自动发布，同时写 archive_revisions，便于追溯谁改了什么。
 - 搜索先用 LIKE 覆盖标题、摘要、正文、标签与来源；数据量小，避免为 FTS5 引入额外分词依赖。
 """
+import hashlib
 import json
 import re
 
@@ -14,7 +15,7 @@ from pydantic import BaseModel, Field
 
 from ..audit import log_event
 from ..database import get_conn
-from ..deps import require_auth, require_capability
+from ..deps import optional_user, require_auth, require_capability
 from ..ratelimit import enforce
 from ..requestinfo import client_ip_from_request, user_agent
 from ..text import clean
@@ -65,6 +66,33 @@ class CorrectionBody(BaseModel):
 class ReviewBody(BaseModel):
     payload: ArchivePayload | None = None
     note: str = Field("", max_length=500)
+
+
+class CommentBody(BaseModel):
+    content: str = Field("", max_length=500)
+    parent_id: int | None = None
+
+
+class ReportBody(BaseModel):
+    reason: str = Field("", max_length=300)
+
+
+class CommentStatusBody(BaseModel):
+    status: str = Field("", max_length=12)
+
+
+class FeaturedBody(BaseModel):
+    featured: bool = False
+
+
+class ResolveReportBody(BaseModel):
+    action: str = Field("", max_length=12)
+    note: str = Field("", max_length=300)
+
+
+SORTS = {"latest", "hot", "featured"}
+HOT_WINDOWS = {"day": "-1 day", "week": "-7 days", "month": "-30 days", "all": None}
+COUNT_FIELDS = {"like_count", "favorite_count", "comment_count", "view_count"}
 
 
 def _audit(request: Request, action: str, *, actor, target_id=None, detail: str = "") -> None:
@@ -204,6 +232,10 @@ def _cover(payload: dict) -> str:
     return ""
 
 
+def _count(row, name: str) -> int:
+    return int(row[name] or 0) if name in row.keys() else 0
+
+
 def _event_public(row) -> dict:
     payload = {
         "title": row["title"],
@@ -222,11 +254,16 @@ def _event_public(row) -> dict:
         "source_count": len(_parse_json(row["sources"], [])),
         "published_at": row["published_at"],
         "updated_at": row["updated_at"],
+        "like_count": _count(row, "like_count"),
+        "favorite_count": _count(row, "favorite_count"),
+        "comment_count": _count(row, "comment_count"),
+        "view_count": _count(row, "view_count"),
+        "featured": bool(_count(row, "featured")),
     })
     return public
 
 
-def _list_item(row) -> dict:
+def _list_item(row, liked: bool = False, favorited: bool = False) -> dict:
     return {
         "id": row["id"],
         "title": row["title"],
@@ -238,6 +275,13 @@ def _list_item(row) -> dict:
         "source_count": len(_parse_json(row["sources"], [])),
         "published_at": row["published_at"],
         "updated_at": row["updated_at"],
+        "like_count": _count(row, "like_count"),
+        "favorite_count": _count(row, "favorite_count"),
+        "comment_count": _count(row, "comment_count"),
+        "view_count": _count(row, "view_count"),
+        "featured": bool(_count(row, "featured")),
+        "liked": liked,
+        "favorited": favorited,
     }
 
 
@@ -267,12 +311,31 @@ def _event_insert(conn, payload: dict, *, actor_id: int, submission_id: int | No
     return int(cursor.lastrowid)
 
 
+def _viewer_sets(conn, event_ids: list[int], user_id: int | None):
+    if not event_ids or not user_id:
+        return set(), set()
+    marks = ",".join("?" for _ in event_ids)
+    liked = {r["event_id"] for r in conn.execute(
+        f"SELECT event_id FROM archive_likes WHERE user_id = ? AND event_id IN ({marks})",
+        (user_id, *event_ids),
+    )}
+    favorited = {r["event_id"] for r in conn.execute(
+        f"SELECT event_id FROM archive_favorites WHERE user_id = ? AND event_id IN ({marks})",
+        (user_id, *event_ids),
+    )}
+    return liked, favorited
+
+
 @router.get("")
-def list_events(q: str = "", category: str = "", year: str = "", page: int = 1):
-    """公开检索：只返回已发布事件，关键词覆盖标题、摘要、正文、标签与来源。"""
+def list_events(q: str = "", category: str = "", year: str = "", sort: str = "latest",
+                window: str = "week", page: int = 1,
+                user: dict | None = Depends(optional_user)):
+    """公开检索：最新、最热、精选；只返回已发布事件。"""
     page = max(1, min(int(page or 1), 2000))
     offset = (page - 1) * PAGE_SIZE
     q = clean(q, 60)
+    sort = sort if sort in SORTS else "latest"
+    window = window if window in HOT_WINDOWS else "week"
     where = ["status = 'published'"]
     args = []
     if q:
@@ -285,12 +348,23 @@ def list_events(q: str = "", category: str = "", year: str = "", page: int = 1):
     if re.match(r"^\d{4}$", year or ""):
         where.append("substr(occurred_at, 1, 4) = ?")
         args.append(year)
+    if sort == "featured":
+        where.append("featured = 1")
+    if sort == "hot" and HOT_WINDOWS[window]:
+        where.append("published_at >= datetime('now','localtime', ?)")
+        args.append(HOT_WINDOWS[window])
     where_sql = " AND ".join(where)
+    if sort == "hot":
+        order_sql = (" ORDER BY (like_count + comment_count * 3 + favorite_count * 4"
+                     " + view_count * 0.1) DESC, published_at DESC, id DESC")
+    elif sort == "featured":
+        order_sql = " ORDER BY featured_at DESC, published_at DESC, id DESC"
+    else:
+        order_sql = " ORDER BY published_at DESC, id DESC"
     with get_conn() as conn:
         total = conn.execute(f"SELECT COUNT(*) c FROM archive_events WHERE {where_sql}", args).fetchone()["c"]
         rows = conn.execute(
-            f"SELECT * FROM archive_events WHERE {where_sql}"
-            " ORDER BY occurred_at DESC, id DESC LIMIT ? OFFSET ?",
+            f"SELECT * FROM archive_events WHERE {where_sql}{order_sql} LIMIT ? OFFSET ?",
             (*args, PAGE_SIZE, offset),
         ).fetchall()
         years = [
@@ -299,11 +373,14 @@ def list_events(q: str = "", category: str = "", year: str = "", page: int = 1):
                 " WHERE status = 'published' ORDER BY y DESC"
             ) if row["y"]
         ]
+        liked, favorited = _viewer_sets(conn, [row["id"] for row in rows], user["id"] if user else None)
     return {
-        "items": [_list_item(row) for row in rows],
+        "items": [_list_item(row, row["id"] in liked, row["id"] in favorited) for row in rows],
         "total": total,
         "page": page,
         "pageSize": PAGE_SIZE,
+        "sort": sort,
+        "window": window,
         "categories": CATEGORIES,
         "years": years,
         "disclaimer": "本站事件资料来自公开渠道与社区整理，仅供参考，不构成事实认定或法律意见。",
@@ -333,18 +410,293 @@ def my_submissions(user: dict = Depends(require_auth)):
     return {"items": items}
 
 
+def _visitor_key(request: Request, user: dict | None) -> str:
+    if user:
+        return f"u{user['id']}"
+    raw = f"{client_ip_from_request(request)}|{user_agent(request)}".encode("utf-8", "ignore")
+    return "a" + hashlib.sha256(raw).hexdigest()[:24]
+
+
+def _related_events(conn, row, user_id: int | None) -> list[dict]:
+    tags = set(_parse_json(row["tags"], []))
+    candidates = conn.execute(
+        "SELECT * FROM archive_events WHERE status = 'published' AND id != ?"
+        " AND category = ? ORDER BY (like_count + comment_count * 3"
+        " + favorite_count * 4) DESC, published_at DESC LIMIT 8",
+        (row["id"], row["category"]),
+    ).fetchall()
+    ranked = []
+    for candidate in candidates:
+        overlap = len(tags & set(_parse_json(candidate["tags"], [])))
+        ranked.append((overlap, candidate))
+    ranked.sort(key=lambda item: item[0], reverse=True)
+    chosen = [candidate for _, candidate in ranked[:4]]
+    liked, favorited = _viewer_sets(conn, [item["id"] for item in chosen], user_id)
+    return [_list_item(item, item["id"] in liked, item["id"] in favorited) for item in chosen]
+
+
+@router.get("/mine/favorites")
+def my_favorites(user: dict = Depends(require_auth)):
+    with get_conn() as conn:
+        rows = conn.execute(
+            "SELECT e.* FROM archive_favorites f JOIN archive_events e ON e.id = f.event_id"
+            " WHERE f.user_id = ? AND e.status = 'published'"
+            " ORDER BY f.created_at DESC LIMIT 200",
+            (user["id"],),
+        ).fetchall()
+        liked, favorited = _viewer_sets(conn, [row["id"] for row in rows], user["id"])
+    return {"items": [_list_item(row, row["id"] in liked, row["id"] in favorited) for row in rows]}
+
+
 @router.get("/{event_id}")
-def event_detail(event_id: int):
+def event_detail(event_id: int, request: Request, user: dict | None = Depends(optional_user)):
     with get_conn() as conn:
         row = conn.execute(
             "SELECT * FROM archive_events WHERE id = ? AND status = 'published'", (event_id,)
         ).fetchone()
-    if not row:
-        raise HTTPException(404, "事件不存在或已下线")
+        if not row:
+            raise HTTPException(404, "事件不存在或已下线")
+        viewed = conn.execute(
+            "INSERT OR IGNORE INTO archive_views (event_id, visitor_key, viewed_on)"
+            " VALUES (?, ?, date('now','localtime'))",
+            (event_id, _visitor_key(request, user)),
+        ).rowcount
+        if viewed:
+            conn.execute(
+                "UPDATE archive_events SET view_count = view_count + 1 WHERE id = ?", (event_id,)
+            )
+            row = conn.execute("SELECT * FROM archive_events WHERE id = ?", (event_id,)).fetchone()
+        liked, favorited = _viewer_sets(conn, [event_id], user["id"] if user else None)
+        related = _related_events(conn, row, user["id"] if user else None)
     data = _event_public(row)
+    data["liked"] = event_id in liked
+    data["favorited"] = event_id in favorited
+    data["related"] = related
     data["disclaimer"] = "本站事件资料来自公开渠道与社区整理，仅供参考，不构成事实认定或法律意见。"
     data["correction_notice"] = "发现事实或表述有误，可登录后提交纠错，管理员审核后更新。"
     return data
+
+
+@router.post("/{event_id}/like")
+def toggle_like(event_id: int, request: Request, user: dict = Depends(require_auth)):
+    enforce(request, "archive-like", 60, 600)
+    with get_conn() as conn:
+        _published_event(conn, event_id)
+        exists = conn.execute(
+            "SELECT 1 FROM archive_likes WHERE event_id = ? AND user_id = ?",
+            (event_id, user["id"]),
+        ).fetchone()
+        if exists:
+            conn.execute(
+                "DELETE FROM archive_likes WHERE event_id = ? AND user_id = ?",
+                (event_id, user["id"]),
+            )
+            conn.execute(
+                "UPDATE archive_events SET like_count = MAX(0, like_count - 1) WHERE id = ?",
+                (event_id,),
+            )
+            liked = False
+        else:
+            conn.execute(
+                "INSERT INTO archive_likes (event_id, user_id) VALUES (?, ?)",
+                (event_id, user["id"]),
+            )
+            conn.execute(
+                "UPDATE archive_events SET like_count = like_count + 1 WHERE id = ?",
+                (event_id,),
+            )
+            liked = True
+        count = conn.execute(
+            "SELECT like_count FROM archive_events WHERE id = ?", (event_id,)
+        ).fetchone()["like_count"]
+    return {"ok": True, "liked": liked, "count": count}
+
+
+@router.post("/{event_id}/favorite")
+def toggle_favorite(event_id: int, request: Request, user: dict = Depends(require_auth)):
+    enforce(request, "archive-favorite", 60, 600)
+    with get_conn() as conn:
+        _published_event(conn, event_id)
+        exists = conn.execute(
+            "SELECT 1 FROM archive_favorites WHERE event_id = ? AND user_id = ?",
+            (event_id, user["id"]),
+        ).fetchone()
+        if exists:
+            conn.execute(
+                "DELETE FROM archive_favorites WHERE event_id = ? AND user_id = ?",
+                (event_id, user["id"]),
+            )
+            conn.execute(
+                "UPDATE archive_events SET favorite_count = MAX(0, favorite_count - 1)"
+                " WHERE id = ?", (event_id,),
+            )
+            favorited = False
+        else:
+            conn.execute(
+                "INSERT INTO archive_favorites (event_id, user_id) VALUES (?, ?)",
+                (event_id, user["id"]),
+            )
+            conn.execute(
+                "UPDATE archive_events SET favorite_count = favorite_count + 1 WHERE id = ?",
+                (event_id,),
+            )
+            favorited = True
+        count = conn.execute(
+            "SELECT favorite_count FROM archive_events WHERE id = ?", (event_id,)
+        ).fetchone()["favorite_count"]
+    return {"ok": True, "favorited": favorited, "count": count}
+
+
+def _published_event(conn, event_id: int):
+    row = conn.execute(
+        "SELECT * FROM archive_events WHERE id = ? AND status = 'published'", (event_id,)
+    ).fetchone()
+    if not row:
+        raise HTTPException(404, "事件不存在或已下线")
+    return row
+
+
+def _comment_public(row, viewer_id: int | None = None) -> dict:
+    return {
+        "id": row["id"],
+        "event_id": row["event_id"],
+        "parent_id": row["parent_id"],
+        "content": row["content"],
+        "username": row["username"],
+        "avatar_url": row["avatar_url"] or "",
+        "created_at": row["created_at"],
+        "is_mine": bool(viewer_id and row["user_id"] == viewer_id),
+    }
+
+
+def _comment_rows(conn, event_id: int):
+    return conn.execute(
+        "SELECT c.*, u.username, u.avatar_url FROM archive_comments c"
+        " JOIN users u ON u.id = c.user_id"
+        " WHERE c.event_id = ? AND c.status = 'published'"
+        " ORDER BY c.id ASC LIMIT 300",
+        (event_id,),
+    ).fetchall()
+
+
+@router.get("/{event_id}/comments")
+def list_comments(event_id: int, user: dict | None = Depends(optional_user)):
+    with get_conn() as conn:
+        row = _published_event(conn, event_id)
+        rows = _comment_rows(conn, event_id)
+    viewer_id = user["id"] if user else None
+    top = []
+    replies = {}
+    for item in rows:
+        data = _comment_public(item, viewer_id)
+        if item["parent_id"]:
+            replies.setdefault(item["parent_id"], []).append(data)
+        else:
+            data["replies"] = []
+            top.append(data)
+    for item in top:
+        item["replies"] = replies.get(item["id"], [])
+    return {"items": top, "total": int(row["comment_count"] or 0)}
+
+
+@router.post("/{event_id}/comments")
+def create_comment(event_id: int, body: CommentBody, request: Request,
+                   user: dict = Depends(require_auth)):
+    enforce(request, "archive-comment", 8, 600)
+    content = clean(body.content, 500)
+    if len(content) < 2:
+        raise HTTPException(400, "评论至少需要 2 个字")
+    with get_conn() as conn:
+        _published_event(conn, event_id)
+        parent_id = None
+        if body.parent_id:
+            parent = conn.execute(
+                "SELECT * FROM archive_comments WHERE id = ? AND event_id = ?"
+                " AND status = 'published'", (body.parent_id, event_id),
+            ).fetchone()
+            if not parent:
+                raise HTTPException(404, "回复的评论不存在")
+            if parent["parent_id"]:
+                raise HTTPException(400, "只支持回复一级评论")
+            parent_id = int(parent["id"])
+        cursor = conn.execute(
+            "INSERT INTO archive_comments (event_id, user_id, parent_id, content)"
+            " VALUES (?, ?, ?, ?)",
+            (event_id, user["id"], parent_id, content),
+        )
+        comment_id = int(cursor.lastrowid)
+        conn.execute(
+            "UPDATE archive_events SET comment_count = comment_count + 1 WHERE id = ?",
+            (event_id,),
+        )
+        row = conn.execute(
+            "SELECT c.*, u.username, u.avatar_url FROM archive_comments c"
+            " JOIN users u ON u.id = c.user_id WHERE c.id = ?", (comment_id,),
+        ).fetchone()
+    _audit(request, "发表事件评论", actor=user, target_id=event_id,
+           detail=f"comment={comment_id}")
+    return {"ok": True, "comment": _comment_public(row, user["id"])}
+
+
+@router.delete("/comments/{comment_id}")
+def delete_own_comment(comment_id: int, request: Request, user: dict = Depends(require_auth)):
+    with get_conn() as conn:
+        row = conn.execute("SELECT * FROM archive_comments WHERE id = ?", (comment_id,)).fetchone()
+        if not row:
+            raise HTTPException(404, "评论不存在")
+        if row["user_id"] != user["id"]:
+            raise HTTPException(403, "只能删除自己的评论")
+        if row["status"] != "published":
+            return {"ok": True}
+        if row["parent_id"] is None:
+            count = conn.execute(
+                "SELECT COUNT(*) c FROM archive_comments WHERE parent_id = ? AND status = 'published'",
+                (comment_id,),
+            ).fetchone()["c"]
+            total = 1 + int(count)
+        else:
+            total = 1
+        conn.execute(
+            "UPDATE archive_comments SET status = 'deleted' WHERE id = ?", (comment_id,)
+        )
+        if row["parent_id"] is None:
+            conn.execute(
+                "UPDATE archive_comments SET status = 'deleted'"
+                " WHERE parent_id = ? AND status = 'published'", (comment_id,)
+            )
+        conn.execute(
+            "UPDATE archive_events SET comment_count = MAX(0, comment_count - ?) WHERE id = ?",
+            (total, row["event_id"]),
+        )
+    _audit(request, "删除自己的事件评论", actor=user, target_id=row["event_id"],
+           detail=f"comment={comment_id}")
+    return {"ok": True}
+
+
+@router.post("/comments/{comment_id}/report")
+def report_comment(comment_id: int, body: ReportBody, request: Request,
+                   user: dict = Depends(require_auth)):
+    enforce(request, "archive-report", 10, 3600)
+    reason = clean(body.reason, 300)
+    with get_conn() as conn:
+        comment = conn.execute(
+            "SELECT * FROM archive_comments WHERE id = ? AND status = 'published'", (comment_id,)
+        ).fetchone()
+        if not comment:
+            raise HTTPException(404, "评论不存在")
+        duplicate = conn.execute(
+            "SELECT 1 FROM archive_comment_reports WHERE comment_id = ?"
+            " AND user_id = ? AND status = 'pending'", (comment_id, user["id"]),
+        ).fetchone()
+        if duplicate:
+            raise HTTPException(400, "你已经举报过这条评论，请等待处理")
+        conn.execute(
+            "INSERT INTO archive_comment_reports (comment_id, user_id, reason) VALUES (?, ?, ?)",
+            (comment_id, user["id"], reason or "未填写原因"),
+        )
+    _audit(request, "举报事件评论", actor=user, target_id=comment["event_id"],
+           detail=f"comment={comment_id}")
+    return {"ok": True, "message": "举报已提交，管理员会尽快处理"}
 
 
 @router.post("/submissions")
@@ -729,4 +1081,143 @@ def reject_correction(correction_id: int, body: ReviewBody, request: Request,
         )
     _audit(request, "驳回事件纠错", actor=user, target_id=row["event_id"],
            detail=f"correction={correction_id}")
+    return {"ok": True}
+
+
+@admin_router.post("/events/{event_id}/featured")
+def admin_set_featured(event_id: int, body: FeaturedBody, request: Request,
+                       user: dict = Depends(require_capability("manage_archive"))):
+    with get_conn() as conn:
+        row = conn.execute("SELECT title FROM archive_events WHERE id = ?", (event_id,)).fetchone()
+        if not row:
+            raise HTTPException(404, "事件不存在")
+        conn.execute(
+            "UPDATE archive_events SET featured = ?,"
+            " featured_at = CASE WHEN ? = 1 THEN datetime('now','localtime') ELSE NULL END"
+            " WHERE id = ?",
+            (1 if body.featured else 0, 1 if body.featured else 0, event_id),
+        )
+        _revision(conn, event_id, user["id"], "featured", {"featured": body.featured})
+    _audit(request, "设置事件精选" if body.featured else "取消事件精选",
+           actor=user, target_id=event_id, detail=row["title"])
+    return {"ok": True, "featured": body.featured}
+
+
+def _comment_status_change(conn, comment, status: str, admin_id: int) -> int:
+    affected = [comment]
+    if comment["parent_id"] is None:
+        affected.extend(conn.execute(
+            "SELECT * FROM archive_comments WHERE parent_id = ?", (comment["id"],)
+        ).fetchall())
+    before = sum(1 for item in affected if item["status"] == "published")
+    ids = [item["id"] for item in affected]
+    marks = ",".join("?" for _ in ids)
+    conn.execute(
+        f"UPDATE archive_comments SET status = ?, hidden_by = ?,"
+        f" hidden_at = datetime('now','localtime') WHERE id IN ({marks})",
+        (status, admin_id, *ids),
+    )
+    after = sum(1 for _ in affected) if status == "published" else 0
+    delta = after - before
+    if delta:
+        conn.execute(
+            "UPDATE archive_events SET comment_count = MAX(0, comment_count + ?) WHERE id = ?",
+            (delta, comment["event_id"]),
+        )
+    return len(affected)
+
+
+@admin_router.get("/comments")
+def admin_comments(status: str = "published",
+                   user: dict = Depends(require_capability("manage_archive"))):
+    if status not in ("published", "hidden", "deleted", "all"):
+        status = "published"
+    where = "1=1" if status == "all" else "c.status = ?"
+    args = () if status == "all" else (status,)
+    with get_conn() as conn:
+        rows = conn.execute(
+            "SELECT c.*, e.title AS event_title, u.username,"
+            " (SELECT COUNT(*) FROM archive_comment_reports r"
+            "  WHERE r.comment_id = c.id AND r.status = 'pending') AS report_count"
+            " FROM archive_comments c JOIN archive_events e ON e.id = c.event_id"
+            " JOIN users u ON u.id = c.user_id"
+            f" WHERE {where} ORDER BY c.id DESC LIMIT 200", args,
+        ).fetchall()
+    return {"items": [dict(row) for row in rows]}
+
+
+@admin_router.post("/comments/{comment_id}/status")
+def admin_comment_status(comment_id: int, body: CommentStatusBody, request: Request,
+                         user: dict = Depends(require_capability("manage_archive"))):
+    if body.status not in ("published", "hidden", "deleted"):
+        raise HTTPException(400, "无效的评论状态")
+    with get_conn() as conn:
+        row = conn.execute(
+            "SELECT * FROM archive_comments WHERE id = ?", (comment_id,)
+        ).fetchone()
+        if not row:
+            raise HTTPException(404, "评论不存在")
+        affected = _comment_status_change(conn, row, body.status, user["id"])
+    _audit(request, f"设置评论状态为 {body.status}", actor=user,
+           target_id=row["event_id"], detail=f"comment={comment_id} affected={affected}")
+    return {"ok": True, "affected": affected}
+
+
+@admin_router.get("/reports")
+def admin_reports(status: str = "pending",
+                  user: dict = Depends(require_capability("manage_archive"))):
+    if status not in ("pending", "resolved", "all"):
+        status = "pending"
+    where = "1=1" if status == "all" else "r.status = ?"
+    args = () if status == "all" else (status,)
+    with get_conn() as conn:
+        rows = conn.execute(
+            "SELECT r.*, c.content, c.status AS comment_status, c.event_id,"
+            " e.title AS event_title, reporter.username AS reporter_name,"
+            " author.username AS author_name"
+            " FROM archive_comment_reports r"
+            " JOIN archive_comments c ON c.id = r.comment_id"
+            " JOIN archive_events e ON e.id = c.event_id"
+            " JOIN users reporter ON reporter.id = r.user_id"
+            " JOIN users author ON author.id = c.user_id"
+            f" WHERE {where} ORDER BY r.id DESC LIMIT 200", args,
+        ).fetchall()
+    return {"items": [dict(row) for row in rows]}
+
+
+@admin_router.post("/reports/{report_id}/resolve")
+def resolve_report(report_id: int, body: ResolveReportBody, request: Request,
+                   user: dict = Depends(require_capability("manage_archive"))):
+    if body.action not in ("hide", "dismiss"):
+        raise HTTPException(400, "无效操作")
+    note = clean(body.note, 300)
+    with get_conn() as conn:
+        report = conn.execute(
+            "SELECT * FROM archive_comment_reports WHERE id = ?", (report_id,)
+        ).fetchone()
+        if not report:
+            raise HTTPException(404, "举报不存在")
+        if report["status"] != "pending":
+            raise HTTPException(400, "该举报已处理")
+        comment = conn.execute(
+            "SELECT * FROM archive_comments WHERE id = ?", (report["comment_id"],)
+        ).fetchone()
+        if not comment:
+            raise HTTPException(404, "评论不存在")
+        if body.action == "hide":
+            _comment_status_change(conn, comment, "hidden", user["id"])
+            conn.execute(
+                "UPDATE archive_comment_reports SET status = 'resolved', resolution_note = ?,"
+                " resolved_by = ?, resolved_at = datetime('now','localtime')"
+                " WHERE comment_id = ? AND status = 'pending'",
+                (note or "举报成立，评论已隐藏", user["id"], comment["id"]),
+            )
+        else:
+            conn.execute(
+                "UPDATE archive_comment_reports SET status = 'resolved', resolution_note = ?,"
+                " resolved_by = ?, resolved_at = datetime('now','localtime') WHERE id = ?",
+                (note or "举报不成立", user["id"], report_id),
+            )
+    _audit(request, "处理评论举报", actor=user, target_id=comment["event_id"],
+           detail=f"report={report_id} action={body.action}")
     return {"ok": True}

@@ -180,3 +180,93 @@ def test_non_admin_cannot_review(client, conn):
     submit(client, auth(conn, author))
     r = client.get("/api/admin/archive/submissions", headers=auth(conn, author))
     assert r.status_code == 403
+
+
+def _create_event(client, headers, **over):
+    data = payload(**over)
+    r = client.post("/api/admin/archive/events", json=data, headers=headers)
+    assert r.status_code == 200, r.text
+    return r.json()["event_id"]
+
+
+def test_like_favorite_views_and_hot(client, conn):
+    author, admin = make_users(conn)
+    ah = auth(conn, admin)
+    uh = auth(conn, author)
+    event_id = _create_event(client, ah, title="互动测试事件标题")
+
+    like = client.post(f"/api/archive/{event_id}/like", headers=uh)
+    assert like.status_code == 200 and like.json()["liked"] is True
+    assert like.json()["count"] == 1
+    assert client.post(f"/api/archive/{event_id}/like", headers=uh).json()["liked"] is False
+
+    fav = client.post(f"/api/archive/{event_id}/favorite", headers=uh)
+    assert fav.status_code == 200 and fav.json()["favorited"] is True
+    assert fav.json()["count"] == 1
+
+    detail = client.get(f"/api/archive/{event_id}", headers=uh).json()
+    assert detail["liked"] is False
+    assert detail["favorited"] is True
+    assert detail["favorite_count"] == 1
+    assert detail["view_count"] == 1
+    assert client.get(f"/api/archive/{event_id}", headers=uh).json()["view_count"] == 1
+
+    listing = client.get("/api/archive?sort=hot&window=all", headers=uh).json()
+    assert listing["items"][0]["id"] == event_id
+    assert listing["items"][0]["favorited"] is True
+
+    mine = client.get("/api/archive/mine/favorites", headers=uh).json()
+    assert [item["id"] for item in mine["items"]] == [event_id]
+
+    featured = client.post(f"/api/admin/archive/events/{event_id}/featured",
+                           json={"featured": True}, headers=ah)
+    assert featured.status_code == 200
+    featured_list = client.get("/api/archive?sort=featured").json()
+    assert featured_list["items"][0]["id"] == event_id
+    assert featured_list["items"][0]["featured"] is True
+
+
+def test_comments_replies_reports_and_admin_hide(client, conn):
+    author, admin = make_users(conn)
+    reporter = make_user(conn, cid="8103", username="archive_reporter")
+    ah = auth(conn, admin)
+    uh = auth(conn, author)
+    rh = auth(conn, reporter)
+    event_id = _create_event(client, ah, title="评论测试事件标题")
+
+    top = client.post(f"/api/archive/{event_id}/comments",
+                      json={"content": "这是第一条评论"}, headers=uh)
+    assert top.status_code == 200, top.text
+    top_id = top.json()["comment"]["id"]
+    reply = client.post(f"/api/archive/{event_id}/comments",
+                        json={"content": "这是一条回复", "parent_id": top_id}, headers=rh)
+    assert reply.status_code == 200, reply.text
+    reply_id = reply.json()["comment"]["id"]
+
+    second = client.post(f"/api/archive/{event_id}/comments",
+                         json={"content": "二级回复", "parent_id": reply_id}, headers=rh)
+    assert second.status_code == 400
+
+    listing = client.get(f"/api/archive/{event_id}/comments", headers=uh).json()
+    assert listing["total"] == 2
+    assert listing["items"][0]["id"] == top_id
+    assert listing["items"][0]["is_mine"] is True
+    assert listing["items"][0]["replies"][0]["id"] == reply_id
+
+    report = client.post(f"/api/archive/comments/{top_id}/report",
+                         json={"reason": "测试举报"}, headers=rh)
+    assert report.status_code == 200
+    reports = client.get("/api/admin/archive/reports", headers=ah).json()["items"]
+    assert reports[0]["comment_id"] == top_id
+
+    hidden = client.post(f"/api/admin/archive/comments/{top_id}/status",
+                         json={"status": "hidden"}, headers=ah)
+    assert hidden.status_code == 200
+    assert hidden.json()["affected"] == 2
+    assert client.get(f"/api/archive/{event_id}/comments").json()["total"] == 0
+    detail = client.get(f"/api/archive/{event_id}").json()
+    assert detail["comment_count"] == 0
+
+    resolved = client.post(f"/api/admin/archive/reports/{reports[0]['id']}/resolve",
+                           json={"action": "dismiss", "note": "不成立"}, headers=ah)
+    assert resolved.status_code == 200

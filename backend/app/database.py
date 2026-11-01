@@ -6,8 +6,9 @@ import threading
 from contextlib import contextmanager
 
 from .config import BACKEND_DIR, SEED_ADMIN, SEED_DEMO_DATA
-from .migrations import (migrate_application_nickname, migrate_badge_payload,
-                         migrate_log_ua, migrate_partner_logo, migrate_survey_anon)
+from .migrations import (migrate_application_nickname, migrate_archive_forum,
+                         migrate_badge_payload, migrate_log_ua, migrate_partner_logo,
+                         migrate_survey_anon)
 from .schema import SCHEMA
 from .seed_data import ACHIEVEMENT_SEEDS, SAMPLE_ROUTES, seed_default_partner
 from .security import hash_password
@@ -593,6 +594,7 @@ def init_db() -> None:
                 ],
             )
 
+    migrate_archive_forum(conn)
     migrate_survey_anon(conn)
 
     conn.commit()

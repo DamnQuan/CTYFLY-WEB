@@ -9,6 +9,7 @@ const routes = [
   { path: '/partners', name: 'partners', component: () => import('../views/PartnersView.vue') },
   { path: '/archive', name: 'archive', component: () => import('../views/ArchiveView.vue') },
   { path: '/archive/submit', name: 'archive-submit', component: () => import('../views/ArchiveSubmitView.vue'), meta: { auth: true } },
+  { path: '/archive/mine', name: 'archive-mine', component: () => import('../views/ArchiveMineView.vue'), meta: { auth: true } },
   { path: '/archive/:id(\\d+)', name: 'archive-detail', component: () => import('../views/ArchiveDetailView.vue') },
   { path: '/cookies', name: 'cookies', component: () => import('../views/CookiePolicyView.vue') },
   { path: '/privacy', name: 'privacy', component: () => import('../views/PrivacyPolicyView.vue') },

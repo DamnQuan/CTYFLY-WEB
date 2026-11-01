@@ -58,6 +58,22 @@ def migrate_badge_payload(conn) -> None:
         )
 
 
+def migrate_archive_forum(conn) -> None:
+    """飞圈事件检索论坛化：给既有 archive_events 补互动计数字段。"""
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(archive_events)")}
+    additions = (
+        ("like_count", "INTEGER NOT NULL DEFAULT 0"),
+        ("favorite_count", "INTEGER NOT NULL DEFAULT 0"),
+        ("comment_count", "INTEGER NOT NULL DEFAULT 0"),
+        ("view_count", "INTEGER NOT NULL DEFAULT 0"),
+        ("featured", "INTEGER NOT NULL DEFAULT 0"),
+        ("featured_at", "TEXT"),
+    )
+    for name, ddl in additions:
+        if cols and name not in cols:
+            conn.execute(f"ALTER TABLE archive_events ADD COLUMN {name} {ddl}")
+
+
 def migrate_survey_anon(conn) -> None:
     """问卷一人一份：补匿名标识列与两个部分唯一索引。"""
     survey_cols = {r[1] for r in conn.execute("PRAGMA table_info(survey_responses)")}
