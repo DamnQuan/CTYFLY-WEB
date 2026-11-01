@@ -6,6 +6,7 @@ import { onMounted, ref } from 'vue';
 import { api } from '../api.js';
 import { showToast } from '../utils.js';
 import ArchiveEditor from '../components/archive/ArchiveEditor.vue';
+import CheckBox from '../components/CheckBox.vue';
 
 const editorRef = ref(null);
 const submitting = ref(false);
@@ -69,10 +70,7 @@ onMounted(loadMine);
     <div class="glass card">
       <ArchiveEditor :key="editorKey" ref="editorRef" :initial="{}" />
       <div class="submit-footer">
-        <label class="agree-row">
-          <input v-model="agreed" type="checkbox" />
-          <span>我确认事件资料来自可公开的来源，并同意平台在审核后编辑与发布</span>
-        </label>
+        <CheckBox v-model="agreed" label="我确认事件资料来自可公开的来源，并同意平台在审核后编辑与发布" />
         <button class="btn btn-primary" type="button" :disabled="submitting" @click="submit">
           {{ submitting ? '提交中…' : '提交投稿' }}
         </button>
@@ -105,8 +103,6 @@ onMounted(loadMine);
 <style scoped>
 .archive-submit-page { max-width: clamp(760px, 62vw, 1120px); }
 .submit-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); }
-.agree-row { display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; color: var(--text-2); line-height: 1.6; }
-.agree-row input { margin-top: 3px; }
 .mine-list { display: flex; flex-direction: column; }
 .mine-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px dashed var(--border); }
 .mine-item:last-child { border-bottom: none; }

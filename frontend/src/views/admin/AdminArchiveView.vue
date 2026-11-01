@@ -2,10 +2,11 @@
 /**
  * 飞圈事件检索后台：投稿审核、纠错审核、已发布事件管理。
  */
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { api } from '../../api.js';
 import { fmtMonth, showToast } from '../../utils.js';
 import Icon from '../../components/Icon.vue';
+import SelectMenu from '../../components/SelectMenu.vue';
 
 const tab = ref('submissions');
 const submissions = ref([]);
@@ -13,6 +14,20 @@ const corrections = ref([]);
 const events = ref([]);
 const loading = ref(false);
 const statusFilter = ref('pending');
+const statusOptions = computed(() => (
+  tab.value === 'events'
+    ? [
+      { value: 'all', label: '全部' },
+      { value: 'published', label: '已发布' },
+      { value: 'offline', label: '已下线' },
+    ]
+    : [
+      { value: 'pending', label: '待处理' },
+      { value: 'approved', label: '已通过' },
+      { value: 'rejected', label: '已驳回' },
+      { value: 'all', label: '全部' },
+    ]
+));
 
 async function load() {
   loading.value = true;
@@ -63,15 +78,7 @@ load();
       <button class="btn btn-ghost btn-sm" :class="{ 'btn-primary': tab === 'submissions' }" @click="switchTab('submissions')">投稿审核</button>
       <button class="btn btn-ghost btn-sm" :class="{ 'btn-primary': tab === 'corrections' }" @click="switchTab('corrections')">纠错审核</button>
       <button class="btn btn-ghost btn-sm" :class="{ 'btn-primary': tab === 'events' }" @click="switchTab('events')">事件管理</button>
-      <select v-model="statusFilter" class="input status-select" @change="load">
-        <option v-if="tab !== 'events'" value="pending">待处理</option>
-        <option v-if="tab !== 'events'" value="approved">已通过</option>
-        <option v-if="tab !== 'events'" value="rejected">已驳回</option>
-        <option v-if="tab !== 'events'" value="all">全部</option>
-        <option v-if="tab === 'events'" value="all">全部</option>
-        <option v-if="tab === 'events'" value="published">已发布</option>
-        <option v-if="tab === 'events'" value="offline">已下线</option>
-      </select>
+      <SelectMenu v-model="statusFilter" :options="statusOptions" style="width: 140px; margin-left: auto" @update:model-value="load" />
     </div>
 
     <div v-if="loading" class="loading">加载中…</div>
@@ -125,7 +132,6 @@ load();
 
 <style scoped>
 .tabs-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
-.status-select { width: 130px; margin-left: auto; }
 .review-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px dashed var(--border); }
 .review-item:last-child { border-bottom: none; }
 .review-main { flex: 1; min-width: 0; }
