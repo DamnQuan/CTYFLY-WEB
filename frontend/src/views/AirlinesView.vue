@@ -8,6 +8,7 @@ import LogoUploader from '../components/LogoUploader.vue';
 
 const airlines = ref([]);
 const mine = ref(null);
+const myApplication = ref(null);
 const myTransfer = ref(null);
 const loading = ref(true);
 const busyId = ref(0);
@@ -18,7 +19,9 @@ const creating = ref(false);
 const createError = ref('');
 const form = ref({ icao: '', name: '', description: '', logoUrl: '' });
 
-const canCreate = computed(() => !mine.value);
+const applicationPending = computed(() => myApplication.value?.status === 'pending');
+const applicationRejected = computed(() => myApplication.value?.status === 'rejected');
+const canCreate = computed(() => !mine.value && !applicationPending.value && myApplication.value?.status !== 'approved');
 const membershipStatusText = computed(() => {
   if (!mine.value) return '';
   if (mine.value.role === 'ceo') return 'CEO';
@@ -31,6 +34,7 @@ async function load() {
     const data = await api.get('/api/airlines');
     airlines.value = data.airlines;
     mine.value = data.mine;
+    myApplication.value = data.myApplication || null;
     myTransfer.value = data.myTransfer || null;
   } catch (err) {
     showToast(err.message);
@@ -39,12 +43,28 @@ async function load() {
 }
 onMounted(load);
 
+function fillApplicationForm() {
+  const app = myApplication.value;
+  if (!app) return;
+  form.value = {
+    icao: app.icao || '',
+    name: app.name || '',
+    description: app.description || '',
+    logoUrl: app.logo_url || '',
+  };
+}
+
 /** 创建入口常驻：已加入航司时点击给出明确原因，而不是把按钮藏起来 */
 function openCreate() {
   if (mine.value) {
     showToast(`你已加入 ${mine.value.icao}，需先退出或解散当前航司才能创建`);
     return;
   }
+  if (applicationPending.value) {
+    showToast('你的建司申请正在审核中，请等待管理员处理');
+    return;
+  }
+  if (!showCreate.value && applicationRejected.value) fillApplicationForm();
   showCreate.value = !showCreate.value;
 }
 
@@ -170,8 +190,31 @@ function actionFor(a) {
       </div>
       <button class="btn btn-dark" @click="openCreate">
         <Icon :name="showCreate && canCreate ? 'x' : 'plus'" :size="15" />
-        {{ showCreate && canCreate ? '收起' : '创建航司' }}
+        {{ showCreate && canCreate ? '收起' : applicationPending ? '申请审核中' : applicationRejected ? '重新申请' : '创建航司' }}
       </button>
+    </div>
+
+    <!-- 建司申请状态：被驳回后允许修改并重新提交 -->
+    <div v-if="!mine && myApplication && (applicationPending || applicationRejected)" class="glass card" style="margin-bottom: 16px">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px">
+        <div>
+          <div class="card-title" style="margin-bottom: 4px">
+            建司申请
+            <span :class="applicationPending ? 'tag tag-orange' : 'tag tag-red'" style="margin-left: 8px">
+              {{ applicationPending ? '审核中' : '已驳回' }}
+            </span>
+          </div>
+          <div class="card-sub" style="margin-bottom: 0">
+            <template v-if="applicationPending">
+              你的建司申请正在审核中，请等待管理员处理。
+              <template v-if="myApplication.review_note">上次审核意见：{{ myApplication.review_note }}</template>
+            </template>
+            <template v-else>
+              上次申请未通过：{{ myApplication.review_note || '未通过审核' }}。修改资料后可以重新提交。
+            </template>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- 我的航司 -->
@@ -217,8 +260,10 @@ function actionFor(a) {
 
     <!-- 创建表单 -->
     <div v-if="showCreate && canCreate" class="glass card" style="margin-bottom: 16px">
-      <div class="card-title">创建虚拟航司</div>
-      <div class="card-sub">创建需管理员审核；通过后你将成为该航司 CEO，可自行审批成员与管理航线</div>
+      <div class="card-title">{{ applicationRejected ? '重新申请虚拟航司' : '创建虚拟航司' }}</div>
+      <div class="card-sub">
+        {{ applicationRejected ? '上次申请已被驳回，修改资料后可重新提交审核。' : '创建需管理员审核；通过后你将成为该航司 CEO，可自行审批成员与管理航线' }}
+      </div>
       <div v-if="createError" class="alert alert-err">{{ createError }}</div>
       <div class="grid grid-2">
         <div class="field">
@@ -239,7 +284,7 @@ function actionFor(a) {
         <LogoUploader v-model="form.logoUrl" :fallback="(form.icao || '').toUpperCase()" />
       </div>
       <button class="btn btn-primary" :disabled="creating" @click="create">
-        {{ creating ? '提交中…' : '提交创建申请' }}
+        {{ creating ? '提交中…' : applicationRejected ? '重新提交申请' : '提交创建申请' }}
       </button>
     </div>
     <div v-else-if="showCreate && mine" class="glass card" style="margin-bottom: 16px">

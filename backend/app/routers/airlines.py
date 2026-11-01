@@ -271,8 +271,13 @@ def list_airlines(user: dict = Depends(require_auth)):
         rows = conn.execute(
             "SELECT * FROM airlines WHERE status = 'approved' ORDER BY id DESC"
         ).fetchall()
-        airlines = [_summary(conn, a) for a in rows]
         mine = _membership(conn, user["id"])
+        # 我的建司申请：被驳回后可复用原记录重新提交，前端据此显示「重新申请」
+        application = conn.execute(
+            "SELECT * FROM airlines WHERE owner_id = ? ORDER BY id DESC LIMIT 1",
+            (user["id"],),
+        ).fetchone()
+        airlines = [_summary(conn, a) for a in rows]
         # 我的待审批跳槽申请，含目标航司信息，用于列表页展示状态
         transfer = conn.execute(
             "SELECT t.*, a.icao AS to_icao, a.name AS to_name FROM airline_transfers t"
@@ -284,6 +289,7 @@ def list_airlines(user: dict = Depends(require_auth)):
         "ok": True,
         "airlines": airlines,
         "mine": dict(mine) if mine else None,
+        "myApplication": dict(application) if application else None,
         "myTransfer": dict(transfer) if transfer else None,
     }
 
@@ -319,23 +325,58 @@ def create_airline(body: CreateBody, request: Request, user: dict = Depends(requ
         raise HTTPException(400, "请填写航司名称，至少 2 个字")
 
     with get_conn() as conn:
-        if conn.execute("SELECT 1 FROM airlines WHERE owner_id = ?", (user["id"],)).fetchone():
+        existing = conn.execute(
+            "SELECT * FROM airlines WHERE owner_id = ? ORDER BY id DESC LIMIT 1",
+            (user["id"],),
+        ).fetchone()
+        if existing and existing["status"] in ("pending", "approved"):
+            if existing["status"] == "pending":
+                raise HTTPException(400, "你的建司申请正在审核中，请等待管理员处理")
             raise HTTPException(400, "你已创建过虚拟航司")
+
         if _membership(conn, user["id"]):
             raise HTTPException(400, ICAO_PER_USER + "，请先退出当前航司")
-        if conn.execute("SELECT 1 FROM airlines WHERE icao = ?", (icao,)).fetchone():
+
+        # 重新申请时排除原记录本身，否则沿用原代码/名称会被自己的旧记录判为重复
+        exclude_id = int(existing["id"]) if existing else 0
+        if conn.execute(
+            "SELECT 1 FROM airlines WHERE icao = ? AND id != ?", (icao, exclude_id)
+        ).fetchone():
             raise HTTPException(400, f"航司代码 {icao} 已被使用")
-        if _name_taken(conn, name):
+        if _name_taken(conn, name, exclude_id=exclude_id):
             raise HTTPException(400, "航司名称已被使用，请换一个")
 
-        cur = conn.execute(
-            "INSERT INTO airlines (icao, name, description, logo_url, owner_id, status)"
-            " VALUES (?, ?, ?, ?, ?, 'pending')",
-            (icao, name, clean(body.description, 300), _clean_logo_url(body.logoUrl), user["id"]),
-        )
-    _audit(request, "airline", "提交建司申请", actor=user, target_id=cur.lastrowid,
-           detail=f"{icao} {name}")
-    return {"ok": True, "id": cur.lastrowid, "message": "创建申请已提交，等待管理员审核"}
+        description = clean(body.description, 300)
+        logo_url = _clean_logo_url(body.logoUrl)
+        previous_note = ""
+        if existing:
+            # 被驳回的申请复用原记录重新进入待审核；保留上次驳回理由供用户参考
+            previous_note = existing["review_note"] or ""
+            app_id = int(existing["id"])
+            conn.execute(
+                "UPDATE airlines SET icao = ?, name = ?, description = ?, logo_url = ?,"
+                " status = 'pending', reviewed_by = NULL, reviewed_at = NULL WHERE id = ?",
+                (icao, name, description, logo_url, app_id),
+            )
+            action = "重新提交建司申请"
+        else:
+            cur = conn.execute(
+                "INSERT INTO airlines (icao, name, description, logo_url, owner_id, status)"
+                " VALUES (?, ?, ?, ?, ?, 'pending')",
+                (icao, name, description, logo_url, user["id"]),
+            )
+            app_id = int(cur.lastrowid)
+            action = "提交建司申请"
+
+    _audit(request, "airline", action, actor=user, target_id=app_id,
+           detail=f"{icao} {name}" + (f" · 上次驳回：{previous_note}" if previous_note else ""))
+    return {
+        "ok": True,
+        "id": app_id,
+        "reapply": bool(existing),
+        "previous_note": previous_note,
+        "message": "重新申请已提交，等待管理员审核" if existing else "创建申请已提交，等待管理员审核",
+    }
 
 
 @router.get("/leaderboard")
