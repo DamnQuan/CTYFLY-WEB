@@ -8,6 +8,7 @@ import { api } from '../api.js';
 import { fmtMonth, showToast } from '../utils.js';
 import Icon from '../components/Icon.vue';
 import SelectMenu from '../components/SelectMenu.vue';
+import ArchiveMoyu from '../components/archive/ArchiveMoyu.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -25,6 +26,7 @@ const loading = ref(false);
 const pageSize = 12;
 
 const pageCount = computed(() => Math.max(1, Math.ceil(total.value / pageSize)));
+const hasFilter = computed(() => Boolean(q.value.trim() || category.value || year.value));
 const yearOptions = computed(() => [
   { value: '', label: '全部年份' },
   ...years.value.map((value) => ({ value, label: `${value} 年` })),
@@ -157,6 +159,8 @@ watch(() => route.query, () => {
     </template>
 
     <div v-if="disclaimer" class="archive-disclaimer">{{ disclaimer }}</div>
+
+    <ArchiveMoyu :prompt="!loading && !items.length && hasFilter" />
   </div>
 </template>
 
