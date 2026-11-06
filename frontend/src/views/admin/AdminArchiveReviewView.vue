@@ -88,7 +88,7 @@ async function approveSubmission() {
       note: note.value,
     });
     showToast('已审核通过并发布');
-    router.replace(`/archive/${data.event_id}`);
+    router.replace(`/acis/${data.event_id}`);
   } catch (err) {
     showToast(err.message);
   } finally {
@@ -119,7 +119,7 @@ async function saveEvent() {
     if (!id) {
       const data = await api.post('/api/admin/archive/events', payload());
       showToast('事件已创建并发布');
-      router.replace(`/archive/${data.event_id}`);
+      router.replace(`/acis/${data.event_id}`);
       return;
     }
     await api.put(`/api/admin/archive/events/${id}`, payload());

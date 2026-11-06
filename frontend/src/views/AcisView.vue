@@ -26,6 +26,7 @@ const sortOptions = [
   { value: 'pinyin', label: '标题拼音' },
   { value: 'latest', label: '最新收录' },
   { value: 'hot', label: '热门事件' },
+  { value: 'featured', label: '精选' },
 ];
 
 async function fetchAll(params) {
@@ -91,7 +92,7 @@ load();
 
         <div class="acis-brand">
           <div class="acis-brand-copy">
-            <div class="acis-kicker">CTY · INCIDENT INTELLIGENCE</div>
+            <div class="acis-kicker">CTY · ACIS 飞圈事件检索</div>
             <img :src="acisGlyph" alt="ACIS" class="acis-hero-glyph" />
             <div class="acis-tagline">
               <span class="acis-tagline-en">Air Community Incident Search</span>
@@ -123,14 +124,14 @@ load();
           type="button"
           @click="setSort(option.value)"
         >{{ option.label }}</button>
-        <router-link class="acis-back" to="/archive">进入完整论坛 <Icon name="chevron" :size="12" /></router-link>
+        <router-link class="acis-back" to="/acis/mine">我的收藏 <Icon name="chevron" :size="12" /></router-link>
       </div>
 
       <div class="acis-list-head">
         <div class="acis-list-head-main">
-          <span class="acis-list-title">{{ q.trim() ? '搜索结果' : '全部事件' }}</span>
+          <span class="acis-list-title">{{ q.trim() ? '搜索结果' : sort === 'featured' ? '精选事件' : '全部事件' }}</span>
           <span class="acis-list-sub">
-            {{ sort === 'pinyin' ? '按标题拼音 A–Z 排列' : sort === 'hot' ? '按热度排列' : '按收录时间排列' }}
+            {{ sort === 'pinyin' ? '按标题拼音 A–Z 排列' : sort === 'hot' ? '按热度排列' : sort === 'featured' ? '仅展示精选事件' : '按收录时间排列' }}
             · 共 {{ total }} 条
           </span>
         </div>

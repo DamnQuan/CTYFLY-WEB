@@ -206,7 +206,7 @@ init();
       <div class="empty">
         <div class="empty-icon"><Icon name="book" :size="22" /></div>
         <div>事件不存在或已下线</div>
-        <router-link class="btn btn-ghost btn-sm" to="/archive" style="margin-top: 12px">返回检索</router-link>
+        <router-link class="btn btn-ghost btn-sm" :to="isAcis ? '/acis' : '/archive'" style="margin-top: 12px">返回检索</router-link>
       </div>
     </div>
     <template v-else-if="item">

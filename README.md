@@ -28,8 +28,7 @@ CTY 飞行管制社区（CTYFLY）的官网与运营平台：**Vue 3 前端 + Py
 - 申请中心：管制员申请、职员申请，含审核状态跟踪
 - 工单中心：提交、对话式回复、关闭/重开；附件（图片/PDF/Word，带权限校验）
 - 平台发展问卷：公开路由 `/docs`，题目服务端下发；登录用户自动带身份，游客可匿名提交
-- 飞圈事件检索：最新、最热、精选信息流，点赞收藏、评论回复、举报与后台审核
-- ACIS：飞圈事件智能检索系统，免登录使用、投稿与纠错，首次访问强制阅读使用须知
+- ACIS 事件检索：飞圈事件智能检索与论坛，标题拼音全量浏览、最新最热精选、免登录投稿纠错、点赞收藏评论与后台审核
 - 个人中心：资料修改（QQ 头像同步）、修改密码
 
 ### 虚拟航司（VA）与经济
@@ -111,6 +110,13 @@ CTYFLY-WEB/
 │   ├── public/  scripts/        # 静态资源与构建脚本
 │   ├── package.json             # dev / build / lint / test / preview / check:pet
 │   └── vite.config.js / vitest.config.js
+├── deploy/                      # 部署资产
+│   ├── ctyfly.service / ctyfly-test.service   # systemd
+│   ├── nginx-ccflysim.cn.conf / nginx-test.ccflysim.cn.conf
+│   ├── deploy.ps1 / deploy-test.ps1 / step1-nginx.sh / step4-backup.sh / remote-swap.sh
+│   ├── install-airdata.ps1 / install-airdata.sh
+│   └── smoke.ps1                # 部署后冒烟检查
+├── 交接文档/                     # 历次交接与功能历史（含恢复演练记录）
 ├── check-all.ps1                # 一键检查（前端 lint/test + 后端 pytest 等）
 └── README.md
 ```
@@ -209,14 +215,24 @@ pwsh ./check-all.ps1                            # 一键全检查
 
 ## 六、部署
 
-公开仓库不包含生产部署脚本、Nginx 配置、systemd 单元与备份脚本，这些资产保留在私有运维仓库中。
+```bash
+# 构建前端
+cd frontend && npm run build
 
-通用部署方式：
+# 部署（Windows PowerShell 脚本）
+pwsh ./deploy/deploy.ps1                        # 生产
+pwsh ./deploy/deploy-test.ps1                   # 测试环境
+pwsh ./deploy/smoke.ps1                         # 冒烟检查
 
-- 前端：`cd frontend && npm run build`，把 `dist/` 交给 Nginx 或任意静态托管
-- 后端：`cd backend && pip install -r requirements.lock`，用 `python run.py` 启动，前面放 Nginx 反向代理
-- 数据库：SQLite 单文件，备份直接复制 `backend/data/ctyfly.db`
-- 生产必须设置 `ADMIN_PASSWORD` 与 `JWT_SECRET`，并保持 `POW_CAPTCHA_ALLOW_LOCALHOST=false`
+# 服务器侧（Linux）
+sudo systemctl daemon-reload
+sudo systemctl enable --now ctyfly.service      # 或 ctyfly-test.service
+sudo systemctl status ctyfly.service
+```
+
+- Nginx：`deploy/nginx-ccflysim.cn.conf`（生产）、`deploy/nginx-test.ccflysim.cn.conf`（测试）
+- 部署脚本包含：`step1-nginx.sh`（Nginx 配置）、`step4-backup.sh`（备份）、`remote-swap.sh`（远端切换）、`install-airdata.*`（导航数据）
+- 备份：`deploy/step4-backup.sh`；数据库为单文件 SQLite（`backend/data/ctyfly.db`），直接复制即可
 
 ---
 
@@ -249,21 +265,6 @@ pwsh ./check-all.ps1                            # 一键全检查
 | [CWFLY-WEB](https://github.com/yuanshen-123-ui/CWFLY-WEB) | 同作者项目：模拟飞行社区主站 |
 | [CWFLY-FSD](https://github.com/yuanshen-123-ui/CWFLY-FSD) | 同作者项目：FSD 连线服务器 |
 
-
----
-
-## 十、许可证
-
-本项目以 **GNU General Public License v3.0** 发布，SPDX 标识为 `GPL-3.0-only`。
-
-Copyright (C) 2026 CTYFLY Contributors
-
-完整条款见仓库根目录 [LICENSE](LICENSE)。简单说：你可以自由使用、修改、分发本项目，但分发衍生作品时必须继续以 GPLv3 开放源码，并保留版权声明与许可证文本。
-
-### 第三方素材例外
-
-`frontend/public/pet/` 下的桌宠素材来自开源项目 dsh-pet，适用上游的独立许可，**不属于 GPLv3 覆盖范围**，详见 [NOTICE-dsh-pet.md](NOTICE-dsh-pet.md)。再分发这些素材时必须遵守上游许可，尤其是禁止商用条款。若不需要桌宠，可以整体删除 `frontend/public/pet/` 与 `frontend/src/deskpet/`。
-
 ---
 
 ## 贡献
@@ -271,9 +272,16 @@ Copyright (C) 2026 CTYFLY Contributors
 欢迎参与！请先阅读 [CONTRIBUTING.md](CONTRIBUTING.md)；
 提交 PR 即视为同意 [CLA.md](CLA.md)（你保留自己贡献的版权，同时授予项目发起人再许可能力）。
 
+---
+
 ## 许可证
 
-本项目采用 **GNU General Public License v3.0**（GPL-3.0）开源，完整条款见 [LICENSE](LICENSE)。
+本项目采用 **GNU General Public License v3.0**（GPL-3.0）开源。
+完整条款见仓库根目录 [LICENSE](LICENSE)；简单说明：
+
+- 允许自由使用、修改、分发本软件（含商业用途）
+- 分发修改版或衍生作品时必须同样以 GPL-3.0 开源，并提供源码
+- 不提供任何担保（详见 GPL-3.0 第 15、16 条）
 
 版权归**所有著作人**（项目发起人及所有贡献者）所有。
 Copyright (C) 2026 全体著作人（All contributors）

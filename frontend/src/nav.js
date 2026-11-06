@@ -95,8 +95,7 @@ export function useNavItems() {
         ],
       },
       { to: '/partners', label: '合作伙伴', icon: 'link', desc: '合作单位与友人站点' },
-      { to: '/archive', label: '飞圈事件检索', icon: 'book', desc: '检索飞圈重要事件与资料' },
-      { to: '/acis', label: 'ACIS', icon: 'book', image: acisLogo, desc: '飞圈事件智能检索系统' },
+      { to: '/acis', label: 'ACIS 事件检索', icon: 'book', image: acisLogo, desc: '飞圈事件智能检索与论坛' },
       {
         label: '管理后台',
         icon: 'shield',
@@ -113,7 +112,7 @@ export function useNavItems() {
           { to: '/admin/applications/staff', label: '职员申请', icon: 'briefcase', desc: '审核职员申请，含面试', cap: 'review_applications' },
           { to: '/admin/airlines', label: '航司审核', icon: 'plane', desc: '虚拟航司建司审核', cap: 'review_airlines' },
           { to: '/admin/events', label: '活动管理', icon: 'calendar', desc: '连飞活动与管制席位', cap: 'manage_events' },
-          { to: '/admin/archive', label: '飞圈事件检索', icon: 'book', desc: '投稿审核、纠错与事件发布', cap: 'manage_archive' },
+          { to: '/admin/archive', label: 'ACIS 管理', icon: 'book', desc: '投稿审核、纠错与事件发布', cap: 'manage_archive' },
           { to: '/admin/tickets', label: '工单管理', icon: 'ticket', desc: '处理用户工单', cap: 'manage_tickets' },
           { to: '/admin/notices', label: '公告管理', icon: 'megaphone', desc: '发布站内公告', cap: 'manage_notices' },
           { to: '/admin/partners', label: '合作伙伴', icon: 'link', desc: '首页合作展示位', cap: 'manage_notices' },

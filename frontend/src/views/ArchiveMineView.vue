@@ -45,8 +45,8 @@ load();
         <div class="page-desc">收藏的飞圈事件，方便之后回看</div>
       </div>
       <div class="header-actions">
-        <router-link class="btn btn-ghost btn-sm" to="/archive">返回检索</router-link>
-        <router-link class="btn btn-primary btn-sm" to="/archive/submit">我要投稿</router-link>
+        <router-link class="btn btn-ghost btn-sm" to="/acis">返回检索</router-link>
+        <router-link class="btn btn-primary btn-sm" to="/acis/submit">我要投稿</router-link>
       </div>
     </div>
 
@@ -55,12 +55,12 @@ load();
       <div class="empty">
         <div class="empty-icon"><Icon name="bookmark" :size="22" /></div>
         <div>还没有收藏任何事件</div>
-        <router-link class="btn btn-ghost btn-sm" to="/archive" style="margin-top: 12px">去逛逛</router-link>
+        <router-link class="btn btn-ghost btn-sm" to="/acis" style="margin-top: 12px">去逛逛</router-link>
       </div>
     </div>
     <div v-else class="favorite-list">
       <article v-for="item in items" :key="item.id" class="glass card favorite-card">
-        <router-link class="favorite-main" :to="`/archive/${item.id}`">
+        <router-link class="favorite-main" :to="`/acis/${item.id}`">
           <div class="favorite-title">{{ item.title }}</div>
           <div class="favorite-summary">{{ item.summary || '暂无摘要' }}</div>
           <div class="favorite-meta">

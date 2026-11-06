@@ -42,7 +42,7 @@ watch(() => auth.isLoggedIn, (ok) => {
 const { navItems, visibleChildren } = useNavItems();
 
 const guestLinks = [
-  { to: '/acis', label: 'ACIS', image: acisLogo },
+  { to: '/acis', label: 'ACIS 事件检索', image: acisLogo },
   { to: '/login', label: '登录', icon: 'logout' },
   { to: '/register', label: '注册', icon: 'user-plus' },
 ];

@@ -1,6 +1,6 @@
 <script setup>
 /**
- * 飞圈事件检索后台：投稿审核、纠错审核、事件管理、评论管理与举报处理。
+ * ACIS 事件检索后台：投稿审核、纠错审核、事件管理、评论管理与举报处理。
  */
 import { computed, ref } from 'vue';
 import { api } from '../../api.js';
@@ -125,7 +125,7 @@ load();
   <div class="page">
     <div class="page-header">
       <div>
-        <div class="page-title">飞圈事件检索</div>
+        <div class="page-title">ACIS 管理</div>
         <div class="page-desc">审核投稿与纠错、管理事件、评论和举报</div>
       </div>
       <router-link class="btn btn-primary btn-sm" :to="review('event', 0)">
@@ -187,7 +187,7 @@ load();
             <button class="btn btn-ghost btn-sm" type="button" @click="toggleFeatured(row)">
               {{ row.featured ? '取消精选' : '设为精选' }}
             </button>
-            <router-link v-if="row.status === 'published'" class="btn btn-ghost btn-sm" :to="`/archive/${row.id}`" target="_blank">查看</router-link>
+            <router-link v-if="row.status === 'published'" class="btn btn-ghost btn-sm" :to="`/acis/${row.id}`" target="_blank">查看</router-link>
             <router-link class="btn btn-primary btn-sm" :to="review('event', row.id)">编辑</router-link>
           </div>
         </div>
