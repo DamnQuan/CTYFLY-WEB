@@ -83,14 +83,46 @@ def test_public_list_and_detail(client, conn):
     assert "contact" not in detail
 
 
-def test_submission_requires_login_and_one_pending(client, conn):
-    author, _ = make_users(conn)
-    assert client.post("/api/archive/submissions", json=payload()).status_code == 401
-    h = auth(conn, author)
-    assert submit(client, h).status_code == 200
-    second = submit(client, h)
+def test_submission_anonymous_allowed_and_one_pending(client, conn):
+    headers = {"X-ACIS-Anon": "anon-test-requires"}
+    first = client.post("/api/archive/submissions", json=payload(), headers=headers)
+    assert first.status_code == 200
+    second = client.post("/api/archive/submissions", json=payload(), headers=headers)
     assert second.status_code == 400
     assert "审核中" in second.json()["error"]
+
+
+def test_anonymous_acis_submit_and_correction(client, conn):
+    admin = make_user(conn, cid="8104", username="acis_admin", role="admin")
+    ah = auth(conn, admin)
+    headers = {"X-ACIS-Anon": "anon-test-0001"}
+    data = payload(title="ACIS匿名投稿测试事件")
+    r = client.post("/api/archive/submissions", json=data, headers=headers)
+    assert r.status_code == 200, r.text
+    submission_id = r.json()["id"]
+    again = client.post("/api/archive/submissions", json=data, headers=headers)
+    assert again.status_code == 400
+
+    detail = client.get(f"/api/admin/archive/submissions/{submission_id}", headers=ah).json()
+    assert detail["username"] == "ACIS访客"
+    approved = client.post(f"/api/admin/archive/submissions/{submission_id}/approve",
+                           json={"payload": data}, headers=ah)
+    assert approved.status_code == 200
+    event_id = approved.json()["event_id"]
+
+    correction = client.post(f"/api/archive/{event_id}/corrections", json={
+        "field": "title",
+        "proposed_value": "ACIS匿名纠错后的标题",
+        "reason": "匿名纠错测试",
+    }, headers={"X-ACIS-Anon": "anon-test-0002"})
+    assert correction.status_code == 200, correction.text
+    duplicate = client.post(f"/api/archive/{event_id}/corrections", json={
+        "field": "title",
+        "proposed_value": "重复纠错",
+    }, headers={"X-ACIS-Anon": "anon-test-0002"})
+    assert duplicate.status_code == 400
+    corrections = client.get("/api/admin/archive/corrections?status=pending", headers=ah).json()
+    assert corrections["items"][0]["username"] == "ACIS访客"
 
 
 def test_admin_edit_before_publish(client, conn):

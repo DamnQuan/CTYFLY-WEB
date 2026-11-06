@@ -110,7 +110,10 @@ async function logout() {
             @mouseenter="prefetchRoute(item.to)"
             @focus="openGroup(item)"
             @click="closeNow"
-          >{{ item.label }}</router-link>
+          >
+            <img v-if="item.image" class="topnav-item-logo" :src="item.image" alt="" />
+            {{ item.label }}
+          </router-link>
 
           <!-- 有子项：悬停下落面板 -->
           <button

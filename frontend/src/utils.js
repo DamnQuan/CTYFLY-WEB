@@ -41,6 +41,22 @@ export function fmtMonth(value) {
   return match ? `${match[1]} 年 ${Number(match[2])} 月` : text;
 }
 
+/** ACIS 匿名访客标识：用于免登录投稿与纠错的状态追踪*/
+export function acisAnonId() {
+  try {
+    let id = localStorage.getItem('acis_anon_id');
+    if (!id) {
+      id = typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `acis-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+      localStorage.setItem('acis_anon_id', id);
+    }
+    return id;
+  } catch {
+    return '';
+  }
+}
+
 /** 外链协议白名单：仅 http/https 可渲染为链接，javascript: 等一律返回空串，降级纯文本*/
 export function safeHttpUrl(url) {
   if (!url || typeof url !== 'string') return '';

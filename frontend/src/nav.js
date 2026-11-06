@@ -18,6 +18,9 @@
 import { computed } from 'vue';
 import { useAuthStore } from './stores/auth.js';
 import { useVaStore } from './stores/va.js';
+import acisLogo from './assets/acis-logo.png';
+
+export { acisLogo };
 
 export function useNavItems() {
   const auth = useAuthStore();
@@ -93,6 +96,7 @@ export function useNavItems() {
       },
       { to: '/partners', label: '合作伙伴', icon: 'link', desc: '合作单位与友人站点' },
       { to: '/archive', label: '飞圈事件检索', icon: 'book', desc: '检索飞圈重要事件与资料' },
+      { to: '/acis', label: 'ACIS', icon: 'book', image: acisLogo, desc: '飞圈事件智能检索系统' },
       {
         label: '管理后台',
         icon: 'shield',

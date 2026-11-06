@@ -30,6 +30,10 @@ function normalizeOptions(opts) {
 async function request(method, url, body, opts) {
   const conf = normalizeOptions(opts);
   const headers = { 'Content-Type': 'application/json', ...conf.headers };
+  try {
+    const anon = localStorage.getItem('acis_anon_id');
+    if (anon) headers['X-ACIS-Anon'] = anon;
+  } catch { /* 存储不可用时按匿名 IP 处理 */ }
   const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
 
@@ -116,6 +120,10 @@ export const api = {
   /** multipart 文件上传，body 为 FormData，勿设 Content-Type，让浏览器自带 boundary*/
   async upload(url, formData, timeout = 120000) {
     const headers = {};
+    try {
+      const anon = localStorage.getItem('acis_anon_id');
+      if (anon) headers['X-ACIS-Anon'] = anon;
+    } catch { /* 忽略存储异常 */ }
     const token = getToken();
     if (token) headers.Authorization = `Bearer ${token}`;
     const controller = new AbortController();

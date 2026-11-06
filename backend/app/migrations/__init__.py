@@ -72,6 +72,10 @@ def migrate_archive_forum(conn) -> None:
     for name, ddl in additions:
         if cols and name not in cols:
             conn.execute(f"ALTER TABLE archive_events ADD COLUMN {name} {ddl}")
+    for table in ("archive_submissions", "archive_corrections"):
+        table_cols = {r[1] for r in conn.execute(f"PRAGMA table_info({table})")}
+        if table_cols and "anon_id" not in table_cols:
+            conn.execute(f"ALTER TABLE {table} ADD COLUMN anon_id TEXT NOT NULL DEFAULT ''")
 
 
 def migrate_survey_anon(conn) -> None:

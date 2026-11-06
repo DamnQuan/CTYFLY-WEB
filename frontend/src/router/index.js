@@ -7,6 +7,9 @@ import { showToast } from '../utils.js';
 const routes = [
   { path: '/', name: 'home', component: () => import('../views/HomeView.vue') },
   { path: '/partners', name: 'partners', component: () => import('../views/PartnersView.vue') },
+  { path: '/acis', name: 'acis', component: () => import('../views/AcisView.vue') },
+  { path: '/acis/submit', name: 'acis-submit', component: () => import('../views/AcisSubmitView.vue') },
+  { path: '/acis/:id(\\d+)', name: 'acis-detail', component: () => import('../views/ArchiveDetailView.vue'), meta: { acis: true } },
   { path: '/archive', name: 'archive', component: () => import('../views/ArchiveView.vue') },
   { path: '/archive/submit', name: 'archive-submit', component: () => import('../views/ArchiveSubmitView.vue'), meta: { auth: true } },
   { path: '/archive/mine', name: 'archive-mine', component: () => import('../views/ArchiveMineView.vue'), meta: { auth: true } },

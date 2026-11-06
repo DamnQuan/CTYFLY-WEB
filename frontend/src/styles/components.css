@@ -347,6 +347,7 @@
   transition: background 0.15s ease, color 0.15s ease;
 }
 .side-link svg, .side-sublink svg { flex-shrink: 0; }
+.side-nav-logo { width: 18px; height: 18px; object-fit: contain; flex-shrink: 0; border-radius: 4px; }
 .side-link:hover { background: var(--surface); color: var(--text); }
 /* router-link-active 是「前缀匹配」：/tickets/new 会让 /tickets 也带上它，
    所以不能用它上底色，会同时亮两项。底色统一交给 .nav-highlight。*/
@@ -590,6 +591,7 @@
   transition: background 0.15s ease, color 0.15s ease;
 }
 .topnav-item:hover { background: var(--surface); color: var(--text); }
+.topnav-item-logo { width: 16px; height: 16px; object-fit: contain; border-radius: 4px; vertical-align: -3px; margin-right: 3px; }
 .topnav-item.is-current { color: var(--text); font-weight: 600; }
 .topnav-item.is-open { background: var(--surface); color: var(--text); }
 /* 当前项：底下一道品牌蓝短横，与侧边栏的圆角色块呼应，不铺满整块*/

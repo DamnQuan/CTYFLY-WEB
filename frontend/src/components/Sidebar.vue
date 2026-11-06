@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth.js';
 import { useVaStore } from '../stores/va.js';
 import { confirmModal } from '../modal.js';
-import { useNavItems } from '../nav.js';
+import { useNavItems, acisLogo } from '../nav.js';
 import { prefetchRoute, prefetchRoutesOnIdle } from '../prefetch.js';
 import { isCollapsed, toggleNavCollapsed } from '../navlayout.js';
 import Icon from './Icon.vue';
@@ -42,6 +42,7 @@ watch(() => auth.isLoggedIn, (ok) => {
 const { navItems, visibleChildren } = useNavItems();
 
 const guestLinks = [
+  { to: '/acis', label: 'ACIS', image: acisLogo },
   { to: '/login', label: '登录', icon: 'logout' },
   { to: '/register', label: '注册', icon: 'user-plus' },
 ];
@@ -284,7 +285,8 @@ async function logout() {
             @focus="prefetchRoute(item.to); showTip($event, item.label)"
             @blur="hideTip"
           >
-            <Icon :name="item.icon" :size="16" /><span class="side-label">{{ item.label }}</span>
+            <img v-if="item.image" class="side-nav-logo" :src="item.image" alt="" />
+            <Icon v-else :name="item.icon" :size="16" /><span class="side-label">{{ item.label }}</span>
           </router-link>
 
           <!-- 二级菜单组：收拢态下点击会先展开侧边栏再打开该组，见 onGroupToggle-->
@@ -349,7 +351,8 @@ async function logout() {
           @focus="showTip($event, l.label)"
           @blur="hideTip"
         >
-          <Icon :name="l.icon" :size="16" /><span class="side-label">{{ l.label }}</span>
+          <img v-if="l.image" class="side-nav-logo" :src="l.image" alt="" />
+          <Icon v-else :name="l.icon" :size="16" /><span class="side-label">{{ l.label }}</span>
         </router-link>
       </template>
     </nav>

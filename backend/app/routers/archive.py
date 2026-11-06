@@ -100,6 +100,27 @@ def _audit(request: Request, action: str, *, actor, target_id=None, detail: str 
               detail=detail, ip=client_ip_from_request(request), ua=user_agent(request))
 
 
+def _acis_anon_id(request: Request) -> str:
+    """匿名访客标识：优先使用前端持久化的随机 ID，缺失时按 IP+UA 派生。"""
+    raw = (request.headers.get("x-acis-anon") or "").strip()[:64]
+    if raw and re.match(r"^[A-Za-z0-9_-]{8,64}$", raw):
+        return raw
+    derived = f"{client_ip_from_request(request)}|{user_agent(request)}".encode("utf-8", "ignore")
+    return "ip-" + hashlib.sha256(derived).hexdigest()[:32]
+
+
+def _guest_user(conn) -> dict:
+    """ACIS 免登录投稿使用的内部访客账号，不能登录，仅用于外键与后台展示。"""
+    row = conn.execute("SELECT * FROM users WHERE cid = 'ACIS'").fetchone()
+    if row:
+        return dict(row)
+    cur = conn.execute(
+        "INSERT INTO users (cid, username, email, password_hash, role, rating, status)"
+        " VALUES ('ACIS', 'ACIS访客', 'acis-guest@local.invalid', '!', 'user', '飞行员', 'deleted')"
+    )
+    return {"id": int(cur.lastrowid), "cid": "ACIS", "username": "ACIS访客", "role": "user"}
+
+
 def _parse_json(raw: str, fallback):
     try:
         value = json.loads(raw or "")
@@ -700,32 +721,43 @@ def report_comment(comment_id: int, body: ReportBody, request: Request,
 
 
 @router.post("/submissions")
-def submit_event(body: ArchivePayload, request: Request, user: dict = Depends(require_auth)):
+def submit_event(body: ArchivePayload, request: Request,
+                 user: dict | None = Depends(optional_user)):
     enforce(request, "archive-submit", 3, 3600)
     payload = _normalise(body)
-    if not payload["contact"]:
-        payload["contact"] = user.get("qq") or user.get("email") or ""
-    payload["personal_info_mode"] = "public"
+    anon_id = _acis_anon_id(request)
     with get_conn() as conn:
-        pending = conn.execute(
-            "SELECT COUNT(*) c FROM archive_submissions WHERE user_id = ? AND status = 'pending'",
-            (user["id"],),
-        ).fetchone()["c"]
+        guest = None if user else _guest_user(conn)
+        owner_id = user["id"] if user else guest["id"]
+        actor = user or guest
+        if user:
+            pending = conn.execute(
+                "SELECT COUNT(*) c FROM archive_submissions WHERE user_id = ? AND status = 'pending'",
+                (owner_id,),
+            ).fetchone()["c"]
+        else:
+            pending = conn.execute(
+                "SELECT COUNT(*) c FROM archive_submissions WHERE anon_id = ? AND status = 'pending'",
+                (anon_id,),
+            ).fetchone()["c"]
         if pending >= 1:
             raise HTTPException(400, "你还有一条投稿在审核中，请等待处理后再提交")
+        if not payload["contact"] and user:
+            payload["contact"] = user.get("qq") or user.get("email") or ""
+        payload["personal_info_mode"] = "public"
         cursor = conn.execute(
-            "INSERT INTO archive_submissions (user_id, payload) VALUES (?, ?)",
-            (user["id"], json.dumps(payload, ensure_ascii=False)),
+            "INSERT INTO archive_submissions (user_id, anon_id, payload) VALUES (?, ?, ?)",
+            (owner_id, anon_id, json.dumps(payload, ensure_ascii=False)),
         )
         submission_id = int(cursor.lastrowid)
-    _audit(request, "提交事件投稿", actor=user, target_id=submission_id,
+    _audit(request, "提交事件投稿", actor=actor, target_id=submission_id,
            detail=payload["title"])
     return {"ok": True, "id": submission_id, "message": "投稿已提交，管理员审核通过后会自动发布"}
 
 
 @router.post("/{event_id}/corrections")
 def submit_correction(event_id: int, body: CorrectionBody, request: Request,
-                      user: dict = Depends(require_auth)):
+                      user: dict | None = Depends(optional_user)):
     enforce(request, "archive-correction", 5, 3600)
     field = body.field if body.field in ("title", "summary", "occurred_at", "category", "other") else "other"
     proposed = clean(body.proposed_value, 8000)
@@ -735,6 +767,7 @@ def submit_correction(event_id: int, body: CorrectionBody, request: Request,
         raise HTTPException(400, "请填写需要更正的内容")
     if source_url and not (source_url.startswith("https://") or source_url.startswith("http://")):
         raise HTTPException(400, "来源链接格式不正确")
+    anon_id = _acis_anon_id(request)
     with get_conn() as conn:
         event = conn.execute(
             "SELECT id, title, summary, occurred_at, category FROM archive_events"
@@ -742,10 +775,19 @@ def submit_correction(event_id: int, body: CorrectionBody, request: Request,
         ).fetchone()
         if not event:
             raise HTTPException(404, "事件不存在或已下线")
-        pending = conn.execute(
-            "SELECT 1 FROM archive_corrections WHERE event_id = ? AND user_id = ? AND status = 'pending'",
-            (event_id, user["id"]),
-        ).fetchone()
+        guest = None if user else _guest_user(conn)
+        owner_id = user["id"] if user else guest["id"]
+        actor = user or guest
+        if user:
+            pending = conn.execute(
+                "SELECT 1 FROM archive_corrections WHERE event_id = ? AND user_id = ?"
+                " AND status = 'pending'", (event_id, owner_id),
+            ).fetchone()
+        else:
+            pending = conn.execute(
+                "SELECT 1 FROM archive_corrections WHERE event_id = ? AND anon_id = ?"
+                " AND status = 'pending'", (event_id, anon_id),
+            ).fetchone()
         if pending:
             raise HTTPException(400, "你已经提交过纠错，请等待管理员处理")
         current = {
@@ -756,12 +798,12 @@ def submit_correction(event_id: int, body: CorrectionBody, request: Request,
             "other": "",
         }[field]
         cursor = conn.execute(
-            "INSERT INTO archive_corrections (event_id, user_id, field, current_value, proposed_value,"
-            " reason, source_url) VALUES (?, ?, ?, ?, ?, ?, ?)",
-            (event_id, user["id"], field, current, proposed, reason, source_url),
+            "INSERT INTO archive_corrections (event_id, user_id, anon_id, field, current_value,"
+            " proposed_value, reason, source_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (event_id, owner_id, anon_id, field, current, proposed, reason, source_url),
         )
         correction_id = int(cursor.lastrowid)
-    _audit(request, "提交事件纠错", actor=user, target_id=correction_id,
+    _audit(request, "提交事件纠错", actor=actor, target_id=correction_id,
            detail=f"event={event_id} field={field}")
     return {"ok": True, "id": correction_id, "message": "纠错已提交，管理员审核后更新"}
 

@@ -2,7 +2,7 @@
 /**
  * 飞圈事件详情：论坛式互动，点赞、收藏、评论、回复、举报与相关事件。
  */
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from '../api.js';
 import { fmtMonth, fmtTime, showToast } from '../utils.js';
@@ -10,10 +10,12 @@ import { confirmModal, promptModal } from '../modal.js';
 import { useAuthStore } from '../stores/auth.js';
 import Icon from '../components/Icon.vue';
 import SelectMenu from '../components/SelectMenu.vue';
+import AcisAgreementModal from '../components/acis/AcisAgreementModal.vue';
 
 const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
+const isAcis = computed(() => Boolean(route.meta.acis));
 
 const item = ref(null);
 const comments = ref([]);
@@ -162,7 +164,7 @@ async function reportComment(comment) {
 }
 
 function openCorrection() {
-  if (needLogin()) return;
+  if (!isAcis.value && needLogin()) return;
   showCorrection.value = true;
 }
 
@@ -198,6 +200,7 @@ init();
 
 <template>
   <div class="page archive-detail-page">
+    <AcisAgreementModal v-if="isAcis" />
     <div v-if="loading" class="loading">加载中…</div>
     <div v-else-if="notFound" class="glass card">
       <div class="empty">
@@ -208,7 +211,7 @@ init();
     </div>
     <template v-else-if="item">
       <div class="detail-top">
-        <router-link class="back-link" to="/archive"><Icon name="chevron" :size="14" style="transform: rotate(90deg)" /> 返回检索</router-link>
+        <router-link class="back-link" :to="isAcis ? '/acis' : '/archive'"><Icon name="chevron" :size="14" style="transform: rotate(90deg)" /> 返回检索</router-link>
         <button class="btn btn-ghost btn-sm" type="button" @click="openCorrection"><Icon name="file" :size="14" /> 纠错</button>
       </div>
 
@@ -321,7 +324,7 @@ init();
       <div v-if="item.related?.length" class="related-block">
         <div class="card-title" style="font-size: 15px; margin-bottom: 10px">相关事件</div>
         <div class="related-list">
-          <router-link v-for="rel in item.related" :key="rel.id" class="glass card related-card" :to="`/archive/${rel.id}`">
+          <router-link v-for="rel in item.related" :key="rel.id" class="glass card related-card" :to="`${isAcis ? '/acis' : '/archive'}/${rel.id}`">
             <div class="related-title">{{ rel.title }}</div>
             <div class="related-meta">{{ fmtMonth(rel.occurred_at) }} · {{ rel.like_count }} 赞 · {{ rel.comment_count }} 评论</div>
           </router-link>

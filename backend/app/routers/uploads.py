@@ -13,7 +13,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
 
 from ..audit import log_event
 from ..config import MAX_UPLOAD_BYTES, UPLOAD_DIR, UPLOAD_URL_PREFIX
-from ..deps import require_auth, require_capability
+from ..deps import optional_user, require_auth, require_capability
 from ..ratelimit import enforce
 from ..requestinfo import client_ip_from_request, user_agent
 
@@ -106,8 +106,8 @@ async def upload_partner_logo(request: Request, file: UploadFile = File(...),
 
 @router.post("/archive-image")
 async def upload_archive_image(request: Request, file: UploadFile = File(...),
-                               user: dict = Depends(require_auth)):
-    """飞圈事件检索图片：登录用户投稿与管理员审核共用，返回同源相对地址"""
+                               user: dict | None = Depends(optional_user)):
+    """飞圈事件检索图片：ACIS 匿名投稿与管理员审核共用，返回同源相对地址"""
     enforce(request, "upload", 30, 3600)
 
     head = await file.read(16)
