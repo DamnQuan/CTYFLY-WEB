@@ -149,7 +149,7 @@ defineExpose({ getPayload });
           </div>
         </div>
         <template v-if="block.type === 'image'">
-          <img v-if="block.url" :src="block.url" alt="" class="block-image" />
+          <img v-if="block.url" :src="block.url" alt="" class="block-image" loading="lazy" decoding="async" />
           <div class="block-image-row">
             <label class="btn btn-ghost btn-sm" style="cursor: pointer">
               {{ block.url ? '更换图片' : '上传图片' }}

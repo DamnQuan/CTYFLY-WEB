@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 /**
  * 平台发展问卷，公开路由 /docs
  *
@@ -12,7 +12,7 @@ import { useAuthStore } from '../stores/auth.js';
 import { showToast } from '../utils.js';
 import Icon from '../components/Icon.vue';
 import PoWCaptcha from '../components/PoWCaptcha.vue';
-import logoMark from '../assets/logo-mark.png';
+import logoMark from '../assets/logo-mark.webp';
 
 const auth = useAuthStore();
 const loading = ref(true);

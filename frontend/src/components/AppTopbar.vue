@@ -1,11 +1,11 @@
-<script setup>
+﻿<script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
 import { getConsent } from '../consent.js';
 import { getTheme, setTheme } from '../theme.js';
 import SegmentedTabs from './SegmentedTabs.vue';
 import Icon from './Icon.vue';
 // 站点标志：走构建产物，文件名带 hash，可长期缓存
-import logoMark from '../assets/logo-mark.png';
+import logoMark from '../assets/logo-mark.webp';
 
 const props = defineProps({
   showBrand: { type: Boolean, default: false },

@@ -40,6 +40,14 @@ def _new_conn() -> sqlite3.Connection:
     conn = sqlite3.connect(DB_PATH, timeout=10)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
+    # 性能与并发：WAL 由初始化阶段开启，普通连接只做低成本调优。
+    conn.execute("PRAGMA synchronous = NORMAL")
+    conn.execute("PRAGMA busy_timeout = 5000")
+    conn.execute("PRAGMA cache_size = -20000")
+    try:
+        conn.execute("PRAGMA mmap_size = 268435456")
+    except sqlite3.DatabaseError:
+        pass
     return conn
 
 def reset_connections() -> None:

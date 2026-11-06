@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { api } from '../api.js';
@@ -10,7 +10,7 @@ import Icon from '../components/Icon.vue';
 import CheckBox from '../components/CheckBox.vue';
 import PoWCaptcha from '../components/PoWCaptcha.vue';
 import AuthSplitLayout from '../components/AuthSplitLayout.vue';
-import logoMark from '../assets/logo-mark.png';
+import logoMark from '../assets/logo-mark.webp';
 
 const router = useRouter();
 const auth = useAuthStore();

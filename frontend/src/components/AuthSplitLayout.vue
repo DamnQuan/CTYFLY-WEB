@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 /**
  * 认证页 6:4 分屏布局，登录 / 注册 / 找回密码共用
  *
@@ -9,7 +9,7 @@
  * 为什么做成组件：三个认证页共用同一套分屏结构，避免三份样式漂移；
  * 各页差异只有标题文案、插槽内容与表单宽度。
  */
-import logoMark from '../assets/logo-mark.png';
+import logoMark from '../assets/logo-mark.webp';
 import heroImg from '../assets/login-hero-apron.webp';
 
 defineProps({

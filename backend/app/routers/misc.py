@@ -1,4 +1,5 @@
 """公开数据与仪表盘 API"""
+import threading
 import time
 from datetime import date, timedelta
 
@@ -14,6 +15,11 @@ router = APIRouter(tags=["misc"])
 
 # 进程启动时间戳：公开状态页用它计算运行时长，main.py 无现成启动时间，这里模块加载时记录
 _START_TIME = time.time()
+
+# 首页数据高频读取、低频变化：短 TTL 缓存，减少重复查询与数据库唤醒。
+_HOME_CACHE = {"at": 0.0, "data": None}
+_HOME_CACHE_LOCK = threading.Lock()
+_HOME_CACHE_TTL = 20.0
 
 
 @router.get("/api/config")
@@ -120,6 +126,11 @@ def public_changelogs(request: Request):
 
 @router.get("/api/home")
 def home():
+    now = time.time()
+    with _HOME_CACHE_LOCK:
+        cached = _HOME_CACHE["data"]
+        if cached is not None and now - _HOME_CACHE["at"] < _HOME_CACHE_TTL:
+            return cached
     with get_conn() as conn:
         notices = conn.execute(
             "SELECT id, title, content, pinned, created_at FROM notices"
@@ -130,7 +141,11 @@ def home():
             " (SELECT COUNT(*) FROM event_signups s WHERE s.event_id = e.id) AS signup_count"
             " FROM events e WHERE e.status IN ('upcoming','ongoing') ORDER BY e.start_time LIMIT 6"
         ).fetchall()
-    return {"ok": True, "notices": [dict(n) for n in notices], "events": [dict(e) for e in events]}
+    result = {"ok": True, "notices": [dict(n) for n in notices], "events": [dict(e) for e in events]}
+    with _HOME_CACHE_LOCK:
+        _HOME_CACHE["at"] = now
+        _HOME_CACHE["data"] = result
+    return result
 
 
 @router.get("/api/partners")

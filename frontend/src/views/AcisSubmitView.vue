@@ -7,7 +7,7 @@ import { api } from '../api.js';
 import { acisAnonId, showToast } from '../utils.js';
 import ArchiveEditor from '../components/archive/ArchiveEditor.vue';
 import AcisAgreementModal from '../components/acis/AcisAgreementModal.vue';
-import acisLogo from '../assets/acis-glyph.png';
+import acisLogo from '../assets/acis-glyph-400.webp';
 
 acisAnonId();
 
@@ -39,7 +39,7 @@ async function submit() {
     <div class="page acis-submit-inner">
       <div class="page-header">
         <div class="acis-submit-brand">
-          <img :src="acisLogo" alt="ACIS" class="acis-submit-logo" />
+          <img :src="acisLogo" alt="ACIS" class="acis-submit-logo" width="400" height="144" decoding="async" />
           <div class="acis-submit-sub">投稿新事件 · 无需登录</div>
         </div>
         <router-link class="btn btn-ghost btn-sm" to="/acis">返回 ACIS</router-link>

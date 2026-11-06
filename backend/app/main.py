@@ -17,7 +17,7 @@ from .middleware import (AccessLogMiddleware, ApiMetricsMiddleware,
                          BodySizeLimitMiddleware, GlobalRateLimitMiddleware,
                          SecurityHeadersMiddleware)
 from .routers import (admin, airlines, applications, auth, captcha, events,
-                      misc, navdata, pet, shop, survey, tickets, uploads, weather)
+                      misc, navdata, perf, pet, shop, survey, tickets, uploads, weather)
 from .routers import dispatch, pirep, wallet
 from .routers.shop import shop_admin_router
 from .routers import va_shop
@@ -224,6 +224,7 @@ app.include_router(market.router)
 app.include_router(incidents.router)
 app.include_router(archive.router)
 app.include_router(archive.admin_router)
+app.include_router(perf.router)
 app.include_router(shop.router)
 app.include_router(shop_admin_router)
 app.include_router(uploads.router)

@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth.js';
@@ -11,7 +11,7 @@ import Icon from './Icon.vue';
 import UserAvatar from './UserAvatar.vue';
 import UserTag from './UserTag.vue';
 // 站点标志：走构建产物，文件名带 hash，可长期缓存
-import logoMark from '../assets/logo-mark.png';
+import logoMark from '../assets/logo-mark.webp';
 
 const props = defineProps({ open: Boolean });
 const emit = defineEmits(['close']);
@@ -285,7 +285,7 @@ async function logout() {
             @focus="prefetchRoute(item.to); showTip($event, item.label)"
             @blur="hideTip"
           >
-            <img v-if="item.image" class="side-nav-logo" :src="item.image" alt="" />
+            <img v-if="item.image" class="side-nav-logo" :src="item.image" alt="" width="160" height="58" />
             <Icon v-else :name="item.icon" :size="16" /><span class="side-label">{{ item.label }}</span>
           </router-link>
 
@@ -351,7 +351,7 @@ async function logout() {
           @focus="showTip($event, l.label)"
           @blur="hideTip"
         >
-          <img v-if="l.image" class="side-nav-logo" :src="l.image" alt="" />
+          <img v-if="l.image" class="side-nav-logo" :src="l.image" alt="" width="160" height="58" />
           <Icon v-else :name="l.icon" :size="16" /><span class="side-label">{{ l.label }}</span>
         </router-link>
       </template>

@@ -4,6 +4,10 @@ import { api } from '../api.js';
 import { fmtTime } from '../utils.js';
 import Icon from '../components/Icon.vue';
 import acisGlyph from '../assets/acis-glyph.png';
+import acisGlyph400Avif from '../assets/acis-glyph-400.avif';
+import acisGlyph800Avif from '../assets/acis-glyph-800.avif';
+import acisGlyph400Webp from '../assets/acis-glyph-400.webp';
+import acisGlyph800Webp from '../assets/acis-glyph-800.webp';
 
 const events = ref([]);
 const loading = ref(true);
@@ -39,7 +43,11 @@ onMounted(async () => {
 
     <router-link class="acis-entry" to="/acis">
       <span class="acis-entry-glow" aria-hidden="true"></span>
-      <img :src="acisGlyph" alt="ACIS" class="acis-entry-logo" />
+      <picture class="acis-entry-picture">
+        <source type="image/avif" :srcset="`${acisGlyph400Avif} 400w, ${acisGlyph800Avif} 800w`" sizes="(max-width: 620px) 76px, 112px" />
+        <source type="image/webp" :srcset="`${acisGlyph400Webp} 400w, ${acisGlyph800Webp} 800w`" sizes="(max-width: 620px) 76px, 112px" />
+        <img :src="acisGlyph" alt="ACIS" class="acis-entry-logo" width="1600" height="576" fetchpriority="high" decoding="async" />
+      </picture>
       <span class="acis-entry-copy">
         <span class="acis-entry-kicker">免登录 · 直接使用</span>
         <span class="acis-entry-title">ACIS 飞圈事件检索</span>
@@ -139,11 +147,17 @@ onMounted(async () => {
   filter: blur(12px);
   pointer-events: none;
 }
+.acis-entry-picture {
+  position: relative;
+  display: block;
+  flex: none;
+  width: 112px;
+}
 .acis-entry-logo {
   position: relative;
-  width: 112px;
+  display: block;
+  width: 100%;
   height: auto;
-  flex: none;
   filter: drop-shadow(0 6px 14px rgba(10, 110, 210, 0.18));
 }
 .acis-entry-copy { position: relative; display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
@@ -216,7 +230,8 @@ onMounted(async () => {
     box-shadow: 0 10px 28px rgba(30, 90, 160, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   }
   .acis-entry-glow { display: none; }
-  .acis-entry-logo { width: 76px; }
+  .acis-entry-picture { width: 76px; }
+  .acis-entry-logo { width: 100%; }
   .acis-entry-kicker { font-size: 9px; letter-spacing: 0.04em; }
   .acis-entry-title { font-size: 14px; line-height: 1.35; }
   .acis-entry-desc { display: none; }

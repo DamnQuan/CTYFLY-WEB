@@ -46,3 +46,6 @@ backend/data/airport-gis/
 
 # 本地审计工作区，截图/诊断脚本临时产物
 .audit-tmp/
+
+# Lighthouse CI 本地报告
+.lighthouseci/

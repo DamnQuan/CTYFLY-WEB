@@ -45,7 +45,7 @@ onMounted(async () => {
         rel="noopener nofollow"
       >
         <div class="partner-logo-wrap">
-          <img v-if="p.logo" :src="p.logo" :alt="p.name" class="partner-logo" />
+          <img v-if="p.logo" :src="p.logo" :alt="p.name" class="partner-logo" loading="lazy" decoding="async" />
           <span v-else class="partner-name-fallback">{{ p.name }}</span>
         </div>
         <div class="partner-info">

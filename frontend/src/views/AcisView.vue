@@ -8,6 +8,11 @@ import { fmtMonth, showToast } from '../utils.js';
 import Icon from '../components/Icon.vue';
 import AcisAgreementModal from '../components/acis/AcisAgreementModal.vue';
 import acisGlyph from '../assets/acis-glyph.png';
+import acisGlyph400Webp from '../assets/acis-glyph-400.webp';
+import acisGlyph800Avif from '../assets/acis-glyph-800.avif';
+import acisGlyph1280Avif from '../assets/acis-glyph-1280.avif';
+import acisGlyph800Webp from '../assets/acis-glyph-800.webp';
+import acisGlyph1280Webp from '../assets/acis-glyph-1280.webp';
 
 const q = ref('');
 const sort = ref('pinyin');
@@ -87,13 +92,17 @@ load();
     <AcisAgreementModal />
     <div class="page acis-inner">
       <section class="acis-hero">
-        <img :src="acisGlyph" alt="" class="acis-watermark" aria-hidden="true" />
+        <img :src="acisGlyph400Webp" alt="" class="acis-watermark" width="400" height="144" aria-hidden="true" loading="lazy" decoding="async" />
         <div class="acis-hero-glow" aria-hidden="true"></div>
 
         <div class="acis-brand">
           <div class="acis-brand-copy">
             <div class="acis-kicker">CTY · ACIS 飞圈事件检索</div>
-            <img :src="acisGlyph" alt="ACIS" class="acis-hero-glyph" />
+            <picture class="acis-hero-picture">
+              <source type="image/avif" :srcset="`${acisGlyph800Avif} 800w, ${acisGlyph1280Avif} 1280w`" sizes="(max-width: 720px) 94vw, 560px" />
+              <source type="image/webp" :srcset="`${acisGlyph800Webp} 800w, ${acisGlyph1280Webp} 1280w`" sizes="(max-width: 720px) 94vw, 560px" />
+              <img :src="acisGlyph" alt="ACIS" class="acis-hero-glyph" width="1600" height="576" fetchpriority="high" decoding="async" />
+            </picture>
             <div class="acis-tagline">
               <span class="acis-tagline-en">Air Community Incident Search</span>
               <span class="acis-tagline-dot" aria-hidden="true"></span>
@@ -276,9 +285,13 @@ load();
 .acis-brand {
   position: relative;
 }
-.acis-hero-glyph {
+.acis-hero-picture {
   display: block;
   width: min(560px, 74%);
+}
+.acis-hero-glyph {
+  display: block;
+  width: 100%;
   height: auto;
   margin: 2px 0 0;
   filter: drop-shadow(0 14px 30px rgba(10, 110, 210, 0.22));
@@ -733,7 +746,7 @@ load();
 @media (max-width: 720px) {
   .acis-inner { padding-left: 18px; padding-right: 18px; padding-top: 20px; }
   .acis-hero { padding: 24px 20px; border-radius: 24px; }
-  .acis-hero-glyph { width: 94%; }
+  .acis-hero-picture { width: 94%; }
   .acis-tagline { gap: 7px; }
   .acis-tagline-en { font-size: 9.5px; letter-spacing: 0.12em; }
   .acis-tagline-cn { font-size: 11px; }

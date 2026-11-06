@@ -4,7 +4,7 @@
  * 必须点击同意后关闭，状态写入 localStorage。
  */
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
-import acisLogo from '../../assets/acis-glyph.png';
+import acisLogo from '../../assets/acis-glyph-400.webp';
 
 const OPEN_KEY = 'acis_agreed';
 const ANON_KEY = 'acis_anon_id';
@@ -73,7 +73,7 @@ onBeforeUnmount(unlockScroll);
     <div v-if="open" class="acis-modal-mask" role="dialog" aria-modal="true" aria-labelledby="acis-modal-title">
       <div class="acis-modal">
         <div class="acis-modal-head">
-          <img :src="acisLogo" alt="ACIS" class="acis-modal-logo" />
+          <img :src="acisLogo" alt="ACIS" class="acis-modal-logo" width="400" height="144" decoding="async" />
           <div>
             <div id="acis-modal-title" class="acis-modal-title">ACIS使用须知</div>
             <div class="acis-modal-sub">首次使用前请阅读并确认</div>

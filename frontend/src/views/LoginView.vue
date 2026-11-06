@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { onBeforeUnmount, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { api } from '../api.js';
@@ -9,7 +9,7 @@ import { useFieldFeedback } from '../fieldFeedback.js';
 import PoWCaptcha from '../components/PoWCaptcha.vue';
 import MorphLoginButton from '../components/MorphLoginButton.vue';
 import AuthSplitLayout from '../components/AuthSplitLayout.vue';
-import logoMark from '../assets/logo-mark.png';
+import logoMark from '../assets/logo-mark.webp';
 
 const router = useRouter();
 const route = useRoute();

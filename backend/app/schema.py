@@ -921,4 +921,23 @@ CREATE TABLE IF NOT EXISTS archive_views (
   created_at TEXT NOT NULL DEFAULT (datetime('now','localtime')),
   PRIMARY KEY (event_id, visitor_key, viewed_on)
 );
+
+CREATE TABLE IF NOT EXISTS perf_metrics (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  path TEXT NOT NULL DEFAULT '/',
+  lcp REAL NOT NULL DEFAULT 0,
+  inp REAL NOT NULL DEFAULT 0,
+  cls REAL NOT NULL DEFAULT 0,
+  ttfb REAL NOT NULL DEFAULT 0,
+  device TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL DEFAULT (datetime('now','localtime'))
+);
+CREATE INDEX IF NOT EXISTS idx_perf_metrics_created ON perf_metrics(created_at);
+
+CREATE INDEX IF NOT EXISTS idx_events_status_start ON events(status, start_time);
+CREATE INDEX IF NOT EXISTS idx_event_signups_event ON event_signups(event_id);
+CREATE INDEX IF NOT EXISTS idx_tickets_user_status ON tickets(user_id, status);
+CREATE INDEX IF NOT EXISTS idx_ticket_replies_ticket ON ticket_replies(ticket_id);
+CREATE INDEX IF NOT EXISTS idx_flight_reports_airline_user ON flight_reports(airline_id, user_id, status);
+CREATE INDEX IF NOT EXISTS idx_wallet_records_user_type_time ON wallet_records(user_id, type, created_at);
 """

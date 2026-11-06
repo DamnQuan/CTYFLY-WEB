@@ -1,9 +1,9 @@
-<script setup>
+﻿<script setup>
 /**
  * 关于我们 —— 垂天云飞友集团介绍页，公开访问
  * 文案由集团官方提供，页面只做排版，不改动原文表述。
  */
-import logoMark from '../assets/logo-mark.png';
+import logoMark from '../assets/logo-mark.webp';
 import Icon from '../components/Icon.vue';
 </script>
 

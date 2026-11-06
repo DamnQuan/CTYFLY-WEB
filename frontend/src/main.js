@@ -5,6 +5,7 @@ import { router } from './router/index.js';
 import { initTheme } from './theme.js';
 import { installRecovery, markAppHealthy, watchForNewBuild } from './recover.js';
 import { installDiag, reportPreviousSession, watchLinkClicks } from './diag.js';
+import { initPerf } from './perf.js';
 import './styles/main.css';
 
 initTheme();
@@ -27,3 +28,10 @@ markAppHealthy();
 
 // 稍后汇报上一次会话的异常，避免与首屏渲染抢时间
 setTimeout(reportPreviousSession, 900);
+
+// Core Web Vitals 采集放到空闲时段，避免与首屏竞争
+if ('requestIdleCallback' in window) {
+  requestIdleCallback(() => initPerf(), { timeout: 2200 });
+} else {
+  setTimeout(initPerf, 1200);
+}

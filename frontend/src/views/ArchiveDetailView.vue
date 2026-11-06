@@ -282,7 +282,7 @@ init();
         <div v-else class="comment-list">
           <div v-for="comment in comments" :key="comment.id" class="comment">
             <div class="comment-avatar">
-              <img v-if="comment.avatar_url" :src="comment.avatar_url" alt="" />
+              <img v-if="comment.avatar_url" :src="comment.avatar_url" alt="" width="34" height="34" loading="lazy" decoding="async" />
               <span v-else>{{ comment.username.slice(0, 1) }}</span>
             </div>
             <div class="comment-main">
@@ -299,7 +299,7 @@ init();
               <div v-if="comment.replies?.length" class="comment-replies">
                 <div v-for="reply in comment.replies" :key="reply.id" class="comment reply">
                   <div class="comment-avatar small">
-                    <img v-if="reply.avatar_url" :src="reply.avatar_url" alt="" />
+                    <img v-if="reply.avatar_url" :src="reply.avatar_url" alt="" width="28" height="28" loading="lazy" decoding="async" />
                     <span v-else>{{ reply.username.slice(0, 1) }}</span>
                   </div>
                   <div class="comment-main">

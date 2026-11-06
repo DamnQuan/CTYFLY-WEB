@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 /**
  * 顶部栏导航，用户可在个人中心把侧边栏切换成它
  *
@@ -24,7 +24,7 @@ import UserAvatar from './UserAvatar.vue';
 import UserTag from './UserTag.vue';
 import AppTopbar from './AppTopbar.vue';
 // 站点标志：走构建产物，文件名带 hash，可长期缓存
-import logoMark from '../assets/logo-mark.png';
+import logoMark from '../assets/logo-mark.webp';
 
 const route = useRoute();
 const router = useRouter();
@@ -111,7 +111,7 @@ async function logout() {
             @focus="openGroup(item)"
             @click="closeNow"
           >
-            <img v-if="item.image" class="topnav-item-logo" :src="item.image" alt="" />
+            <img v-if="item.image" class="topnav-item-logo" :src="item.image" alt="" width="160" height="58" />
             {{ item.label }}
           </router-link>
 
