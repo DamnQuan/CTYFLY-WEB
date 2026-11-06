@@ -98,17 +98,6 @@ onMounted(async () => {
 .hero { padding: 64px 24px; }
 .hero-title { font-size: 44px; font-weight: 700; letter-spacing: -1px; }
 .hero-sub { color: var(--text-2); font-size: 16px; max-width: 520px; margin: 12px auto 28px; }
-@media (max-width: 620px) {
-  .hero { padding: 44px 18px; }
-  .hero-title { font-size: 32px; }
-  .hero-sub { font-size: 14.5px; margin-bottom: 22px; }
-  .acis-entry { gap: 12px; padding: 15px 16px; border-radius: 20px; }
-  .acis-entry-logo { width: 78px; }
-  .acis-entry-kicker { font-size: 9.5px; }
-  .acis-entry-title { font-size: 14.5px; }
-  .acis-entry-desc { display: none; }
-  .acis-entry-cta { padding: 6px 9px; font-size: 10.5px; }
-}
 .hero-actions {
   display: flex;
   gap: 12px;
@@ -213,4 +202,24 @@ onMounted(async () => {
   text-decoration: none;
 }
 .footer-link:hover { color: var(--text-2); text-decoration: underline; }
+@media (max-width: 620px) {
+  .hero { padding: 44px 18px; }
+  .hero-title { font-size: 32px; }
+  .hero-sub { font-size: 14.5px; margin-bottom: 22px; }
+  .acis-entry {
+    gap: 11px;
+    padding: 14px 14px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(238, 247, 255, 0.62));
+    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    box-shadow: 0 10px 28px rgba(30, 90, 160, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+  .acis-entry-glow { display: none; }
+  .acis-entry-logo { width: 76px; }
+  .acis-entry-kicker { font-size: 9px; letter-spacing: 0.04em; }
+  .acis-entry-title { font-size: 14px; line-height: 1.35; }
+  .acis-entry-desc { display: none; }
+  .acis-entry-cta { padding: 6px 8px; font-size: 10px; }
+}
 </style>
