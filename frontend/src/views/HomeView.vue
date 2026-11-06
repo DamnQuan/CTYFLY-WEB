@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { api } from '../api.js';
 import { fmtTime } from '../utils.js';
 import Icon from '../components/Icon.vue';
+import acisGlyph from '../assets/acis-glyph.png';
 
 const events = ref([]);
 const loading = ref(true);
@@ -35,6 +36,17 @@ onMounted(async () => {
         >加入QQ群</a>
       </div>
     </section>
+
+    <router-link class="acis-entry" to="/acis">
+      <span class="acis-entry-glow" aria-hidden="true"></span>
+      <img :src="acisGlyph" alt="ACIS" class="acis-entry-logo" />
+      <span class="acis-entry-copy">
+        <span class="acis-entry-kicker">免登录 · 直接使用</span>
+        <span class="acis-entry-title">ACIS 飞圈事件检索</span>
+        <span class="acis-entry-desc">浏览全部飞圈事件资料，支持搜索、投稿与纠错</span>
+      </span>
+      <span class="acis-entry-cta">进入 ACIS <Icon name="chevron" :size="14" /></span>
+    </router-link>
 
     <div style="margin-top: 48px">
       <div class="card-title" style="margin-bottom: 14px"><Icon name="calendar" :size="16" /> 近期活动</div>
@@ -90,6 +102,12 @@ onMounted(async () => {
   .hero { padding: 44px 18px; }
   .hero-title { font-size: 32px; }
   .hero-sub { font-size: 14.5px; margin-bottom: 22px; }
+  .acis-entry { gap: 12px; padding: 15px 16px; border-radius: 20px; }
+  .acis-entry-logo { width: 78px; }
+  .acis-entry-kicker { font-size: 9.5px; }
+  .acis-entry-title { font-size: 14.5px; }
+  .acis-entry-desc { display: none; }
+  .acis-entry-cta { padding: 6px 9px; font-size: 10.5px; }
 }
 .hero-actions {
   display: flex;
@@ -98,6 +116,72 @@ onMounted(async () => {
   align-items: center;
   flex-wrap: wrap;
 }
+.acis-entry {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 10px;
+  padding: 18px 22px;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid var(--glass-border);
+  background: linear-gradient(145deg, var(--glass-strong), var(--glass));
+  color: inherit;
+  text-decoration: none;
+  backdrop-filter: blur(26px) saturate(180%);
+  -webkit-backdrop-filter: blur(26px) saturate(180%);
+  box-shadow: 0 18px 48px rgba(30, 90, 160, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+.acis-entry:hover {
+  transform: translateY(-3px);
+  border-color: rgba(92, 180, 255, 0.45);
+  box-shadow: 0 24px 58px rgba(30, 100, 170, 0.17), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+.acis-entry-glow {
+  position: absolute;
+  right: 12%;
+  top: -90%;
+  width: 280px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(94, 184, 255, 0.22), transparent 68%);
+  filter: blur(12px);
+  pointer-events: none;
+}
+.acis-entry-logo {
+  position: relative;
+  width: 112px;
+  height: auto;
+  flex: none;
+  filter: drop-shadow(0 6px 14px rgba(10, 110, 210, 0.18));
+}
+.acis-entry-copy { position: relative; display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+.acis-entry-kicker { color: var(--blue); font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; }
+.acis-entry-title { color: var(--text); font-size: 16px; font-weight: 700; letter-spacing: 0.01em; }
+.acis-entry-desc { color: var(--text-2); font-size: 12px; line-height: 1.5; }
+.acis-entry-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex: none;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.34);
+  border: 1px solid var(--glass-border);
+  color: var(--text-2);
+  font-size: 11.5px;
+  font-weight: 600;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+.acis-entry:hover .acis-entry-cta { background: var(--blue); color: #fff; border-color: var(--blue); }
+[data-theme="dark"] .acis-entry {
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+[data-theme="dark"] .acis-entry-cta { background: rgba(40, 64, 96, 0.5); }
+[data-theme="dark"] .acis-entry:hover { box-shadow: 0 24px 58px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.16); }
 /* QQ 官方风格加群按钮，QQ 蓝 #12B7F5*/
 .qq-join-btn {
   display: inline-flex;
