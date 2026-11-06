@@ -145,8 +145,8 @@ def test_concurrent_report_submission_occupies_dispatch_once(db):
 
 # ---------- 4 事务回滚：失败不留半截状态 ----------
 
-def test_failed_payout_leaves_dispatch_open_for_retry(client, db):
-    """公司余额不足 → 发薪前置校验抛错 → 整个事务回滚：签派单仍为 open，可补钱后重试"""
+def test_unfunded_payout_submits_report_and_defers_salary(client, db):
+    """公司余额不足 → 报告仍可提交，转 CEO 审核；补足余额后审核发薪，不再卡死。"""
     from tests.conftest import add_event  # noqa: F401 保持与其它测试一致的 import 位置
 
     with db.get_conn() as conn:
@@ -167,20 +167,25 @@ def test_failed_payout_leaves_dispatch_open_for_retry(client, db):
     body = {"dispatchId": d["id"], "routeId": rid, "hours": 2.0, "aircraft": "A20N",
             "flightDate": "2026-10-01"}
     r = client.post(f"/api/airlines/{aid}/reports", json=body, headers=h)
-    assert r.status_code == 400, r.text[:200]
-    assert "余额不足" in (r.json().get("error") or r.json().get("detail") or "")
+    assert r.status_code == 200, r.text[:200]
+    assert "公司余额不足" in r.json().get("message", "")
+    report_id = r.json()["id"]
 
     with db.get_conn() as conn:
-        assert conn.execute("SELECT status FROM dispatches WHERE id = ?", (d["id"],)).fetchone()["status"] == "open", \
-            "失败的提交不得占用签派单（否则用户既没拿到钱也无法重试）"
-        assert conn.execute("SELECT COUNT(*) c FROM flight_reports WHERE dispatch_id = ?",
-                            (d["id"],)).fetchone()["c"] == 0
+        assert conn.execute("SELECT status FROM dispatches WHERE id = ?",
+                            (d["id"],)).fetchone()["status"] == "flown"
+        report = conn.execute("SELECT * FROM flight_reports WHERE id = ?", (report_id,)).fetchone()
+        assert report["status"] == "pending"
+        assert report["verify_status"] == "needs_review"
         assert conn.execute("SELECT balance FROM wallets WHERE user_id = ?", (uid,)).fetchone() is None
         assert conn.execute("SELECT balance FROM airlines WHERE id = ?", (aid,)).fetchone()["balance"] == 0
 
-    # 补钱后可重试成功
+    # 补足公司余额后，CEO 审核通过并补发工资
     from app.routers.admin import _airline_fund_move
     with db.get_conn() as conn:
         _airline_fund_move(conn, aid, 500000, "【测试】补足公司余额")
-    retry = client.post(f"/api/airlines/{aid}/reports", json=body, headers=h)
-    assert retry.status_code == 200, retry.text[:200]
+        conn.commit()
+    review = client.post(f"/api/airlines/{aid}/reports/{report_id}/review",
+                         json={"action": "approve"}, headers=h)
+    assert review.status_code == 200, review.text[:200]
+    assert review.json()["amount"] > 0

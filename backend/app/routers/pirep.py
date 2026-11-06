@@ -17,8 +17,8 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from ..audit import log_event
 from ..database import get_conn
 from ..deps import require_auth
-from ..economy import (CARGO_RATE_PER_KG_NM, DEFAULT_LOAD_FACTOR, REVENUE_PER_PAX_NM,
-                       _payout_guard, _report_wage, _verify_flight_report)
+from ..economy import (CARGO_RATE_PER_KG_NM, DEFAULT_LOAD_FACTOR, PAYOUT_PER_REPORT_CAP,
+                       REVENUE_PER_PAX_NM, _payout_guard, _report_wage, _verify_flight_report)
 from ..mailer import notify_user
 from ..ratelimit import enforce
 from ..text import clean, csv_safe
@@ -81,15 +81,25 @@ def submit_report(airline_id: int, body: ReportBody, request: Request,
         base_salary = r["base_salary"] if r else 0
         flight_no = d["flight_no"] or ("FERRY" if kind == "ferry" else "CHTR")
 
-        # 自动核验通过时先做发薪前置校验，上限/每日额度/公司余额，
-        # 校验不过直接 400 回滚，不产生任何入账
+        # 自动核验通过时先做发薪前置校验，上限/每日额度/公司余额。
+        # 公司余额不足不再拦死提交：报告照常入库并转 CEO 审核，待公司补足余额后发薪。
         wage = 0
         wage_capped = False
+        wage_deferred = False
         if verify_status == "auto_pass":
-            wage, wage_capped = _payout_guard(
-                conn, airline_id, user["id"],
-                _report_wage(conn, airline_id, kind, body.hours, distance, base_salary),
+            computed_wage = _report_wage(
+                conn, airline_id, kind, body.hours, distance, base_salary,
             )
+            try:
+                wage, wage_capped = _payout_guard(conn, airline_id, user["id"], computed_wage)
+            except HTTPException as exc:
+                if "公司余额不足" not in str(exc.detail):
+                    raise
+                wage = min(computed_wage, PAYOUT_PER_REPORT_CAP)
+                wage_capped = computed_wage > PAYOUT_PER_REPORT_CAP
+                wage_deferred = True
+                verify_status = "needs_review"
+                reasons.append("公司余额不足，报告已提交并转 CEO 审核，公司补足余额后发薪")
 
         # 并发双报告防护：签派单占用改为条件更新，仅 open 状态可被置为 flown；
         # 报告插入与结算全部放在占用成功之后
@@ -204,7 +214,11 @@ def submit_report(airline_id: int, body: ReportBody, request: Request,
 
         return {
             "ok": True, "id": report_id, "score": score,
-            "message": f"报告已提交，核验 {score} 分，等待 CEO 审核",
+            "message": (
+                "公司余额不足，报告已提交，等待 CEO 审核；公司补足余额后发放工资"
+                if wage_deferred else
+                f"报告已提交，核验 {score} 分，等待 CEO 审核"
+            ),
         }
 
 @router.get("/{airline_id}/reports")
