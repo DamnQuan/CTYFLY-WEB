@@ -1,6 +1,6 @@
-<script setup>
+﻿<script setup>
 /**
- * 航司货币管理，2026-10-11 新增
+ * 航司货币管理
  *
  * 航司余额，airlines.balance 是 PIREP 结算里发工资的钱 —— 余额为 0 时会员拿不到工资，
  * 用户会集中反映「没钱」。此前只能手工改 SQL，且没有统一口径。本页提供：
@@ -43,7 +43,7 @@ const airlineOptions = computed(() => airlines.value.map((a) => ({
 
 const scopeOptions = [
   { value: 'approved', label: '运营中的航司' },
-  { value: 'all', label: '全部航司，含待审核' },
+  { value: 'all', label: '全部航司（含待审核）' },
 ];
 
 function money(n) {
@@ -70,7 +70,7 @@ async function submitGrant() {
   if (!amount || amount <= 0) return showToast('请填写发放金额');
   const n = grantTargets.value.length;
   if (!n) return showToast('没有符合条件的航司');
-  if (!window.confirm(`将向 ${n} 家航司各发放 ${money(amount)}，合计 ${money(amount * n)}。确认发放？`)) return;
+  if (!window.confirm(`将向 ${n} 家航司各发放 ${money(amount)}，合计 ${money(amount * n)}。确定要发放吗？`)) return;
   granting.value = true;
   try {
     const r = await api.post('/api/admin/airlines/funds/grant', {
@@ -89,10 +89,10 @@ async function submitGrant() {
 
 async function submitAdjust() {
   const amount = Number(adjust.value.amount);
-  if (!amount) return showToast('请填写调整金额，正数发放，负数扣除');
+  if (!amount) return showToast('请填写调整金额（正数发放，负数扣除）');
   if (adjust.value.airlineId === null) return showToast('请选择航司');
   const target = airlines.value.find((a) => a.id === adjust.value.airlineId);
-  if (!window.confirm(`确认将「${target?.name || adjust.value.airlineId}」余额调整 ${amount > 0 ? '+' : ''}${money(amount)}？`)) return;
+  if (!window.confirm(`确定要将「${target?.name || adjust.value.airlineId}」的余额调整 ${amount > 0 ? '+' : ''}${money(amount)} 吗？`)) return;
   adjusting.value = true;
   try {
     const r = await api.post('/api/admin/airlines/funds/adjust', {
@@ -133,7 +133,7 @@ function statusLabel(s) {
     <div class="grid grid-4" style="margin-bottom: 16px">
       <div class="stat">
         <div class="stat-num">{{ summary.count || 0 }}</div>
-        <div class="stat-label">航司总数，运营中 {{ summary.approved || 0 }}</div>
+        <div class="stat-label">航司总数（运营中 {{ summary.approved || 0 }}）</div>
       </div>
       <div class="stat">
         <div class="stat-num">{{ money(summary.totalBalance) }}</div>
@@ -162,7 +162,7 @@ function statusLabel(s) {
           <SelectMenu v-model="grant.scope" :options="scopeOptions" />
         </div>
         <div class="field" style="grid-column: span 2">
-          <label class="label">原因，写入账本与审计</label>
+          <label class="label">原因（写入账本与审计）</label>
           <input v-model="grant.reason" class="input" placeholder="例如 基础金发放 / 春节补贴" />
         </div>
       </div>
@@ -186,7 +186,7 @@ function statusLabel(s) {
           <SelectMenu v-model="adjust.airlineId" :options="airlineOptions" placeholder="选择航司" />
         </div>
         <div class="field">
-          <label class="label">金额，正=发放，负=扣除</label>
+          <label class="label">金额（正数发放，负数扣除）</label>
           <input v-model.number="adjust.amount" class="input" type="number" placeholder="例如 3000 或 -500" />
         </div>
         <div class="field" style="grid-column: span 2">
@@ -204,7 +204,7 @@ function statusLabel(s) {
       <div class="card-title">航司余额</div>
       <div v-if="loading" class="loading">加载中…</div>
       <div v-else-if="!airlines.length" style="padding: 14px 0; color: var(--gray); font-size: 13.5px">
-        还没有任何虚拟航司。
+        暂无虚拟航司，审核通过后展示
       </div>
       <div v-else class="table-wrap" style="margin-top: 12px">
         <table class="table">
@@ -240,8 +240,8 @@ function statusLabel(s) {
 
     <!-- 调整记录 -->
     <div class="glass card" style="margin-top: 16px">
-      <div class="card-title">最近调整记录，后台发起</div>
-      <div v-if="!recent.length" style="font-size: 13px; color: var(--gray)">还没有后台调整记录。</div>
+      <div class="card-title">最近调整记录（后台发起）</div>
+      <div v-if="!recent.length" style="font-size: 13px; color: var(--gray)">暂无调整记录</div>
       <div v-else class="table-wrap" style="margin-top: 12px">
         <table class="table">
           <thead>

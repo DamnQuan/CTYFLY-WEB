@@ -34,7 +34,7 @@ onMounted(async () => {
         </div>
         <div class="stat">
           <div class="stat-num">{{ wallet.total_hours }}</div>
-          <div class="stat-label">累计飞行时长，小时</div>
+          <div class="stat-label">累计飞行时长（小时）</div>
         </div>
         <div class="stat">
           <div class="stat-num">{{ wallet.rank }}</div>

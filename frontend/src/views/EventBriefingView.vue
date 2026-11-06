@@ -211,7 +211,7 @@ async function signupAtc(pos) {
     const ok = await confirmModal({
       title: '变更报名',
       confirmText: '确认报名该席位',
-      message: `将「${my.value.role === 'atc' ? '已占用的席位' : '飞行员报名'}」变更为席位 ${pos.name}？原报名会被替换。`,
+      message: `确定要将「${my.value.role === 'atc' ? '已占用的席位' : '飞行员报名'}」变更为席位 ${pos.name} 吗？原报名将被替换。`,
     });
     if (!ok) return;
   }
@@ -233,13 +233,13 @@ async function cancelSignup() {
     return;
   }
   const roleText = my.value.role === 'atc'
-    ? `管制员席位，${atcPositions.value.find((p) => p.id === my.value.positionId)?.name || my.value.positionId}`
-    : `飞行员，${my.value.callsign} / ${my.value.aircraft || '机型未填'}`;
+    ? `管制员席位（${atcPositions.value.find((p) => p.id === my.value.positionId)?.name || my.value.positionId}）`
+    : `飞行员（${my.value.callsign} / ${my.value.aircraft || '机型未填写'}）`;
   const ok = await confirmModal({
     title: '取消报名',
     danger: true,
     confirmText: '取消报名',
-    message: `确认取消本次活动的${roleText}报名？`,
+    message: `确定要取消本次活动的${roleText}报名吗？`,
   });
   if (!ok) return;
   posBusyId.value = -1;
@@ -338,7 +338,7 @@ onBeforeUnmount(() => {
                 <!-- 已报名，飞行员：展示呼号/机型 + 取消报名-->
                 <template v-else-if="my.signed && my.role !== 'atc'">
                   <div class="signed-line">
-                    已报名，{{ my.callsign }} / {{ my.aircraft || '机型未填' }}
+                    已报名：{{ my.callsign }} / {{ my.aircraft || '机型未填写' }}
                   </div>
                   <div class="signed-actions">
                     <button v-if="signupOpen" class="btn btn-ghost btn-sm" @click="showPilotForm = !showPilotForm">
@@ -430,7 +430,7 @@ onBeforeUnmount(() => {
             <div class="pos-foot">
               <!-- 本人占用：可取消 -->
               <template v-if="posState(pos) === 'mine'">
-                <span class="pos-state pos-state-mine">我占用</span>
+                <span class="pos-state pos-state-mine">你的席位</span>
                 <button
                   v-if="signupOpen"
                   class="btn btn-ghost btn-sm"
@@ -482,7 +482,7 @@ onBeforeUnmount(() => {
               </div>
               <div class="list-sub">
                 <template v-if="tab === 'atc'">{{ s.username }} · CID {{ s.cid }}</template>
-                <template v-else>{{ s.aircraft || '机型未填' }} · {{ s.username }} · CID {{ s.cid }}</template>
+                <template v-else>{{ s.aircraft || '机型未填写' }} · {{ s.username }} · CID {{ s.cid }}</template>
               </div>
             </div>
             <div class="list-actions list-sub">{{ fmtTime(s.created_at) }}</div>

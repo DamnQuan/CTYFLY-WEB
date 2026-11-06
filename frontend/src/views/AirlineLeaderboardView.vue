@@ -49,7 +49,7 @@ const medal = (i) => (i < 3 ? RANKS[i] : { text: String(i + 1), cls: '' });
           </div>
           <span class="tag tag-blue">{{ a.members }} 名成员</span>
         </div>
-        <div v-if="!airlines.length" class="empty">暂无航司</div>
+        <div v-if="!airlines.length" class="empty">暂无航司，可创建或加入一家</div>
       </div>
 
       <div class="glass card">
@@ -81,7 +81,7 @@ const medal = (i) => (i < 3 ? RANKS[i] : { text: String(i + 1), cls: '' });
           </div>
           <span class="tag tag-purple">{{ p.events }} 次活动</span>
         </div>
-        <div v-if="!pilots.length" class="empty">暂无数据，快去参加连飞活动吧</div>
+        <div v-if="!pilots.length" class="empty">暂无数据，参加连飞活动后上榜</div>
       </div>
     </div>
   </div>

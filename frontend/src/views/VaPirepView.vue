@@ -151,13 +151,13 @@ async function submit() {
 
     <div v-else class="glass card">
       <div class="field">
-        <label class="label">关联签派单，必选 · 需已完成起飞/落地上报</label>
+        <label class="label">关联签派单（必选 · 需已完成起飞/落地上报）</label>
         <SelectMenu
           v-model="form.dispatchId" :options="dispatchOptions"
           placeholder="选择已落地的签派单" @update:model-value="applyDispatch"
         />
         <div v-if="reportableDispatches.length === 0" class="card-sub" style="margin-top: 6px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
-          <span>暂无已落地的签派单——先去签派页生成签派单并完成「起飞/落地」上报</span>
+          <span>暂无已落地的签派单，先去签派页生成签派单并完成「起飞/落地」上报</span>
           <router-link to="/va/dispatch" class="btn btn-primary btn-sm">去飞行签派</router-link>
         </div>
         <div v-else-if="selectedDispatch" class="card-sub" style="margin-top: 6px">
@@ -175,7 +175,7 @@ async function submit() {
       </div>
       <div v-else class="field">
         <label class="label">航线</label>
-        <div class="card-sub">包机 / 转场任务无关联航线，报告将按任务类型自动结算，包机 1.5× 溢价，转场计调机补贴</div>
+        <div class="card-sub">包机 / 转场任务无关联航线，报告将按任务类型自动结算，包机 1.5× 溢价，转场按调机补贴结算</div>
       </div>
       <div class="input-row">
         <div class="field" style="flex: 1">
@@ -183,7 +183,7 @@ async function submit() {
           <input v-model="form.aircraft" class="input" placeholder="如 A320 / B738" maxlength="16" />
         </div>
         <div class="field" style="flex: 1">
-          <label class="label">飞行时长，小时</label>
+          <label class="label">飞行时长（小时）</label>
           <input v-model="form.hours" class="input" type="number" step="0.1" min="0.1" max="24" placeholder="如 2.5" />
         </div>
       </div>
@@ -193,7 +193,7 @@ async function submit() {
       </div>
       <div class="field">
         <label class="label">备注</label>
-        <textarea v-model="form.notes" class="textarea" rows="2" placeholder="航路、特殊情况等，可空" maxlength="200"></textarea>
+        <textarea v-model="form.notes" class="textarea" rows="2" placeholder="航路、特殊情况等，可留空" maxlength="200"></textarea>
       </div>
       <button class="btn btn-primary" :disabled="submitting" @click="submit">
         {{ submitting ? '提交中…' : '提交飞行报告' }}
@@ -205,8 +205,8 @@ async function submit() {
         飞行工资 {{ est.wage.toLocaleString() }} = 底薪 {{ selectedRoute?.base_salary || 0 }}
         + {{ form.hours || 0 }}h × 时薪 {{ va.membership?.hourlyRate ?? 100 }}
         + {{ Math.round(selectedRoute?.distance_nm || 0) }}nm × 津贴 {{ va.membership?.distanceRate ?? 1 }}<br />
-        公司运输收入 {{ est.revenue.toLocaleString() }} = 客运 {{ est.paxRev.toLocaleString() }}，{{ est.hasPax ? `签派旅客 ${est.pax}` : `无签派，按机型 80% 客座率估 ${est.pax} 客` }} × {{ Math.round(selectedRoute?.distance_nm || 0) }}nm × 0.6<template v-if="est.hasCargo"> + 货运 {{ est.cargoRev.toLocaleString() }}，{{ est.cargo }}kg × 航程 × 0.002</template>
-        · 公司净 {{ est.net.toLocaleString() }}
+        公司运输收入 {{ est.revenue.toLocaleString() }} = 客运 {{ est.paxRev.toLocaleString() }}（{{ est.hasPax ? `签派旅客 ${est.pax}` : `无签派，按机型 80% 客座率估 ${est.pax} 客` }} × {{ Math.round(selectedRoute?.distance_nm || 0) }}nm × 0.6）<template v-if="est.hasCargo"> + 货运 {{ est.cargoRev.toLocaleString() }}（{{ est.cargo }}kg × 航程 × 0.002）</template>
+        · 公司净入 {{ est.net.toLocaleString() }}
       </div>
     </div>
 
@@ -214,11 +214,11 @@ async function submit() {
     <div v-if="va.joined" class="glass card" style="margin-top: 16px">
       <div class="card-title"><Icon name="award" :size="16" /> 结算规则公示</div>
       <div class="list-sub" style="line-height: 1.9">
-        <b>平台 ACARS 核验</b>：报告必须关联已落地的签派单；系统自动核验时长与时间线、航线一致性、起飞时间与提交频率，满分 100——≥80 分自动发薪，60-79 分转 CEO 复核，&lt;60 分自动拒绝。<br />
-        <b>飞行员工资</b> = 航线底薪 + 飞行时长 × 时薪，CEO 在航司设置中调整+ 航程 × 里程津贴<br />
-        <b>公司运输收入</b> = 旅客 × 航程 nm × 0.6，客运 + 货物 kg × 航程 × 0.002，货运<br />
-        <b>公司净入</b> = 运输收入 − 飞行员工资，空载或亏损航段公司照付工资，可能为负<br />
-        CEO 审核通过后工资立即入账；CEO 审本人报告单笔工资封顶 20,000。<br />
+        <b>平台 ACARS 核验</b>：报告必须关联已落地的签派单；系统自动核验时长与时间线、航线一致性、起飞时间与提交频率，满分 100，≥80 分自动发薪，60-79 分转 CEO 复核，&lt;60 分自动拒绝。<br />
+        <b>飞行员工资</b> = 航线底薪 + 飞行时长 × 时薪 + 航程 × 里程津贴（时薪与津贴由 CEO 在航司设置中调整）<br />
+        <b>公司运输收入</b> = 旅客 × 航程 nm × 0.6（客运）+ 货物 kg × 航程 × 0.002（货运）<br />
+        <b>公司净入</b> = 运输收入 − 飞行员工资。空载或亏损的航段公司照付工资，净入可能为负。<br />
+        CEO 审核通过后工资立即入账；CEO 审本人报告时，单笔工资封顶 20,000。<br />
         载客与货载数以签派单为准；无签派时按机型典型客座率 80% 估算客运、不计货运。
       </div>
     </div>

@@ -117,7 +117,7 @@ function sheet(title, lines, opts = {}) {
       await navigator.clipboard.writeText(copyText);
       copyBtn.textContent = '已复制';
     } catch {
-      copyBtn.textContent = '请手动选中';
+      copyBtn.textContent = '请手动复制';
       body.style.userSelect = 'text';
       window.getSelection()?.selectAllChildren(body);
     }
@@ -333,7 +333,7 @@ export function installViewSync(router) {
       `页面仍显示：${actual}`,
       '',
       '正在自动重新加载该地址…',
-    ], { sub: '这属于功能性异常，已自动恢复并记录' });
+    ], { sub: '页面出现异常，已自动恢复并记录' });
     window.setTimeout(() => window.location.assign(expected), 1400);
   }, 3000);
 }

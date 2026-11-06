@@ -61,7 +61,7 @@ const iconSize = computed(() => ({ sm: 11, md: 13, lg: 15 }[props.size] || 13));
   line-height: 1;
   font-weight: 600;
   color: #fff;
-  background: linear-gradient(135deg, #0a84ff, #0071e3);
+  background: var(--blue);
   box-shadow: 0 2px 6px rgba(0, 113, 227, 0.28);
 }
 

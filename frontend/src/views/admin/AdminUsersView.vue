@@ -29,7 +29,7 @@ const roleOptions = [
 const FALLBACK_RATINGS = ['飞行员', 'OBS', 'S1', 'S2', 'S3', 'T2', 'C1', 'C2', 'C3', 'I1', 'I2', 'I3', 'SUP', 'ADM'];
 const FALLBACK_PILOT_RANKS = ['学员', '副驾驶', '机长', '教员'];
 // banned 置顶展示：封禁审议触发器，选中后走双人审批，后端拦截，不改等级字段
-const ratingOptions = computed(() => [{ value: 'banned', label: 'banned，发起封禁审议' }]
+const ratingOptions = computed(() => [{ value: 'banned', label: 'banned（发起封禁审议）' }]
   .concat((ratings.value.length ? ratings.value : FALLBACK_RATINGS)
   .map((r) => ({ value: r, label: r }))));
 const rankOptions = computed(() => (pilotRanks.value.length ? pilotRanks.value : FALLBACK_PILOT_RANKS)
@@ -76,7 +76,7 @@ async function changeRating(u, next) {
   if (next === 'banned') {
     const ok = await confirmModal({
       title: '发起封禁审议', danger: true, confirmText: '发起审议',
-      message: `确认对 ${u.username}，CID ${u.cid}，发起封禁审议？` +
+      message: `确定要对 ${u.username}（CID ${u.cid}）发起封禁审议吗？` +
         '将提交另一位管理员复核，通过后账号才会被封禁。',
     });
     if (!ok) return;
@@ -114,7 +114,7 @@ async function changeRank(u, next) {
 async function resetPassword(u) {
   const ok = await confirmModal({
     title: '重置密码', confirmText: '重置',
-    message: `确认为 ${u.username}，CID ${u.cid}，生成新密码？其所有登录会话将失效。`,
+    message: `确定要为 ${u.username}（CID ${u.cid}）生成新密码吗？其所有登录会话将失效。`,
   });
   if (!ok) return;
   try {
@@ -144,7 +144,7 @@ async function requestApproval(u, type) {
   }
   const reason = await promptModal({
     title: type === 'ban' ? '发起封禁审批' : type === 'delete_account' ? '发起删除账户审批' : '填写申请理由',
-    message: `目标：${u.username}，CID ${u.cid}${role ? ` → ${role.toUpperCase()}` : ''}。请填写理由，必填`,
+    message: `目标：${u.username}，CID ${u.cid}${role ? ` → ${role.toUpperCase()}` : ''}。请填写理由（必填）`,
     placeholder: '申请理由',
     confirmText: '提交审批',
     danger: type !== 'role_change',
@@ -175,7 +175,7 @@ async function requestApproval(u, type) {
 
     <div class="glass card" style="margin-bottom: 16px">
       <div class="input-row" style="max-width: 720px">
-        <input v-model="q" class="input" placeholder="搜索 用户ID / CID / 用户名 / 邮箱" @keyup.enter="load" />
+        <input v-model="q" class="input" placeholder="搜索用户 ID / CID / 用户名 / 邮箱" @keyup.enter="load" />
         <button class="btn btn-primary" @click="load">搜索</button>
       </div>
       <div style="display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap">
@@ -276,7 +276,7 @@ async function requestApproval(u, type) {
             </tr>
           </tbody>
         </table>
-        <div v-if="!users.length" class="empty">无匹配用户</div>
+        <div v-if="!users.length" class="empty">没有匹配的用户，试试调整搜索条件或筛选</div>
       </div>
     </div>
   </div>

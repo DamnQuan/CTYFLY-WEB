@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { inject } from 'vue';
 import { fmtTime } from '../../utils.js';
 import Icon from '../Icon.vue';
@@ -113,7 +113,7 @@ const {
         <div class="card-title" style="margin: 0">运营统计</div>
         <div class="grid grid-3" style="margin-top: 14px">
           <div class="stat"><div class="stat-num">{{ stats.reports }}</div><div class="stat-label">已通过报告</div></div>
-          <div class="stat"><div class="stat-num">{{ stats.totalHours }}</div><div class="stat-label">总飞行时长，小时</div></div>
+          <div class="stat"><div class="stat-num">{{ stats.totalHours }}</div><div class="stat-label">总飞行时长（小时）</div></div>
           <div class="stat"><div class="stat-num">{{ stats.totalPayout }}</div><div class="stat-label">累计发放工资</div></div>
         </div>
         <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border)">
@@ -128,7 +128,7 @@ const {
             <thead><tr><th>成员</th><th>飞行时长</th><th>累计收入</th><th>等级</th></tr></thead>
             <tbody>
               <tr v-for="p in stats.perMember" :key="p.cid">
-                <td>{{ p.username }}，CID {{ p.cid }}</td>
+                <td>{{ p.username }}（CID {{ p.cid }}）</td>
                 <td>{{ p.hours }} h</td>
                 <td>{{ p.earned }}</td>
                 <td><span class="tag tag-blue">{{ rankFor(p.hours) }}</span></td>
@@ -140,7 +140,7 @@ const {
 
       <!-- 加入申请审批，CEO / 部长-->
       <div v-if="canManage" class="glass card" style="margin-bottom: 16px">
-        <div class="card-title">加入申请，{{ data.applications.length }}</div>
+        <div class="card-title">加入申请（{{ data.applications.length }}）</div>
         <div v-for="m in data.applications" :key="m.id" class="list-item">
           <UserAvatar :user="m" :size="36" />
           <div class="list-main">
@@ -160,7 +160,7 @@ const {
 
       <!-- CEO：跳槽，转司审批-->
       <div v-if="isCeo" class="glass card" style="margin-bottom: 16px">
-        <div class="card-title">跳槽申请，{{ pendingTransfers.length }}</div>
+        <div class="card-title">跳槽申请（{{ pendingTransfers.length }}）</div>
         <div class="card-sub">批准后该飞行员将解除与原航司的成员关系，直接加入本航司</div>
         <div v-for="t in pendingTransfers" :key="t.id" class="list-item">
           <UserAvatar :user="t" :size="36" />
@@ -197,7 +197,7 @@ const {
   align-items: center;
   justify-content: center;
   border-radius: 14px;
-  background: linear-gradient(135deg, #0a84ff, #0071e3);
+  background: var(--blue);
   background-size: cover;
   color: #fff;
   font-weight: 700;

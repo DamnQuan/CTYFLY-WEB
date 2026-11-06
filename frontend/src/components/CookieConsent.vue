@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { onMounted, ref } from 'vue';
 import { clearPreferenceStorage, getConsent, setConsent } from '../consent.js';
 import { showToast } from '../utils.js';
@@ -47,14 +47,14 @@ function dismiss() {
 <template>
   <transition name="consent">
     <div v-if="visible && !leaving" class="consent-banner" role="dialog" aria-live="polite">
-      <button class="consent-close" title="暂不决定，本次会话不再提示" @click="dismiss">
+      <button class="consent-close" title="暂不决定（本次会话不再提示）" @click="dismiss">
         <Icon name="x" :size="15" />
       </button>
       <div class="consent-text">
         <strong>存储使用提示</strong>
         <p>
           本站使用必要的本地存储维持登录功能；在你同意后，还会用偏好存储项记住主题与时区设置。
-          我们不使用任何广告或追踪 Cookie。
+          本站不使用广告或追踪 Cookie。
           <router-link to="/cookies">了解 Cookie 政策</router-link>
           <span style="margin: 0 6px; color: var(--gray)">·</span>
           <router-link to="/privacy">隐私政策</router-link>

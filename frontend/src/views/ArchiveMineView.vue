@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 /**
  * 我的收藏：登录用户收藏的飞圈事件。
  */

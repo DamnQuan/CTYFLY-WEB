@@ -37,7 +37,7 @@ async function submit() {
     } else {
       await api.post('/api/applications', { type: 'staff', ...staffForm.value });
     }
-    showToast('申请已提交，请耐心等待审核');
+    showToast('申请已提交，审核结果将在申请记录中更新');
     controllerForm.value = { nickname: '', hours: '', experience: '', motivation: '' };
     staffForm.value = { nickname: '', availableTime: '', motivation: '' };
     load();
@@ -61,7 +61,7 @@ async function submit() {
 
       <template v-if="tab === 'controller'">
         <div class="card-title">管制员申请</div>
-        <div class="card-sub">成为 CTY 管制团队的一员，为连飞活动提供管制服务</div>
+        <div class="card-sub">加入 CTY 管制团队，为连飞活动提供管制服务</div>
         <div class="grid grid-2">
           <div class="field"><label class="label">称呼 <span style="color: var(--red)">*</span></label><input v-model="controllerForm.nickname" class="input" maxlength="20" placeholder="例如呼号或昵称" /></div>
           <div class="field"><label class="label">累计连飞时长 <span style="color: var(--red)">*</span></label><input v-model="controllerForm.hours" class="input" placeholder="如 120 小时" /></div>
@@ -69,7 +69,7 @@ async function submit() {
         </div>
         <div class="field">
           <label class="label">申请动机</label>
-          <textarea v-model="controllerForm.motivation" class="textarea" placeholder="谈谈您为什么想成为管制员…"></textarea>
+          <textarea v-model="controllerForm.motivation" class="textarea" placeholder="如 想为连飞活动提供管制服务、有平台放单经验…"></textarea>
         </div>
       </template>
 
@@ -84,7 +84,7 @@ async function submit() {
         </div>
         <div class="field">
           <label class="label">申请理由 <span style="color: var(--red)">*</span></label>
-          <textarea v-model="staffForm.motivation" class="textarea" placeholder="您的特长、经验与期望负责的方向…"></textarea>
+          <textarea v-model="staffForm.motivation" class="textarea" placeholder="你的特长、经验与期望负责的方向…"></textarea>
         </div>
       </template>
 

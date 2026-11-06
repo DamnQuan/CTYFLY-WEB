@@ -79,7 +79,7 @@ const {
               </div>
             </div>
           </div>
-          <div v-if="!posts.length" class="empty">还没有动态，来发第一条吧</div>
+          <div v-if="!posts.length" class="empty">暂无动态，来发第一条</div>
         </template>
       </div>
 </template>

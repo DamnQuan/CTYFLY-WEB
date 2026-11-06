@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { api } from '../api.js';
@@ -93,7 +93,7 @@ async function submit() {
     <div class="auth-brand">
       <div class="logo-big" style="color: var(--blue)"><Icon name="key" :size="42" /></div>
       <h1>重置密码</h1>
-      <p>通过绑定邮箱验证码找回您的密码</p>
+      <p>通过绑定邮箱的验证码重置密码</p>
     </div>
 
       <div v-if="error" class="alert alert-err">{{ error }}</div>

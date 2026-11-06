@@ -76,8 +76,8 @@ const noSidebar = computed(() => {
   return ['home', 'login', 'register', 'forgot', 'cookies', 'public-airline', 'privacy', 'about', 'terms', 'survey'].includes(route.name);
 });
 const sidebarOpen = ref(false);
-// 移动端抽屉不再随路由变化自动收起，站长 2026-10-06 要求：
-// 点菜单项导航后抽屉保持展开，由用户点遮罩/抽屉内的叉来收起
+// 移动端抽屉不随路由变化自动收起：点菜单项导航后保持展开，
+// 由用户点遮罩或抽屉内的叉来收起
 
 // 视图若未跟随路由更新，数秒内自动恢复，并由诊断面板留下记录
 onMounted(() => installViewSync(router));

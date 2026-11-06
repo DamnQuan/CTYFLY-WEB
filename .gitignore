@@ -35,6 +35,7 @@ backend/navdata-planner/Navdata/*.db3-shm
 # ---------- 编辑器 / 系统 ----------
 .vscode/
 .idea/
+.zcode/
 .DS_Store
 Thumbs.db
 
@@ -49,3 +50,6 @@ backend/data/airport-gis/
 
 # Lighthouse CI 本地报告
 .lighthouseci/
+
+# docs
+docs/

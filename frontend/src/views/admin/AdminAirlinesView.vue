@@ -31,8 +31,8 @@ async function review(a, action) {
   if (action === 'approve') {
     note = await promptModal({
       title: '通过建司申请',
-      message: `确认通过 ${a.owner_name}，CID ${a.owner_cid}创建 ${a.icao} ${a.name} 的申请？该用户将成为 CEO。`,
-      placeholder: '审核备注，可留空',
+      message: `确定要通过 ${a.owner_name}（CID ${a.owner_cid}）创建 ${a.icao} ${a.name} 的申请吗？该用户将成为 CEO。`,
+      placeholder: '审核备注（可留空）',
       confirmText: '通过',
     });
     if (note === null) return;
@@ -40,7 +40,7 @@ async function review(a, action) {
     note = await promptModal({
       title: '驳回建司申请',
       message: `请填写驳回 ${a.icao} ${a.name} 的原因：`,
-      placeholder: '驳回原因，必填',
+      placeholder: '驳回原因（必填）',
       confirmText: '驳回',
       danger: true,
     });
@@ -106,7 +106,7 @@ async function review(a, action) {
   align-items: center;
   justify-content: center;
   border-radius: 12px;
-  background: linear-gradient(135deg, #0a84ff, #0071e3);
+  background: var(--blue);
   color: #fff;
   font-weight: 700;
   font-size: 12px;

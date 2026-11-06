@@ -62,8 +62,8 @@ async function vote(a, vote) {
   if (vote === 'reject') {
     comment = await promptModal({
       title: '驳回申请',
-      message: `确认驳回对 ${a.target_username} 的「${a.type_label}」申请？请填写驳回理由：`,
-      placeholder: '驳回理由，必填',
+      message: `确定要驳回对 ${a.target_username} 的「${a.type_label}」申请吗？请填写驳回理由：`,
+      placeholder: '驳回理由（必填）',
       confirmText: '确认驳回',
       danger: true,
     });

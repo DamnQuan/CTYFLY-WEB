@@ -50,7 +50,7 @@ const {
               <input v-model="pubForm.name" class="input" maxlength="20" />
             </div>
             <div class="field">
-              <label class="label">标语 <span class="optional">选填，显示在名称下方</span></label>
+              <label class="label">标语 <span class="optional">选填（显示在名称下方）</span></label>
               <input v-model="pubForm.slogan" class="input" maxlength="20" placeholder="如 安全第一，准点至上" />
             </div>
           </div>
@@ -60,7 +60,7 @@ const {
                       placeholder="介绍航司定位、主基地与运营风格…"></textarea>
           </div>
           <div class="field">
-            <label class="label">欢迎语 / 公告 <span class="optional">选填，主页上的醒目区块</span></label>
+            <label class="label">欢迎语 / 公告 <span class="optional">选填（主页上的醒目区块）</span></label>
             <textarea v-model="pubForm.welcome" class="textarea" rows="3" maxlength="500"
                       placeholder="如 我们长期招募热爱飞行的伙伴，欢迎加入…"></textarea>
           </div>
@@ -145,7 +145,7 @@ const {
 
           <div v-if="previewFlags.showRoutes || previewFlags.showMembers" class="grid grid-2" style="margin-top: 12px">
             <div v-if="previewFlags.showRoutes" class="pub-preview-card">
-              <div class="card-title">航线网络，{{ data.routes.length }}</div>
+              <div class="card-title">航线网络（{{ data.routes.length }}）</div>
               <div v-for="r in data.routes.slice(0, 6)" :key="r.id" class="list-item">
                 <div class="list-main">
                   <div class="list-title">
@@ -158,7 +158,7 @@ const {
               <div v-if="!data.routes.length" class="empty">暂未公布航线</div>
             </div>
             <div v-if="previewFlags.showMembers" class="pub-preview-card">
-              <div class="card-title">成员名单，{{ data.members.length }}</div>
+              <div class="card-title">成员名单（{{ data.members.length }}）</div>
               <div v-for="m in data.members.slice(0, 6)" :key="m.id" class="list-item">
                 <UserAvatar :user="m" :size="30" />
                 <div class="list-main">

@@ -39,7 +39,7 @@ const {
             <div>
               <div class="card-title" style="margin-bottom: 2px">资金管理</div>
               <div class="card-sub" style="margin-bottom: 0">
-                公司账上余额与账本流水，收入为正、支出为负。发薪只能走报告审核那条带单份/每日上限与余额校验的路，此处不提供任何直接变动资金的入口
+                公司余额与账本流水，收入为正、支出为负。发薪仅通过飞行报告审核结算，此处不提供直接变动资金的入口
               </div>
             </div>
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap">
@@ -58,7 +58,7 @@ const {
             <div class="grid grid-3" style="margin-top: 14px">
               <div class="stat"><div class="stat-num">{{ money(ledger.balance) }}</div><div class="stat-label">公司余额</div></div>
               <div class="stat"><div class="stat-num">{{ money(ledger.income) }}</div><div class="stat-label">累计收入</div></div>
-              <div class="stat"><div class="stat-num">{{ money(ledger.expense) }}</div><div class="stat-label">累计支出，负号</div></div>
+              <div class="stat"><div class="stat-num">{{ money(ledger.expense) }}</div><div class="stat-label">累计支出（负数）</div></div>
             </div>
             <div class="card-sub" style="margin-top: 10px">
               账本净额 {{ money(ledger.net) }} · 近 30 天收入 {{ money(ledger.recent30.income) }} / 支出 {{ money(ledger.recent30.expense) }}
@@ -72,7 +72,7 @@ const {
 
             <!-- 经济参数：直接决定全公司工资支出，仅 CEO 可改，后端同步收窄为 _require_ceo-->
             <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border)">
-              <div class="label" style="margin-bottom: 8px">经济参数，决定全公司工资支出</div>
+              <div class="label" style="margin-bottom: 8px">经济参数（决定全公司工资支出）</div>
               <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
                 <label class="label" style="margin: 0">时薪</label>
                 <input
@@ -98,7 +98,7 @@ const {
                 <button v-if="isCeo" class="btn btn-ghost btn-sm" :disabled="savingRate" @click="saveRate">保存</button>
               </div>
               <div class="hourly-hint" style="margin-top: 8px">
-                官方建议时薪：支线 80–95 · 窄体 100–125 · 宽体 150–200 · 旗舰 200+，游戏币/h，按机型
+                官方建议时薪（游戏币/h，按机型）：支线 80–95 · 窄体 100–125 · 宽体 150–200 · 旗舰 200+
                 <template v-if="!isCeo"> · 经济参数仅 CEO 可修改</template>
               </div>
             </div>
@@ -106,7 +106,7 @@ const {
             <!-- 账本流水：分页 + 类型筛选 -->
             <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border)">
               <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px">
-                <div class="label" style="margin: 0">账本流水，{{ ledger.total }} 条</div>
+                <div class="label" style="margin: 0">账本流水（{{ ledger.total }} 条）</div>
                 <SegmentedTabs
                   :options="[{ value: '', label: '全部' }, { value: 'revenue', label: '收入' }, { value: 'expense', label: '支出' }]"
                   :model-value="ledgerType"
@@ -133,7 +133,7 @@ const {
                 class="btn btn-ghost btn-sm" style="margin-top: 10px"
                 :disabled="ledgerLoadingMore" @click="loadLedger(true)"
               >
-                {{ ledgerLoadingMore ? '加载中…' : `加载更多，还有 ${ledger.total - ledger.records.length} 条` }}
+                {{ ledgerLoadingMore ? '加载中…' : `加载更多（还有 ${ledger.total - ledger.records.length} 条）` }}
               </button>
             </div>
           </template>
@@ -145,7 +145,7 @@ const {
           <div class="card-title">成员管理</div>
           <div class="card-sub">职位按现实飞行部门阶梯设置：飞行教员 / 机长 / 副驾驶 / 二副 / 见习学员，留空即普通飞行员；移除成员与部长任命仅 CEO 可操作</div>
 
-          <div v-if="data.applications.length" class="label" style="margin: 12px 0 4px">待审批加入申请，{{ data.applications.length }}</div>
+          <div v-if="data.applications.length" class="label" style="margin: 12px 0 4px">待审批加入申请（{{ data.applications.length }}）</div>
           <div v-for="m in data.applications" :key="m.id" class="list-item">
             <UserAvatar :user="m" :size="36" />
             <div class="list-main">
@@ -162,7 +162,7 @@ const {
           </div>
           <div v-if="!data.applications.length" class="empty">暂无待审批的加入申请</div>
 
-          <div class="label" style="margin: 14px 0 4px">正式成员，{{ data.members.length }}</div>
+          <div class="label" style="margin: 14px 0 4px">正式成员（{{ data.members.length }}）</div>
           <div v-for="m in data.members" :key="m.id" class="list-item">
             <UserAvatar :user="m" :size="34" />
             <div class="list-main">
@@ -195,7 +195,7 @@ const {
 
         <!-- 航线管理：添加 / 删除航线 -->
         <div class="glass card" style="margin-bottom: 16px">
-          <div class="card-title">航线管理，{{ data.routes.length }}</div>
+          <div class="card-title">航线管理（{{ data.routes.length }}）</div>
           <div v-for="r in data.routes" :key="r.id" class="list-item">
             <div class="list-main">
               <div class="list-title">
@@ -217,16 +217,16 @@ const {
             <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border)">
               <div class="label" style="margin-bottom: 8px">新增航线</div>
               <div class="grid grid-2" style="gap: 10px">
-                <div class="field" style="margin-bottom: 10px"><AirportInput v-model="routeForm.dep" placeholder="起飞 ICAO，如 ZBAA" /></div>
-                <div class="field" style="margin-bottom: 10px"><AirportInput v-model="routeForm.arr" placeholder="落地 ICAO，如 ZSPD" /></div>
+                <div class="field" style="margin-bottom: 10px"><AirportInput v-model="routeForm.dep" placeholder="起飞 ICAO（如 ZBAA）" /></div>
+                <div class="field" style="margin-bottom: 10px"><AirportInput v-model="routeForm.arr" placeholder="落地 ICAO（如 ZSPD）" /></div>
                 <div class="field" style="margin-bottom: 10px">
                   <CheckBox v-model="routeForm.intl" label="国际航线（国际备用油规章）" />
                 </div>
-                <div class="field" style="margin-bottom: 10px"><input v-model="routeForm.flightNo" class="input input-icao" maxlength="8" placeholder="航班号，选填" /></div>
-                <div class="field" style="margin-bottom: 10px"><input v-model="routeForm.aircraft" class="input input-icao" maxlength="16" placeholder="机型，选填 A320" /></div>
-                <div class="field" style="margin-bottom: 10px"><input v-model.number="routeForm.baseSalary" class="input" type="number" min="0" placeholder="基础工资，默认 200" /></div>
+                <div class="field" style="margin-bottom: 10px"><input v-model="routeForm.flightNo" class="input input-icao" maxlength="8" placeholder="航班号（选填）" /></div>
+                <div class="field" style="margin-bottom: 10px"><input v-model="routeForm.aircraft" class="input input-icao" maxlength="16" placeholder="机型（选填，如 A320）" /></div>
+                <div class="field" style="margin-bottom: 10px"><input v-model.number="routeForm.baseSalary" class="input" type="number" min="0" placeholder="基础工资（默认 200）" /></div>
               </div>
-              <input v-model="routeForm.notes" class="input" style="margin-bottom: 10px" placeholder="备注，选填" />
+              <input v-model="routeForm.notes" class="input" style="margin-bottom: 10px" placeholder="备注（选填）" />
                             <button class="btn btn-primary btn-sm" @click="addRoute">添加航线</button>
               <button class="btn btn-ghost btn-sm" :disabled="importingCsv" @click="pickCsv">导入 CSV</button>
               <input ref="csvInput" type="file" accept=".csv" style="display: none" @change="importRoutesCsv" />
@@ -236,7 +236,7 @@ const {
 
         <!-- 飞行报告审核：待审核列表 + 通过 / 驳回，提交表单不在此处-->
         <div class="glass card" style="margin-bottom: 16px">
-          <div class="card-title">飞行报告审核，{{ pendingReports.length }}</div>
+          <div class="card-title">飞行报告审核（{{ pendingReports.length }}）</div>
           <template v-if="pendingReports.length">
             <div v-for="r in pendingReports" :key="r.id" class="list-item">
               <UserAvatar :user="r" :size="34" />
@@ -261,14 +261,14 @@ const {
 
         <!-- 考核审核：待审核列表 + 通过 / 驳回 -->
         <div class="glass card" style="margin-bottom: 16px">
-          <div class="card-title">考核审核，{{ pendingExams.length }}</div>
+          <div class="card-title">考核审核（{{ pendingExams.length }}）</div>
           <template v-if="pendingExams.length">
             <div v-for="e in pendingExams" :key="e.id" class="list-item">
               <UserAvatar :user="e" :size="34" />
               <div class="list-main">
                 <div class="list-title">
                   <span class="tag tag-orange" style="margin-right: 8px">{{ e.target_rank }}考核</span>
-                  {{ e.username }}，CID {{ e.cid }}
+                  {{ e.username }}（CID {{ e.cid }}）
                 </div>
                 <div class="list-sub">
                   {{ e.route_flown || '—' }} · {{ e.aircraft || '机型未填' }} · {{ e.flight_date || '-' }}
@@ -307,7 +307,7 @@ const {
               <input v-model="pubForm.name" class="input" maxlength="20" />
             </div>
             <div class="field">
-              <label class="label">标语 <span class="optional">选填，显示在名称下方</span></label>
+              <label class="label">标语 <span class="optional">选填（显示在名称下方）</span></label>
               <input v-model="pubForm.slogan" class="input" maxlength="20" placeholder="如 安全第一，准点至上" />
             </div>
           </div>
@@ -317,7 +317,7 @@ const {
                       placeholder="介绍航司定位、主基地与运营风格…"></textarea>
           </div>
           <div class="field">
-            <label class="label">欢迎语 / 公告 <span class="optional">选填，主页上的醒目区块</span></label>
+            <label class="label">欢迎语 / 公告 <span class="optional">选填（主页上的醒目区块）</span></label>
             <textarea v-model="pubForm.welcome" class="textarea" rows="3" maxlength="500"
                       placeholder="如 我们长期招募热爱飞行的伙伴，欢迎加入…"></textarea>
           </div>
@@ -385,7 +385,7 @@ const {
 
             <div v-if="previewFlags.showRoutes || previewFlags.showMembers" class="grid grid-2" style="margin-top: 12px">
               <div v-if="previewFlags.showRoutes" class="pub-preview-card">
-                <div class="card-title">航线网络，{{ data.routes.length }}</div>
+                <div class="card-title">航线网络（{{ data.routes.length }}）</div>
                 <div v-for="r in data.routes.slice(0, 6)" :key="r.id" class="list-item">
                   <div class="list-main">
                     <div class="list-title">
@@ -398,7 +398,7 @@ const {
                 <div v-if="!data.routes.length" class="empty">暂未公布航线</div>
               </div>
               <div v-if="previewFlags.showMembers" class="pub-preview-card">
-                <div class="card-title">成员名单，{{ data.members.length }}</div>
+                <div class="card-title">成员名单（{{ data.members.length }}）</div>
                 <div v-for="m in data.members.slice(0, 6)" :key="m.id" class="list-item">
                   <UserAvatar :user="m" :size="30" />
                   <div class="list-main">

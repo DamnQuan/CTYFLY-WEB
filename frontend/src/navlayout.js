@@ -59,7 +59,7 @@ export function installNavLayoutWatcher() {
 /** 真正生效的布局：顶部偏好 + 窄屏 → 回退侧边栏 */
 export const isTopLayout = computed(() => navLayout.value === 'top' && !narrow.value);
 
-/* ---------- 侧边栏收拢，图标栏模式，2026-10-16 站长要求 ----------
+/* ---------- 侧边栏收拢，图标栏模式 ----------
  * 桌面端把侧边栏从 240px 收成 68px 的图标栏，内容区跟着回流；状态持久化，
  * 与布局偏好同款做法，仅必需同意时不落盘。窄屏是抽屉形态，不存在「收拢」，
  * 所以 isCollapsed 把 narrow 一并算进去 —— 组件直接用它即可。

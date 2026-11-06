@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 /**
  * 事故记录：上报 + 我的记录 + 调查时间线
  *
@@ -85,7 +85,7 @@ async function submit() {
   const label = meta.value.severities[form.severity] || form.severity;
   const ok = await confirmModal({
     title: '提交事故报告',
-    message: `将按「${label}」上报。上报会记录提交时的 IP 与浏览器信息用于事后溯源，提交后不可删除。`,
+    message: `确定要按「${label}」上报吗？将记录提交时的 IP 与浏览器信息用于事后溯源，提交后不可删除。`,
     confirmText: '确认提交',
   });
   if (!ok) return;
@@ -135,14 +135,14 @@ async function changePage(delta) {
     <div class="page-header">
       <div class="page-title">事故记录</div>
       <div class="page-desc">
-        飞行事故/事件上报与调查跟踪 · 上报时服务端自动记录 IP 与 UA，requestinfo 溯源，证据链长期留存
+        飞行事故/事件上报与调查跟踪 · 上报时服务端自动记录 IP 与 UA 用于溯源，证据链长期留存
       </div>
     </div>
 
     <div class="glass card">
       <div class="inc-toolbar">
         <div class="card-sub" style="margin: 0">
-          我的记录 {{ total }} 条<template v-if="meta.isStaff">含全部用户，可查看溯源字段</template>
+          我的记录 {{ total }} 条<template v-if="meta.isStaff"> · 含全部用户，可查看溯源字段</template>
         </div>
         <div style="display: flex; gap: 8px">
           <button class="btn btn-ghost btn-sm" @click="load">刷新</button>
@@ -181,7 +181,7 @@ async function changePage(delta) {
           <input v-model="form.arr" class="input" maxlength="4" placeholder="ICAO" />
         </div>
         <div class="field">
-          <div class="label">事发地点，可选</div>
+          <div class="label">事发地点（可选）</div>
           <input v-model="form.location" class="input" maxlength="64" placeholder="如 ZSPD 16R 跑道" />
         </div>
       </div>
@@ -190,7 +190,7 @@ async function changePage(delta) {
         <input v-model="form.summary" class="input" maxlength="200" placeholder="一句话说明发生了什么，至少 5 字" />
       </div>
       <div class="field">
-        <div class="label">详细经过，可选</div>
+        <div class="label">详细经过（可选）</div>
         <textarea v-model="form.detail" class="input" rows="4" maxlength="2000" placeholder="时间线、动作、人员与飞机状况"></textarea>
       </div>
       <div class="modal-actions">

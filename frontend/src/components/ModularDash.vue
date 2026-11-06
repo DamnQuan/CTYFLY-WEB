@@ -1,10 +1,9 @@
-<script setup>
+﻿<script setup>
 /**
- * 可复用的「主次可切换」模块化仪表盘，管理后台 · 数据概览专用，见交接文档 §22/§24/§24.7。
+ * 可复用的「主次可切换」模块化仪表盘，管理后台 · 数据概览专用。
  *
- * 模块集，2026-10-10 站长定稿：后台指标，默认主模块，原数据概览内容、
- * 站内活跃趋势，底部通栏、最近飞行、飞行时长排行、社区公告 —— 共 5 个。
- * 活动月历 / 我的飞行数据 / 快捷入口 已按要求移除。
+ * 模块集：后台指标（默认主模块）、站内活跃趋势（底部通栏）、最近飞行、
+ * 飞行时长排行、社区公告，共 5 个。
  *
  * 槽位固定、模块流动：main 槽位，内容区 3/4 宽、约 60vh 高里的模块就是主模块，
  * 拖拽交换后主次层级随槽位切换；布局存 localStorage 并做完整性校验，
@@ -164,9 +163,7 @@ onBeforeUnmount(cleanupDrag);
 </script>
 
 <template>
-  <!-- 工具栏：resetLayout 此前是无调用点的死代码，ESLint no-unused-vars 抓出，
-       说明「恢复默认布局」的入口一直没接上 —— 用户拖乱之后只能清 localStorage 才能复原。
-       2026-10-11 补上按钮；resetLayout 本身已经会 saveLayout 持久化，行为正确。-->
+  <!-- 工具栏：resetLayout 已会 saveLayout 持久化，按钮供拖乱布局后一键复原 -->
   <div class="dash-toolbar">
     <span class="dash-hint">拖动模块标题栏右侧的把手可换位，按 Esc 取消本次拖动</span>
     <button class="btn btn-ghost btn-sm" type="button" @click="resetLayout">
@@ -211,7 +208,7 @@ onBeforeUnmount(cleanupDrag);
                 <div class="stat"><div class="stat-num">{{ adminStats.today }}</div><div class="stat-label">今日新增</div></div>
                 <div class="stat"><div class="stat-num">{{ adminStats.controllers }}</div><div class="stat-label">在职管制员</div></div>
                 <div class="stat"><div class="stat-num">{{ adminStats.pendingApps }}</div><div class="stat-label">待审申请</div></div>
-                <div class="stat"><div class="stat-num">{{ adminStats.pendingApprovals }}</div><div class="stat-label">待审批，双人复核</div></div>
+                <div class="stat"><div class="stat-num">{{ adminStats.pendingApprovals }}</div><div class="stat-label">待审批（双人复核）</div></div>
                 <div class="stat"><div class="stat-num">{{ adminStats.openTickets }}</div><div class="stat-label">未关工单</div></div>
                 <div class="stat"><div class="stat-num">{{ adminStats.events }}</div><div class="stat-label">进行中活动</div></div>
                 <div class="stat"><div class="stat-num">{{ adminStats.airlines }}</div><div class="stat-label">在营虚拟航司</div></div>
@@ -257,7 +254,7 @@ onBeforeUnmount(cleanupDrag);
                 <span class="rank-hours">{{ f.hours }} h</span>
               </div>
             </template>
-            <div v-else class="empty">还没有飞行记录</div>
+            <div v-else class="empty">暂无飞行记录</div>
           </template>
 
           <!-- ④ 飞行时长排行 -->
@@ -273,7 +270,7 @@ onBeforeUnmount(cleanupDrag);
                 <span class="rank-hours">{{ p.total_hours?.toFixed(1) }} h</span>
               </div>
             </template>
-            <div v-else class="empty">还没有飞行记录</div>
+            <div v-else class="empty">暂无飞行记录</div>
           </template>
 
           <!-- ⑤ 社区公告 -->

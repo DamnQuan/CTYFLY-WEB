@@ -72,7 +72,7 @@ async function close(t, status) {
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px">
         <div>
           <div class="card-title" style="margin-bottom: 2px">{{ viewing.title }}</div>
-          <div class="card-sub">{{ viewing.category }} · 由 {{ viewing.username }}，CID {{ viewing.cid }}提交</div>
+          <div class="card-sub">{{ viewing.category }} · 由 {{ viewing.username }}（CID {{ viewing.cid }}）提交</div>
         </div>
         <div style="display: flex; gap: 8px; align-items: center">
           <span class="tag" :class="TICKET_STATUS[viewing.status]?.cls">{{ TICKET_STATUS[viewing.status]?.text }}</span>
@@ -108,7 +108,7 @@ async function close(t, status) {
         <div v-for="t in tickets" :key="t.id" class="list-item" style="cursor: pointer" @click="open(t)">
           <div class="list-main">
             <div class="list-title"><span class="tag" style="margin-right: 8px">{{ t.category }}</span>{{ t.title }}</div>
-            <div class="list-sub">#{{ t.id }} · {{ t.username }}，CID {{ t.cid }}· 更新于 {{ fmtTime(t.updated_at) }}</div>
+            <div class="list-sub">#{{ t.id }} · {{ t.username }}，CID {{ t.cid }} · 更新于 {{ fmtTime(t.updated_at) }}</div>
           </div>
           <span class="tag" :class="TICKET_STATUS[t.status]?.cls">{{ TICKET_STATUS[t.status]?.text }}</span>
         </div>

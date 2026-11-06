@@ -1,5 +1,7 @@
 /* ============================================================
-   深色模式，data-theme: auto 跟随系统 / light / dark
+   深色模式 token 与深色专属微调
+   data-theme 由 theme.js 解析后只写 light/dark，
+   AUTO 判断集中在 JS，这里不再有媒体查询分支。
    ============================================================*/
 [data-theme="dark"] {
   --blue: #0a84ff;
@@ -7,52 +9,40 @@
   --text: #f5f5f7;
   --text-2: #a1a1a6;
   --gray: #6e6e73;
-  --bg: #0b1120;
-  --glass: rgba(30, 41, 59, 0.45);
-  --glass-strong: rgba(30, 41, 59, 0.6);
-  --glass-border: rgba(148, 163, 184, 0.16);
-  --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
-  --topbar-bg: rgba(11, 17, 32, 0.5);
-  --topbar-bg-strong: rgba(30, 41, 59, 0.72);
-  --topbar-pill-bg: rgba(17, 24, 39, 0.9);
-  --nav-panel-bg: #111827;
-  --surface: rgba(148, 163, 184, 0.08);
-  --surface-strong: rgba(148, 163, 184, 0.14);
-  --border: rgba(148, 163, 184, 0.12);
-  --input-border: rgba(148, 163, 184, 0.16);
-  --tab-active-bg: rgba(51, 65, 85, 0.95);
-  --modal-bg: rgba(30, 41, 59, 0.62);
+  /* 纯黑底 + #1c1c1e 卡片：中性灰阶，不带蓝调*/
+  --bg: #000000;
+  --glass: rgba(28, 28, 30, 0.55);
+  --glass-strong: rgba(28, 28, 30, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.5);
+  --shadow-lg-hover: 0 24px 58px rgba(0, 0, 0, 0.6);
+  --topbar-bg: rgba(10, 10, 12, 0.6);
+  --topbar-bg-strong: rgba(28, 28, 30, 0.75);
+  --topbar-pill-bg: rgba(20, 20, 22, 0.9);
+  --nav-panel-bg: #131315;
+  --surface: rgba(255, 255, 255, 0.07);
+  --surface-strong: rgba(255, 255, 255, 0.12);
+  --border: rgba(255, 255, 255, 0.1);
+  --input-border: rgba(255, 255, 255, 0.14);
+  --tab-active-bg: rgba(60, 60, 64, 0.95);
+  --modal-bg: rgba(28, 28, 30, 0.7);
   --btn-dark-bg: #f5f5f7;
   --btn-dark-fg: #1d1d1f;
-  /* 午夜藏青：拉开层次的面板底色 + 微弱蓝色辉光，DeepSeek 改造方案第 1/5 点*/
-  --glass: rgba(30, 41, 59, 0.45);
-  --glass-strong: rgba(30, 41, 59, 0.60);
-  --aurora-bg: linear-gradient(180deg, #0b1120 0%, #0f1a30 52%, #16233f 100%);
   --lg-rim: rgba(255, 255, 255, 0.30);
   --lg-rim-2: rgba(255, 255, 255, 0.10);
-  --lg-seam: rgba(0, 0, 0, 0.48);
+  --lg-seam: rgba(0, 0, 0, 0.5);
   --lg-spec: rgba(255, 255, 255, 0.10);
   --lg-card-edge: linear-gradient(160deg,
     rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06) 38%,
     rgba(255, 255, 255, 0.07) 62%, rgba(255, 255, 255, 0.16));
   --surface-solid: #1c1c1e;
-  --auth-block: #0b1120;
-  --auth-card-bg: #1e293b;
+  --auth-block: #000000;
+  --auth-card-bg: #1c1c1e;
   --auth-card-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
 }
-[data-theme="dark"] .aurora::before,
-[data-theme="dark"] .aurora::after { opacity: 0.3; }
 
-
-/* 卡片悬浮微动效：边框亮起 + 上浮 2px，第 6 点微动效*/
-[data-theme="dark"] .glass.card,
-[data-theme="auto"] .glass.card { transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease; }
-[data-theme="dark"] .glass.card:hover,
-[data-theme="auto"] .glass.card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(148, 163, 184, 0.35);
-  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.55);
-}
+/* 深色专属微调：个别组件在深色下换语义色*/
 [data-theme="dark"] .tag-green { color: var(--green); }
 [data-theme="dark"] .tag-orange { color: var(--orange); }
 [data-theme="dark"] .tag-purple { color: #bf5af2; }
@@ -62,188 +52,12 @@
 [data-theme="dark"] .side-avatar { background: #2c2c2e; }
 [data-theme="dark"] .btn-danger { background: rgba(255, 69, 58, 0.18); }
 
-@media (prefers-color-scheme: dark) {
-  [data-theme="auto"] {
-    --blue: #0a84ff;
-    --blue-hover: #3395ff;
-    --text: #f5f5f7;
-    --text-2: #a1a1a6;
-    --gray: #6e6e73;
-    --bg: #0b1120;
-    --glass: rgba(30, 41, 59, 0.45);
-    --glass-strong: rgba(30, 41, 59, 0.6);
-    --glass-border: rgba(148, 163, 184, 0.16);
-    --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
-    --topbar-bg: rgba(11, 17, 32, 0.5);
-    --topbar-bg-strong: rgba(30, 41, 59, 0.72);
-    --topbar-pill-bg: rgba(17, 24, 39, 0.9);
-    --nav-panel-bg: #111827;
-    --surface: rgba(148, 163, 184, 0.08);
-    --surface-strong: rgba(148, 163, 184, 0.14);
-    --border: rgba(148, 163, 184, 0.12);
-    --input-border: rgba(148, 163, 184, 0.16);
-    --tab-active-bg: rgba(51, 65, 85, 0.95);
-    --modal-bg: rgba(30, 41, 59, 0.62);
-    --btn-dark-bg: #f5f5f7;
-    --btn-dark-fg: #1d1d1f;
-      --glass: rgba(30, 41, 59, 0.45);
-    --glass-strong: rgba(30, 41, 59, 0.60);
-
-    --lg-rim: rgba(255, 255, 255, 0.30);
-    --lg-rim-2: rgba(255, 255, 255, 0.10);
-    --lg-seam: rgba(0, 0, 0, 0.48);
-    --lg-spec: rgba(255, 255, 255, 0.10);
-    --lg-card-edge: linear-gradient(160deg,
-      rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06) 38%,
-      rgba(255, 255, 255, 0.07) 62%, rgba(255, 255, 255, 0.16));
-    --surface-solid: #1c1c1e;
-    --auth-block: #0b1120;
-    --auth-card-bg: #1e293b;
-    --auth-card-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
-  }
-    [data-theme="auto"] .aurora::before,
-  [data-theme="auto"] .aurora::after { opacity: 0.3; }
-  [data-theme="auto"] .tag-green { color: var(--green); }
-  [data-theme="auto"] .tag-orange { color: var(--orange); }
-  [data-theme="auto"] .tag-purple { color: #bf5af2; }
-  [data-theme="auto"] .alert-err { color: #ff6961; }
-  [data-theme="auto"] .alert-ok { color: var(--green); }
-  [data-theme="auto"] .hint.ok { color: var(--green); }
-  [data-theme="auto"] .side-avatar { background: #2c2c2e; }
-  [data-theme="auto"] .btn-danger { background: rgba(255, 69, 58, 0.18); }
+/* 卡片悬浮微动效：边框亮起 + 上浮 2px*/
+[data-theme="dark"] .glass.card {
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
-
-/* ---------- 仪表盘顶部导航栏 ----------
-   滚动收拢，两态：
-   状态一，页面在顶部：外层全宽 sticky、无背景，与页面融合；
-   状态二，scrollY > 50px：内层胶囊收窄居中，白底 + 圆角 + 轻阴影，呈悬浮感。
-   高度与内部布局/间距两态完全一致；过渡 250ms ease-in-out，见 .topbar-shell。*/
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 90;
+[data-theme="dark"] .glass.card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(148, 163, 184, 0.35);
+  box-shadow: 0 14px 44px rgba(0, 0, 0, 0.55);
 }
-/* 胶囊本体：收拢只改这一层。max-width 两个状态都给显式值，100% → 收窄值，
-   这样 width/margin 的过渡是连续的；圆角 0 → 999px，胶囊。*/
-.topbar-shell {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-  min-height: var(--topbar-h);
-  padding: 8px 20px;
-  max-width: 100%;
-  margin-inline: auto;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  transition:
-    max-width 0.25s ease-in-out,
-    margin 0.25s ease-in-out,
-    border-radius 0.25s ease-in-out,
-    box-shadow 0.25s ease-in-out,
-    background 0.25s ease-in-out;
-}
-.topbar-shell.compact {
-  max-width: min(1040px, calc(100% - 40px));
-  border-radius: 999px;
-  background: var(--topbar-pill-bg);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.14);
-  backdrop-filter: blur(18px) saturate(170%);
-  -webkit-backdrop-filter: blur(18px) saturate(170%);
-}
-/* 顶部栏导航模式下内联复用：壳层不参与布局，结构原样交给 .topbar-inline */
-.topbar-inline .topbar-shell { display: contents; }
-.topbar-logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-right: 10px;
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: -0.3px;
-  color: var(--text);
-  text-decoration: none;
-}
-/* 站点标志，顶栏 / 侧边栏通用。flex:none 防止窄屏被压缩变形；
-   width/height 属性已在标签上声明，图片未加载时也不会引起布局跳动。*/
-.brand-mark {
-  flex: none;
-  display: block;
-  object-fit: contain;
-}
-.plain-shell { min-height: 100vh; display: flex; flex-direction: column; }
-.plain-shell .topbar { flex-shrink: 0; }
-.plain-shell > .route-content, .plain-shell > *:not(.topbar) { flex: 1; }
-.topbar-clock { display: flex; align-items: baseline; gap: 10px; }
-.topbar-label { font-size: 12.5px; color: var(--text-2); font-weight: 500; }
-.topbar-time {
-  font-family: 'SF Mono', 'JetBrains Mono', Consolas, monospace;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  font-variant-numeric: tabular-nums;
-}
-.topbar-tz { font-size: 11px; color: var(--gray); }
-.topbar-controls { display: flex; gap: 10px; flex-wrap: wrap; }
-/* GitHub 开源入口：与分段控件同高的圆形按钮，悬停微抬，避免抢时钟的视觉重心 */
-.topbar-github {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  color: var(--text-2);
-  text-decoration: none;
-  transition: color 0.18s ease, background 0.18s ease, transform 0.18s ease;
-}
-.topbar-github:hover {
-  color: var(--text);
-  background: var(--surface-strong);
-  transform: translateY(-1px);
-}
-.topbar-github:active { transform: scale(0.94); }
-.topbar-github:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
-
-/* ---------- 滑动分段控件，iOS 风格 ----------*/
-.seg {
-  position: relative;
-  display: inline-flex;
-  gap: 2px;
-  padding: 3px;
-  background: var(--surface);
-  border-radius: 980px;
-}
-.seg-thumb {
-  position: absolute;
-  top: 3px;
-  bottom: 3px;
-  left: 0;
-  border-radius: 980px;
-  background: var(--tab-active-bg);
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.14);
-  transition:
-    transform 0.34s cubic-bezier(0.3, 1.1, 0.35, 1),
-    width 0.34s cubic-bezier(0.3, 1.1, 0.35, 1);
-  will-change: transform, width;
-}
-.seg-btn {
-  position: relative;
-  z-index: 1;
-  padding: 4px 12px;
-  border: none;
-  border-radius: 980px;
-  background: transparent;
-  font-family: inherit;
-  font-size: 12.5px;
-  color: var(--text-2);
-  cursor: pointer;
-  transition: color 0.2s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  white-space: nowrap;
-}
-.seg-btn:active { transform: scale(0.94); transition-duration: 0.08s; }
-.seg-btn.on { color: var(--text); font-weight: 500; }

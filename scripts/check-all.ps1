@@ -20,7 +20,8 @@ param(
 $ErrorActionPreference = 'Continue'
 if (-not $Backend -and -not $Frontend) { $Backend = $true; $Frontend = $true }
 
-$root = $PSScriptRoot
+# 脚本在 scripts/ 下，仓库根是上一级
+$root = Split-Path -Parent $PSScriptRoot
 $results = [System.Collections.Generic.List[object]]::new()
 
 function Run-Gate {

@@ -22,7 +22,7 @@ onMounted(async () => {
   <div class="page">
     <div class="page-header">
       <div class="page-title">历史报名</div>
-      <div class="page-desc">您报名过的全部活动记录，含已结束与已取消的活动</div>
+      <div class="page-desc">你报名过的全部活动记录，含已结束与已取消的活动</div>
     </div>
 
     <div v-if="loading" class="loading">加载中…</div>

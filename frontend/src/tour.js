@@ -62,13 +62,13 @@ export function buildSteps(ctx = {}) {
     },
     {
       title: '现在点进「METAR 报文查询」',
-      body: '点它会进入航情查询页面 —— 这是查机场实时天气最快的地方。',
+      body: '点它会进入航情查询页，在这里查看机场实时天气。',
       target: { text: 'METAR 报文查询', ...SUB },
       action: 'click',
     },
     {
-      title: '航情查询一共三页',
-      body: 'METAR 报文查询，实时天气、TAF 报文查询，未来预报、航路查询，自动规划航路，基于 AIRAC 导航数据，不用手抄。',
+      title: '航情查询的主要页面',
+      body: 'METAR 报文查询（机场实时天气）、TAF 报文查询（机场天气预报）、航路查询（按 AIRAC 数据自动规划航路）。',
       target: { text: '航情查询', ...GROUP },
     },
     {
@@ -85,7 +85,7 @@ export function buildSteps(ctx = {}) {
     },
     {
       title: '申请中心',
-      body: '想当管制员或加入运营团队，在这里提交申请；提交后本页能看到审核进度和审核意见。点一下展开看看。',
+      body: '想当管制员或加入运营团队，在这里提交申请；提交后本页能看到审核进度和审核意见。点一下展开。',
       target: { text: '申请中心', ...GROUP },
       action: 'click',
     },
@@ -95,24 +95,24 @@ export function buildSteps(ctx = {}) {
       target: { text: '虚拟航司', ...GROUP },
     },
     {
-      title: '钱包与虚拟商城',
-      body: '飞行工资会进「我的钱包」，拿去「虚拟商城」换称号和徽章，会显示在你的用户名旁边。',
+      title: '钱包与商城',
+      body: '飞行工资会进「我的钱包」，到「公共商城」兑换称号和徽章，会显示在你的用户名旁边。',
       target: { text: '虚拟商城', ...LINK },
     },
     {
       title: '工单中心',
-      body: '遇到任何问题——账号、权限、报错——都在这里提工单。点一下展开。',
+      body: '账号、权限、报错等各类问题，都在这里提工单。点一下展开。',
       target: { text: '工单中心', ...GROUP },
       action: 'click',
     },
     {
       title: '顶栏：时区与主题',
-      body: '右上角切换时钟时区，UTC / 北京时间和页面主题，AUTO 跟随系统 / 浅色 / 深色。',
+      body: '右上角可切换时钟时区（UTC / 北京时间）和页面主题（AUTO 跟随系统 / 浅色 / 深色）。',
       target: { selector: '.topbar' },
     },
     {
       title: '动手试试：戳一下鲸宝',
-      body: '右下角这只鲸宝会跟着你的鼠标看、能拖着玩、闲着会打瞌睡。点它一下试试，气泡里还能打字跟它聊天。不想要就在个人中心收起。',
+      body: '右下角的鲸宝会看向你的鼠标，可以拖着玩，闲置时会打瞌睡。点它一下，在气泡里还能打字聊天。不需要时可在个人中心收起。',
       target: { selector: '.deskpet' },
       action: 'click',
     },
@@ -124,7 +124,7 @@ export function buildSteps(ctx = {}) {
     },
     {
       title: '准备好了',
-      body: '就这些。祝飞行愉快 —— 之后有不懂的，随时点右下角的鲸宝问它。',
+      body: '就这些。之后有不懂的，随时点右下角的鲸宝问它。祝飞行愉快。',
       target: null,
     },
   ];

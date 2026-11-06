@@ -40,11 +40,11 @@ const MAP_CAP_PX = 1.2e6;  /* 单张贴图光栅像素上限，超出自动降�
    wideMedia: 宽屏下跳过，桌面布局侧栏不与内容重叠，位移不可见还白烧帧
    minSize: 按目标覆盖全局最小尺寸，Toast 胶囊很矮也要参与*/
 const CHROME = [
-  /* 滚动收拢改造，2026-10-10：玻璃材质从 .topbar 外层移到内层胶囊 .topbar-shell——
+  /* 玻璃材质属于收拢后的内层胶囊 .topbar-shell——
      外层在页面顶部必须完全透明，与页面融合，折射/磨砂只属于收拢后的胶囊。
      顶栏滚动到 50px 阈值前壳层是透明的，此时引擎注入的 backdrop-filter 背后没有内容，观感不变。*/
   { sel: '.topbar-shell', blur: 16, saturate: 170, bezelRatio: 0.24, bezelCap: 26, k: 2, ca: true, tier: 'chrome' },
-  // 顶部栏导航模式，2026-10-06：与 .topbar 同档，保证两种布局观感一致。
+  // 顶部栏导航模式：与 .topbar 同档，保证两种布局观感一致。
   // 该元素只在用户切到顶部栏时存在，不影响侧边栏布局。
   { sel: '.topnav', blur: 16, saturate: 170, bezelRatio: 0.24, bezelCap: 26, k: 2, ca: true, tier: 'chrome' },
   { sel: '.sidebar', blur: 20, saturate: 165, bezelRatio: 0.24, bezelCap: 26, k: 1, ca: false, tier: 'chrome', wideSkip: true },

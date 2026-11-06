@@ -75,7 +75,7 @@ async function submit() {
     <div class="auth-brand">
       <div class="logo-big"><img :src="logoMark" alt="CTYFLY" width="46" height="46" /></div>
       <h1>登录</h1>
-      <p>使用 CID 或用户名登录您的账号</p>
+      <p>使用 CID 或用户名登录</p>
     </div>
 
     <div v-if="error" class="alert alert-err">{{ error }}</div>
@@ -83,7 +83,7 @@ async function submit() {
     <form @submit.prevent="submit">
       <div class="field" :class="{ 'is-error': fb.errors.account, 'is-shake': fb.shaking.account }" @animationend="fb.shaking.account = false">
         <label class="label">CID / 用户名</label>
-        <input v-model="account" class="input" placeholder="例如5966" autocomplete="username" @input="fb.input('account')" />
+        <input v-model="account" class="input" placeholder="例如 5966" autocomplete="username" @input="fb.input('account')" />
         <div class="field-hint" :class="{ show: !!fb.errors.account }">
           <div class="field-hint-text">{{ fb.errors.account }}</div>
         </div>
@@ -99,7 +99,7 @@ async function submit() {
       <!-- 自研工作量证明：完全不可见，用户感知不到这道校验 -->
       <PoWCaptcha ref="powRef" />
 
-      <MorphLoginButton :status="status" label="登 录" @settle="status = 'idle'" />
+      <MorphLoginButton :status="status" label="登录" @settle="status = 'idle'" />
     </form>
 
     <div class="auth-foot">

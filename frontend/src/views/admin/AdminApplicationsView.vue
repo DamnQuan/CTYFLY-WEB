@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { api } from '../../api.js';
@@ -11,7 +11,7 @@ import DatePicker from '../../components/DatePicker.vue';
 const route = useRoute();
 const type = computed(() => (route.params.type === 'staff' ? 'staff' : 'controller'));
 const typeLabel = computed(() => (type.value === 'controller' ? '管制员申请' : '职员申请'));
-// 面试流程只针对职员申请，站长 2026-10-05：先安排面试，面试完成后才能给结论
+// 面试流程只针对职员申请：先安排面试，面试完成后才能给结论
 const isStaff = computed(() => type.value === 'staff');
 
 const apps = ref([]);
@@ -92,7 +92,7 @@ async function sendInterview() {
 async function markInterviewDone(a) {
   const ok = await confirmModal({
     title: '标记面试完成',
-    message: `确认已与 ${a.username}，CID ${a.cid}完成面试？标记后即可通过或驳回该申请。`,
+    message: `确定已完成与 ${a.username}（CID ${a.cid}）的面试吗？标记后即可通过或驳回该申请。`,
     confirmText: '面试已完成',
   });
   if (!ok) return;
@@ -134,16 +134,16 @@ async function review(a, action) {
       : '';
     note = await promptModal({
       title: '通过申请',
-      message: `确认通过 ${a.username}，CID ${a.cid}的${typeLabel.value}？${permHint}可填写备注，选填`,
-      placeholder: '审核备注，可留空',
+      message: `确定要通过 ${a.username}（CID ${a.cid}）的${typeLabel.value}吗？${permHint}可填写备注（选填）`,
+      placeholder: '审核备注（可留空）',
       confirmText: '通过',
     });
     if (note === null) return;
   } else {
     note = await promptModal({
       title: '驳回申请',
-      message: `请填写驳回 ${a.username}，CID ${a.cid}申请的原因：`,
-      placeholder: '未通过原因，必填',
+      message: `请填写驳回 ${a.username}（CID ${a.cid}）申请的原因：`,
+      placeholder: '未通过原因（必填）',
       confirmText: '驳回',
       danger: true,
     });
@@ -180,7 +180,7 @@ async function review(a, action) {
         <div v-for="a in apps" :key="a.id" class="list-item">
           <UserAvatar :user="a" :size="38" />
           <div class="list-main">
-            <div class="list-title">{{ a.username }}，CID {{ a.cid }}· {{ a.nickname }}</div>
+            <div class="list-title">{{ a.username }}，CID {{ a.cid }} · {{ a.nickname }}</div>
             <div class="list-sub">
               <template v-if="type === 'controller'">连飞时长 {{ a.hours }} · 经验：{{ a.experience }}</template>
               <template v-else>可参与时间：{{ a.available_time }}</template>
@@ -239,7 +239,7 @@ async function review(a, action) {
         <div class="modal-panel" role="dialog" aria-modal="true">
           <div class="modal-title">安排面试</div>
           <div class="modal-message">
-            给 {{ interviewTarget?.username }}，CID {{ interviewTarget?.cid }}选择两个可用面试时间，
+            给 {{ interviewTarget?.username }}（CID {{ interviewTarget?.cid }}）选择两个可用面试时间，
             发送后系统会邮件告知对方这两个时间，由对方回复确认。
           </div>
           <div class="field" style="margin-top: 14px">

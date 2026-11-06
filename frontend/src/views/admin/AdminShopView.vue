@@ -13,7 +13,7 @@ const saving = ref(false);
 
 const form = ref({ name: '', description: '', price: 500, type: 'title', payload: '', active: true });
 const typeOptions = [
-  { value: 'title', label: '称号，显示在用户名旁' },
+  { value: 'title', label: '称号（显示在用户名旁）' },
   { value: 'badge', label: '徽章' },
 ];
 
@@ -59,7 +59,7 @@ async function toggleActive(item) {
 async function removeItem(item) {
   const ok = await confirmModal({
     title: '下架商品', danger: true, confirmText: '下架',
-    message: `确认下架「${item.name}」？已购买的玩家不受影响。`,
+    message: `确定要下架「${item.name}」吗？已购买的玩家不受影响。`,
   });
   if (!ok) return;
   try {
@@ -76,7 +76,7 @@ async function removeItem(item) {
   <div class="page">
     <div class="page-header">
       <div class="page-title">商城管理</div>
-      <div class="page-desc">上架虚拟商品，称号 / 徽章，玩家用飞行工资购买</div>
+      <div class="page-desc">上架虚拟商品（称号 / 徽章），玩家用飞行工资购买</div>
     </div>
 
     <div class="glass card" style="margin-bottom: 16px">
@@ -94,7 +94,7 @@ async function removeItem(item) {
         <div class="field">
           <label class="label">
             称号文字 / 徽章内容
-            <span class="optional">徽章可填 icon:star、icon:diamond、icon:crown、icon:bolt、icon:wings 显示矢量图标</span>
+            <span class="optional">徽章可填 icon:star、icon:diamond、icon:crown、icon:bolt、icon:wings，显示矢量图标</span>
           </label>
           <input v-model="form.payload" class="input" maxlength="20" placeholder="如 元老 或 icon:star" />
         </div>
@@ -110,7 +110,7 @@ async function removeItem(item) {
     </div>
 
     <div class="glass card">
-      <div class="card-title">商品列表，{{ items.length }}</div>
+      <div class="card-title">商品列表（{{ items.length }}）</div>
       <div v-if="loading" class="loading">加载中…</div>
       <template v-else-if="items.length">
         <div v-for="i in items" :key="i.id" class="list-item">

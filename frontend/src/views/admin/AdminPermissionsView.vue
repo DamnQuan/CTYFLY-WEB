@@ -247,12 +247,12 @@ function search() {
           </tbody>
         </table>
       </div>
-      <div v-if="!users.length" class="empty">没有匹配的用户</div>
+      <div v-if="!users.length" class="empty">没有匹配的用户，试试调整搜索或筛选条件</div>
     </div>
 
     <!-- ==================== 按角色 ==================== -->
     <div v-else-if="tab === 'role'" class="glass card">
-      <div class="card-title">角色能力矩阵，职务</div>
+      <div class="card-title">角色能力矩阵（按职务）</div>
       <div class="card-sub">ADM 角色恒有全部权限，不可修改；勾选即生效，越权访问会自动记入审计日志</div>
       <div class="table-wrap perm-scroll">
         <table class="table">
@@ -285,7 +285,7 @@ function search() {
 
     <!-- ==================== 按管制等级 ==================== -->
     <div v-else-if="tab === 'rating'" class="glass card">
-      <div class="card-title">管制等级能力矩阵，rating 分支</div>
+      <div class="card-title">管制等级能力矩阵（rating）</div>
       <div class="card-sub">
         选中一个管制等级，勾选它能使用的后台节点。默认只有 <strong>SUP / ADM</strong> 全开。
       </div>

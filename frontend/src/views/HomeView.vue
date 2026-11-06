@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { ref, onMounted } from 'vue';
 import { api } from '../api.js';
 import { fmtTime } from '../utils.js';
@@ -28,28 +28,26 @@ onMounted(async () => {
   <div class="page home-page">
     <section class="hero" style="text-align: center">
       <h1 class="hero-title">CTYFLY</h1>
-      <p class="hero-sub">加入我们，体验最真实的连飞乐趣</p>
+      <p class="hero-sub">加入 CTYFLY，和飞友一起连飞</p>
       <div class="hero-actions">
         <router-link class="btn btn-primary btn-lg" to="/register">立即注册</router-link>
         <router-link class="btn btn-ghost btn-lg" to="/login">立即登录</router-link>
         <a
           target="_blank"
           href="https://qm.qq.com/cgi-bin/qm/qr?k=xX5rJgrrA98XZZjEzZ02QgA8MMUTwXFW&jump_from=webapi&authKey=o04NKjyHYlbl32mZH3fwbOTAyuYV0Kzkncuba2VI6kZ6gbqx4fUrtK9fZjmcO+Di"
-          title="『CTY』垂天云飞友集团"
+          title="「CTY」垂天云飞友集团"
           class="qq-join-btn"
         >加入QQ群</a>
       </div>
     </section>
 
     <router-link class="acis-entry" to="/acis">
-      <span class="acis-entry-glow" aria-hidden="true"></span>
       <picture class="acis-entry-picture">
         <source type="image/avif" :srcset="`${acisGlyph400Avif} 400w, ${acisGlyph800Avif} 800w`" sizes="(max-width: 620px) 76px, 112px" />
         <source type="image/webp" :srcset="`${acisGlyph400Webp} 400w, ${acisGlyph800Webp} 800w`" sizes="(max-width: 620px) 76px, 112px" />
         <img :src="acisGlyph" alt="ACIS" class="acis-entry-logo" width="1600" height="576" fetchpriority="high" decoding="async" />
       </picture>
       <span class="acis-entry-copy">
-        <span class="acis-entry-kicker">免登录 · 直接使用</span>
         <span class="acis-entry-title">ACIS 飞圈事件检索</span>
         <span class="acis-entry-desc">浏览全部飞圈事件资料，支持搜索、投稿与纠错</span>
       </span>
@@ -76,7 +74,7 @@ onMounted(async () => {
 
     
     <footer style="margin-top: auto; padding-top: 40px; text-align: center">
-      <p style="color: var(--gray); font-size: 12.5px">© 2026 CTYFLY - All rights reserved</p>
+      <p style="color: var(--gray); font-size: 12.5px">© 2026 CTYFLY 保留所有权利</p>
       <div class="footer-links">
         <router-link to="/about" class="footer-link">关于我们</router-link>
         <router-link to="/docs" class="footer-link">发展问卷</router-link>
@@ -123,29 +121,18 @@ onMounted(async () => {
   overflow: hidden;
   border-radius: 24px;
   border: 1px solid var(--glass-border);
-  background: linear-gradient(145deg, var(--glass-strong), var(--glass));
+  background: var(--glass-strong);
   color: inherit;
   text-decoration: none;
   backdrop-filter: blur(26px) saturate(180%);
   -webkit-backdrop-filter: blur(26px) saturate(180%);
-  box-shadow: 0 18px 48px rgba(30, 90, 160, 0.11), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
 }
 .acis-entry:hover {
   transform: translateY(-3px);
   border-color: rgba(92, 180, 255, 0.45);
-  box-shadow: 0 24px 58px rgba(30, 100, 170, 0.17), inset 0 1px 0 rgba(255, 255, 255, 0.95);
-}
-.acis-entry-glow {
-  position: absolute;
-  right: 12%;
-  top: -90%;
-  width: 280px;
-  height: 240px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(94, 184, 255, 0.22), transparent 68%);
-  filter: blur(12px);
-  pointer-events: none;
+  box-shadow: var(--shadow-lg-hover), inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 .acis-entry-picture {
   position: relative;
@@ -161,7 +148,6 @@ onMounted(async () => {
   filter: drop-shadow(0 6px 14px rgba(10, 110, 210, 0.18));
 }
 .acis-entry-copy { position: relative; display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
-.acis-entry-kicker { color: var(--blue); font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; }
 .acis-entry-title { color: var(--text); font-size: 16px; font-weight: 700; letter-spacing: 0.01em; }
 .acis-entry-desc { color: var(--text-2); font-size: 12px; line-height: 1.5; }
 .acis-entry-cta {
@@ -181,10 +167,10 @@ onMounted(async () => {
 }
 .acis-entry:hover .acis-entry-cta { background: var(--blue); color: #fff; border-color: var(--blue); }
 [data-theme="dark"] .acis-entry {
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
-[data-theme="dark"] .acis-entry-cta { background: rgba(40, 64, 96, 0.5); }
-[data-theme="dark"] .acis-entry:hover { box-shadow: 0 24px 58px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.16); }
+[data-theme="dark"] .acis-entry-cta { background: rgba(60, 60, 64, 0.5); }
+[data-theme="dark"] .acis-entry:hover { box-shadow: var(--shadow-lg-hover), inset 0 1px 0 rgba(255, 255, 255, 0.16); }
 /* QQ 官方风格加群按钮，QQ 蓝 #12B7F5*/
 .qq-join-btn {
   display: inline-flex;
@@ -224,15 +210,13 @@ onMounted(async () => {
     gap: 11px;
     padding: 14px 14px;
     border-radius: 20px;
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(238, 247, 255, 0.62));
+    background: var(--glass-strong);
     backdrop-filter: blur(14px) saturate(150%);
     -webkit-backdrop-filter: blur(14px) saturate(150%);
-    box-shadow: 0 10px 28px rgba(30, 90, 160, 0.09), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   }
-  .acis-entry-glow { display: none; }
   .acis-entry-picture { width: 76px; }
   .acis-entry-logo { width: 100%; }
-  .acis-entry-kicker { font-size: 9px; letter-spacing: 0.04em; }
   .acis-entry-title { font-size: 14px; line-height: 1.35; }
   .acis-entry-desc { display: none; }
   .acis-entry-cta { padding: 6px 8px; font-size: 10px; }

@@ -64,7 +64,7 @@ const {
             <label class="label">考核航段</label>
             <input v-model="examForm.routeFlown" class="input" maxlength="20" placeholder="如 ZBAA-ZSPD" />
           </div>
-          <input v-model="examForm.notes" class="input" style="margin-top: 12px" placeholder="考核说明，如航线、进离场程序、特殊情况处置等" />
+          <input v-model="examForm.notes" class="input" style="margin-top: 12px" placeholder="考核说明（航线、进离场程序、特殊情况处置等）" />
           <button class="btn btn-primary" style="margin-top: 12px" :disabled="submittingExam || !canSubmitExam" @click="submitExam">
             {{ submittingExam ? '提交中…' : '提交考核申请' }}
           </button>
@@ -73,13 +73,13 @@ const {
 
         <!-- 管理成员待审核，CEO / 部长-->
         <template v-if="canManage && pendingExams.length">
-          <div class="label" style="margin-bottom: 8px">待审核考核，{{ pendingExams.length }}</div>
+          <div class="label" style="margin-bottom: 8px">待审核考核（{{ pendingExams.length }}）</div>
           <div v-for="e in pendingExams" :key="e.id" class="list-item">
             <UserAvatar :user="e" :size="34" />
             <div class="list-main">
               <div class="list-title">
                 <span class="tag tag-orange" style="margin-right: 8px">{{ e.target_rank }}考核</span>
-                {{ e.username }}，CID {{ e.cid }}
+                {{ e.username }}（CID {{ e.cid }}）
               </div>
               <div class="list-sub">
                 {{ e.route_flown || '—' }} · {{ e.aircraft || '机型未填' }} · {{ e.flight_date || '-' }}

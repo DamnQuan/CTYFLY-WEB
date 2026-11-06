@@ -161,7 +161,7 @@ async function copyLink() {
   align-items: center;
   justify-content: center;
   border-radius: 20px;
-  background: linear-gradient(135deg, #0a84ff, #0071e3);
+  background: var(--blue);
   background-size: cover;
   color: #fff;
   font-weight: 700;
@@ -176,7 +176,7 @@ async function copyLink() {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0a84ff, #0071e3);
+  background: var(--blue);
   color: #fff;
   font-weight: 600;
   font-size: 14px;

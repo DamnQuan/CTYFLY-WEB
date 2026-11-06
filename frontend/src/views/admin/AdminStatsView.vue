@@ -1,10 +1,10 @@
-<script setup>
+﻿<script setup>
 import { onMounted, ref } from 'vue';
 import { api } from '../../api.js';
 import { showToast } from '../../utils.js';
 import Icon from '../../components/Icon.vue';
 import TrendLine from '../../components/TrendLine.vue';
-// 仪表盘的模块化内容，可拖拽换位/主次切换迁到这里：见交接文档 §22/§24
+// 仪表盘的模块化内容，可拖拽换位/主次切换
 import ModularDash from '../../components/ModularDash.vue';
 
 const stats = ref(null);
@@ -30,7 +30,7 @@ onMounted(async () => {
       <div class="page-desc">站点运行状态、待办事项与风险概览</div>
     </div>
 
-    <!-- 模块化仪表盘，原 /home 内容，2026-10-10 迁入：主模块可拖拽换位-->
+    <!-- 模块化仪表盘：主模块可拖拽换位-->
     <ModularDash />
 
     <div v-if="loading" class="loading">加载中…</div>
@@ -40,7 +40,7 @@ onMounted(async () => {
         <div class="stat"><div class="stat-num">{{ stats.today }}</div><div class="stat-label">今日新增</div></div>
         <div class="stat"><div class="stat-num">{{ stats.controllers }}</div><div class="stat-label">在职管制员</div></div>
         <div class="stat"><div class="stat-num">{{ stats.pendingApps }}</div><div class="stat-label">待审申请</div></div>
-        <div class="stat"><div class="stat-num">{{ stats.pendingApprovals }}</div><div class="stat-label">待审批，双人复核</div></div>
+        <div class="stat"><div class="stat-num">{{ stats.pendingApprovals }}</div><div class="stat-label">待审批（双人复核）</div></div>
         <div class="stat"><div class="stat-num">{{ stats.openTickets }}</div><div class="stat-label">未关工单</div></div>
         <div class="stat"><div class="stat-num">{{ stats.events }}</div><div class="stat-label">进行中活动</div></div>
         <div class="stat"><div class="stat-num">{{ stats.airlines }}</div><div class="stat-label">在营虚拟航司</div></div>

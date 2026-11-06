@@ -130,7 +130,7 @@ function changeDays(v) {
           <button class="btn btn-sm" :class="botFilter === '' ? 'btn-dark' : 'btn-ghost'" @click="setBotFilter('')">全部来源</button>
           <button class="btn btn-sm" :class="botFilter === '0' ? 'btn-dark' : 'btn-ghost'" @click="setBotFilter('0')">仅浏览器</button>
           <button class="btn btn-sm" :class="botFilter === '1' ? 'btn-dark' : 'btn-ghost'" @click="setBotFilter('1')">
-            仅脚本 / 爬虫，{{ botCount }}
+            仅脚本 / 爬虫（{{ botCount }}）
           </button>
         </template>
 
@@ -140,7 +140,7 @@ function changeDays(v) {
           <button v-for="c in categories" :key="c.category" class="btn btn-sm"
             :class="category === c.category ? 'btn-dark' : 'btn-ghost'"
             @click="() => { category = c.category; page = 1; load(); }">
-            {{ categoryLabels[c.category] || c.category }}，{{ c.count }}
+            {{ categoryLabels[c.category] || c.category }}（{{ c.count }}）
           </button>
         </template>
       </div>
@@ -152,7 +152,7 @@ function changeDays(v) {
       <template v-else-if="network">
         <div class="grid grid-3">
           <div class="stat"><div class="stat-num">{{ network.summary.total }}</div><div class="stat-label">{{ dayLabel(days) }}总请求量</div></div>
-          <div class="stat"><div class="stat-num">{{ network.summary.errors }}</div><div class="stat-label">错误请求，4xx/5xx</div></div>
+          <div class="stat"><div class="stat-num">{{ network.summary.errors }}</div><div class="stat-label">错误请求（4xx / 5xx）</div></div>
           <div class="stat"><div class="stat-num">{{ network.summary.total ? Math.round((network.summary.errors / network.summary.total) * 1000) / 10 : 0 }}%</div><div class="stat-label">错误率</div></div>
         </div>
 
@@ -163,7 +163,7 @@ function changeDays(v) {
         </div>
 
         <div class="glass card" style="margin-top: 16px">
-          <div class="card-title">接口访问排行，Top 40</div>
+          <div class="card-title">接口访问排行（Top 40）</div>
           <div class="table-wrap">
             <table class="table">
               <thead><tr><th>方法</th><th>接口</th><th>请求量</th><th>错误数</th></tr></thead>

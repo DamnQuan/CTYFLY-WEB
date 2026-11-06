@@ -65,7 +65,7 @@ onUnmounted(() => clearInterval(timer));
             正常
             <span v-if="status.dbPingMs !== undefined" class="stat-unit">· {{ status.dbPingMs }} ms</span>
           </div>
-          <div class="stat-label">API 服务，数据库延迟</div>
+          <div class="stat-label">API 服务（数据库延迟）</div>
         </div>
         <div class="stat">
           <div class="stat-num">{{ status.totalUsers ?? 0 }}</div>

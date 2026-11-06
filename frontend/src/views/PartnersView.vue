@@ -22,7 +22,7 @@ onMounted(async () => {
   <div class="page" style="max-width: clamp(720px, 56vw, 1100px)">
     <div class="page-header">
       <div class="page-title">合作伙伴</div>
-      <div class="page-desc">与我们携手同行的平台与社区</div>
+      <div class="page-desc">与 CTYFLY 合作的社区与平台</div>
     </div>
 
     <div v-if="loading" class="loading">加载中…</div>
@@ -59,7 +59,7 @@ onMounted(async () => {
 
     <div class="glass card" style="margin-top: 16px">
       <div class="card-sub" style="line-height: 1.9">
-        合作伙伴与 CTYFLY 互相导流、联合举办活动。想成为我们的合作伙伴？
+        合作伙伴与 CTYFLY 互相导流、联合举办活动。想加入？
         通过 <router-link to="/tickets/new" class="link">工单中心</router-link> 联系我们。
       </div>
     </div>

@@ -30,7 +30,7 @@ async function query() {
   <div class="page">
     <div class="page-header">
       <div class="page-title">TAF 报文查询</div>
-      <div class="page-desc">全球机场航站楼天气预报，数据来源 aviationweather.gov</div>
+      <div class="page-desc">全球机场天气预报，数据来源 aviationweather.gov</div>
     </div>
 
     <div class="glass card" style="max-width: 720px">

@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { api } from '../../api.js';
 import { fmtTime, EVENT_STATUS, showToast } from '../../utils.js';
@@ -69,9 +69,7 @@ async function load() {
 onMounted(load);
 
 /* ==================== 活动海报，简报页头图 ====================
- * 2026-10-18：从活动简报页挪到管理后台。原先前台简报页对 admin 显示「上传海报」按钮，
- * 管理员浏览用户视图时混着编辑控件，容易被误认为普通用户也能传；海报属于活动内容维护，
- * 统一收到这里。后端接口不变，POST /api/events/{id}/briefing/images，
+ * 海报属于活动内容维护，统一在管理后台操作。后端接口不变，POST /api/events/{id}/briefing/images，
  * DELETE /api/briefings/images/{id}，仍只有管理员可用。
  * 文件选择必须靠隐藏 input 触发，浏览器唯一途径，可见 UI 全部是自研按钮，与航司 Logo 上传同款。
  */
@@ -143,7 +141,7 @@ async function removePoster() {
   if (!poster.value.imageId) return;
   const ok = await confirmModal({
     title: '移除活动海报', danger: true, confirmText: '移除',
-    message: '移除后活动简报页会显示默认标题块，确定继续吗？',
+    message: '确定要移除吗？移除后活动简报页会显示默认标题块。',
   });
   if (!ok) return;
   try {
@@ -222,7 +220,7 @@ async function setStatus(e, status) {
 async function remove(e) {
   const ok = await confirmModal({
     title: '删除活动', danger: true, confirmText: '删除',
-    message: `确认删除活动「${e.title}」？该操作不可撤销。`,
+    message: `确定要删除活动「${e.title}」吗？该操作不可撤销。`,
   });
   if (!ok) return;
   try {
@@ -288,10 +286,10 @@ async function addPosition(e) {
 }
 
 async function removePosition(e, pos) {
-  const owner = pos.taken ? `当前由 ${pos.taken.username}，CID ${pos.taken.cid}占用，将同时删除其报名` : '';
+  const owner = pos.taken ? `当前由 ${pos.taken.username}（CID ${pos.taken.cid}）占用，将同时删除其报名。` : '';
   const ok = await confirmModal({
     title: '删除席位', danger: true, confirmText: '删除',
-    message: `确认删除席位「${pos.name}」${owner}？`,
+    message: `确定要删除席位「${pos.name}」吗？${owner}`,
   });
   if (!ok) return;
   try {
@@ -353,7 +351,7 @@ async function removePosition(e, pos) {
           </div>
         </div>
         <div class="field">
-          <label class="label">飞行距离，nm</label>
+          <label class="label">飞行距离（nm）</label>
           <input v-model.number="form.distanceNm" class="input" type="number" min="0" step="0.1" placeholder="如 1078" />
         </div>
       </div>
@@ -363,7 +361,7 @@ async function removePosition(e, pos) {
       </div>
       <!-- 活动海报只在「编辑」时出现：新建活动还没 id，无法挂图中 -->
       <div v-if="canManagePoster" class="field">
-        <label class="label">活动海报，活动简报页头图</label>
+        <label class="label">活动海报（活动简报页头图）</label>
         <div class="poster-admin">
           <div class="poster-thumb">
             <img v-if="poster.url" :src="poster.url" alt="活动海报" />
@@ -443,16 +441,16 @@ async function removePosition(e, pos) {
             </div>
           </template>
           <div class="pos-add">
-            <input v-model="posForm.name" class="input" maxlength="16" placeholder="席位名称，如 ZBAA_TWR" />
-            <input v-model="posForm.rating" class="input" maxlength="8" placeholder="等级，如 S1" style="max-width: 110px" />
-            <input v-model="posForm.frequency" class="input" maxlength="12" placeholder="频率，如 121.600" style="max-width: 140px" />
+            <input v-model="posForm.name" class="input" maxlength="16" placeholder="席位名称（如 ZBAA_TWR）" />
+            <input v-model="posForm.rating" class="input" maxlength="8" placeholder="等级（如 S1）" style="max-width: 110px" />
+            <input v-model="posForm.frequency" class="input" maxlength="12" placeholder="频率（如 121.600）" style="max-width: 140px" />
             <input v-model.number="posForm.sort" class="input" type="number" min="0" placeholder="排序" style="max-width: 90px" />
             <button class="btn btn-primary btn-sm" :disabled="posBusy" @click="addPosition(e)">添加席位</button>
           </div>
           </div>
         </div>
       </template>
-      <div v-else class="empty">暂无活动</div>
+      <div v-else class="empty">暂无活动，可点击右上角创建</div>
     </div>
   </div>
 </template>

@@ -15,7 +15,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue';
 
 const props = defineProps({
   status: { type: String, default: 'idle' }, // idle | loading | success | error
-  label: { type: String, default: '登 录' },
+  label: { type: String, default: '登录' },
   disabled: { type: Boolean, default: false },
 });
 const emit = defineEmits(['settle']);

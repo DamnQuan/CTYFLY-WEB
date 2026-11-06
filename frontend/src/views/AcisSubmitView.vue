@@ -7,6 +7,7 @@ import { api } from '../api.js';
 import { acisAnonId, showToast } from '../utils.js';
 import ArchiveEditor from '../components/archive/ArchiveEditor.vue';
 import AcisAgreementModal from '../components/acis/AcisAgreementModal.vue';
+import Icon from '../components/Icon.vue';
 import acisLogo from '../assets/acis-glyph-400.webp';
 
 acisAnonId();
@@ -46,7 +47,7 @@ async function submit() {
       </div>
 
       <div v-if="submittedId" class="glass card acis-success">
-        <div class="acis-success-icon">✓</div>
+        <div class="acis-success-icon"><Icon name="check" :size="26" /></div>
         <div class="acis-success-title">投稿已提交</div>
         <div class="card-sub">编号 #{{ submittedId }}，管理员审核通过后会自动进入 ACIS 资料库。</div>
         <div class="acis-success-actions">
@@ -88,7 +89,7 @@ async function submit() {
 .acis-submit-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); }
 .acis-submit-note { color: var(--gray); font-size: 12px; }
 .acis-success { text-align: center; padding: 42px 24px; }
-.acis-success-icon { width: 54px; height: 54px; margin: 0 auto 12px; border-radius: 50%; background: rgba(52, 199, 89, 0.16); color: #34c759; font-size: 28px; line-height: 54px; }
+.acis-success-icon { width: 54px; height: 54px; margin: 0 auto 12px; border-radius: 50%; background: rgba(52, 199, 89, 0.16); color: #34c759; display: flex; align-items: center; justify-content: center; }
 .acis-success-title { font-size: 20px; font-weight: 700; }
 .acis-success-actions { display: flex; justify-content: center; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
 .acis-disclaimer { margin-top: 18px; color: var(--gray); font-size: 12px; line-height: 1.7; }

@@ -69,7 +69,7 @@ async function placeOffer(t) {
   }
   const ok = await confirmModal({
     title: '确认出价',
-    message: `将从「${va.membership.name}」余额冻结 ${fmt(amount)}，确定出价吗？`,
+    message: `将从「${va.membership.name}」余额冻结 ${fmt(amount)}，确定要出价吗？`,
     confirmText: '冻结并出价',
   });
   if (!ok) return;
@@ -91,7 +91,7 @@ async function withdraw(t) {
   if (!t.myOffer) return;
   const ok = await confirmModal({
     title: '撤回出价',
-    message: `撤回后冻结的 ${fmt(t.myOffer.amount)} 将退回航司余额。确定撤标吗？`,
+    message: `撤回后冻结的 ${fmt(t.myOffer.amount)} 将退回航司余额。确定要撤标吗？`,
     danger: true,
     confirmText: '确认撤标',
   });
@@ -108,7 +108,7 @@ async function withdraw(t) {
 async function settle() {
   const ok = await confirmModal({
     title: '结算到期招标',
-    message: '将结算所有已过截止时间的招标：最高价中标并分配航线，其余出价全额退款。确定继续吗？',
+    message: '将结算所有已过截止时间的招标：最高价中标并分配航线，其余出价全额退款。确定要继续吗？',
     confirmText: '立即结算',
   });
   if (!ok) return;
@@ -147,7 +147,7 @@ async function switchScope(s) {
         <button class="btn btn-primary btn-sm" @click="settle">结算到期招标</button>
       </div>
       <div class="card-sub" style="margin: 10px 0 0">
-        结算入口是幂等的：重复点击不会重复退款；只有「已过截止时间」的招标会被处理。
+        结算可重复点击，不会重复退款；只有已过截止时间的招标会被处理。
       </div>
     </div>
 
@@ -156,7 +156,7 @@ async function switchScope(s) {
     <div v-else-if="!items.length" class="glass card" style="margin-top: 16px">
       <div class="empty">
         <div class="empty-icon"><Icon name="key" :size="22" /></div>
-        <div>{{ scope === 'open' ? '当前没有在标航线' : '还没有已结算的招标' }}</div>
+        <div>{{ scope === 'open' ? '暂无在标航线' : '暂无已结算的招标' }}</div>
       </div>
     </div>
 

@@ -305,7 +305,7 @@ function toPirep(d) {
         起飞前选择航司航线与本公司飞机生成放行单，飞完后凭签派单提交飞行报告
         <template v-if="va.membership">
           · 公司账上 {{ (va.membership.balance || 0).toLocaleString() }}
-          现实结算：飞行员领固定工资，公司挣客票收入
+          结算方式：飞行员领固定工资，公司获得客票收入
         </template>
       </div>
     </div>
@@ -351,12 +351,12 @@ function toPirep(d) {
       <div class="glass card">
         <div class="card-title"><Icon name="award" :size="16" /> 结算规则公示</div>
         <div class="list-sub" style="line-height: 1.9">
-          <b>飞行员工资</b> = 航线底薪 + 飞行时长 × 时薪，本公司当前 {{ va.membership.hourlyRate }}
-          + 航程 × 里程津贴，本公司当前 {{ va.membership.distanceRate }}<br />
-          <b>公司运输收入</b> = 旅客 × 航程 nm × 0.6，客运 + 货物 kg × 航程 × 0.002，货运<br />
-          <b>公司净入</b> = 运输收入 − 飞行员工资，空载或亏损航段公司照付工资，可能为负<br />
-          CEO 审核通过后工资立即入账；CEO 审本人报告单笔工资封顶 20,000。<br />
-          时薪与里程津贴由 CEO 在航司设置中调整；底薪由 CEO 按航线设定。
+          <b>飞行员工资</b> = 航线底薪 + 飞行时长 × 时薪（本公司当前 {{ va.membership.hourlyRate }}）
+          + 航程 × 里程津贴（本公司当前 {{ va.membership.distanceRate }}）<br />
+          <b>公司运输收入</b> = 旅客 × 航程 nm × 0.6（客运）+ 货物 kg × 航程 × 0.002（货运）<br />
+          <b>公司净入</b> = 运输收入 − 飞行员工资。空载或亏损的航段公司照付工资，净入可能为负。<br />
+          CEO 审核通过后工资立即入账；CEO 审本人报告时，单笔工资封顶 20,000。<br />
+          时薪与里程津贴由 CEO 在航司设置中调整，底薪由 CEO 按航线设定。
         </div>
       </div>
 
@@ -364,7 +364,7 @@ function toPirep(d) {
       <div v-if="!charterMode" class="glass card" style="margin-top: 16px">
         <div class="card-title"><Icon name="check" :size="16" /> 新建签派单</div>
         <div v-if="!routes.length" class="card-sub">本航司还没有航线，请先让 CEO 在航司管理中添加</div>
-        <div v-else-if="!fleet.length" class="card-sub">公司没有可用飞机——请 CEO 先购置飞机</div>
+        <div v-else-if="!fleet.length" class="card-sub">公司没有可用飞机，请 CEO 先购置飞机</div>
         <div v-else>
           <div class="field">
             <label class="label">航线</label>
@@ -374,10 +374,10 @@ function toPirep(d) {
             />
           </div>
           <div class="field">
-            <label class="label">飞机，需为本公司机队并位于 {{ selectedRoute?.dep || '起飞机场' }}</label>
+            <label class="label">飞机（需为本公司机队并位于 {{ selectedRoute?.dep || '起飞机场' }}）</label>
             <SelectMenu
               v-model="form.fleetId" :options="dispatchableOptions"
-              :placeholder="dispatchableFleet.length ? '选择可用飞机' : `无位于 ${selectedRoute?.dep || '本场'} 的可用飞机——机队页可发起转场`"
+              :placeholder="dispatchableFleet.length ? '选择可用飞机' : `无位于 ${selectedRoute?.dep || '本场'} 的可用飞机，可在机队页发起转场`"
             />
           </div>
           <div class="input-row">
@@ -386,7 +386,7 @@ function toPirep(d) {
               <input v-model="form.callsign" class="input" :placeholder="selectedRoute?.flight_no || '如 CES5966'" maxlength="16" />
             </div>
             <div class="field" style="flex: 1">
-              <label class="label">计划起飞，本地时间</label>
+              <label class="label">计划起飞（本地时间）</label>
               <DatePicker v-model="form.schedDep" mode="datetime" placeholder="选择计划起飞时间" />
             </div>
           </div>
@@ -396,7 +396,7 @@ function toPirep(d) {
               <input v-model="form.pax" class="input" type="number" min="0" :max="spec?.pax || 600" placeholder="0" />
             </div>
             <div class="field" style="flex: 1">
-              <label class="label">货物，单位 kg，最多 40,000</label>
+              <label class="label">货物（kg，最多 40,000）</label>
               <input v-model="form.cargo" class="input" type="number" min="0" max="40000" placeholder="0" />
             </div>
             <div class="field" style="flex: 1">
@@ -410,7 +410,7 @@ function toPirep(d) {
               <input v-model="form.captain" class="input" maxlength="20" placeholder="机长姓名" />
             </div>
             <div class="field" style="flex: 1">
-              <label class="label">副驾，可选</label>
+              <label class="label">副驾（可选）</label>
               <input v-model="form.copilot" class="input" maxlength="20" />
             </div>
           </div>
@@ -432,23 +432,23 @@ function toPirep(d) {
               <input v-else v-model="form.arrRwy" class="input" placeholder="如 36R" maxlength="8" />
             </div>
             <div class="field" style="flex: 1">
-              <label class="label">备降场，ICAO</label>
+              <label class="label">备降场（ICAO）</label>
               <input v-model="form.alternate" class="input" placeholder="如 ZBTJ" maxlength="8" />
             </div>
           </div>
           <div class="input-row">
             <div class="field" style="flex: 1">
-              <label class="label">巡航高度层，FL</label>
+              <label class="label">巡航高度层（FL）</label>
               <input v-model="form.cruiseFl" class="input" type="number" min="50" max="450" placeholder="如 350，相当于 35000 英尺" />
             </div>
             <div class="field" style="flex: 1">
-              <label class="label">携带燃油，kg{{ fuelModel ? ' · ' + fuelModel : fuelEstimating ? ' · 估算中…' : '' }}</label>
+              <label class="label">携带燃油（kg）{{ fuelModel ? ' · ' + fuelModel : fuelEstimating ? ' · 估算中…' : '' }}</label>
               <input v-model="form.fuelKg" class="input" type="number" placeholder="自动估算，可手动修改" />
             </div>
           </div>
           <div class="field">
             <label class="label">
-              航路，自动查询
+              航路（自动查询）
               <span v-if="planningRoute" style="color: var(--text-2)"> · 规划中…</span>
               <span v-else-if="plannedRoute" style="color: var(--green)"> · 已自动生成，AIRAC 2609</span>
             </label>
@@ -459,14 +459,14 @@ function toPirep(d) {
           </div>
           <div class="field">
             <label class="label">签派备注</label>
-            <textarea v-model="form.remarks" class="textarea" rows="2" placeholder="航路要点、天气提示等，可空" maxlength="200"></textarea>
+            <textarea v-model="form.remarks" class="textarea" rows="2" placeholder="航路要点、天气提示等，可留空" maxlength="200"></textarea>
           </div>
 
           <!-- 载重与收入预览 -->
           <div v-if="spec" class="card-sub" style="margin: 4px 0 12px">
             载荷 {{ payloadKg.toLocaleString() }} kg · ZFW {{ zfw.toLocaleString() }} kg ·
             预计起飞全重 {{ tow.toLocaleString() }} kg
-            <span v-if="overMtow" style="color: var(--red)">超过 MTOW {{ spec.mtow.toLocaleString() }} kg，请减载！</span>
+            <span v-if="overMtow" style="color: var(--red)">超过 MTOW {{ spec.mtow.toLocaleString() }} kg，请减载</span>
             <template v-if="selectedRoute?.distance_nm && Number(form.pax) > 0">
               · 预计票款收入 {{ Math.round(Number(form.pax) * selectedRoute.distance_nm * 0.6).toLocaleString() }}
               {{ Number(form.pax) }} 客 × {{ Math.round(selectedRoute.distance_nm) }}nm × 0.6
@@ -485,20 +485,20 @@ function toPirep(d) {
           自由包机：自选起降机场，需飞机在本场，客货自定；包机溢价 1.5× 计入公司收入，
           飞行员按时薪 1.2× + 里程补贴结算，同样需要完成起飞/落地上报并接受 ACARS 核验
         </div>
-        <div v-if="!fleet.length" class="card-sub">公司没有可用飞机——请 CEO 先购置飞机</div>
+        <div v-if="!fleet.length" class="card-sub">公司没有可用飞机，请 CEO 先购置飞机</div>
         <template v-else>
           <div class="input-row">
             <div class="field" style="flex: 1">
-              <label class="label">起飞机场，ICAO · 需飞机在本场</label>
+              <label class="label">起飞机场（ICAO · 需飞机在本场）</label>
               <input v-model="cForm.dep" class="input" placeholder="如 ZBAA" maxlength="4" @input="cForm.dep = cForm.dep.toUpperCase(); cForm.fleetId = ''" />
             </div>
             <div class="field" style="flex: 1">
-              <label class="label">到达机场，ICAO</label>
+              <label class="label">到达机场（ICAO）</label>
               <input v-model="cForm.arr" class="input" placeholder="如 ZSPD" maxlength="4" @input="cForm.arr = cForm.arr.toUpperCase()" />
             </div>
           </div>
           <div class="field">
-            <label class="label">飞机，位于 {{ cForm.dep || '起飞机场' }}</label>
+            <label class="label">飞机（位于 {{ cForm.dep || '起飞机场' }}）</label>
             <SelectMenu
               v-model="cForm.fleetId" :options="charterFleetOptions"
               :placeholder="charterFleet.length ? '选择可用飞机' : `无位于 ${cForm.dep || '本场'} 的可用飞机`"
@@ -510,7 +510,7 @@ function toPirep(d) {
               <input v-model="cForm.pax" class="input" type="number" min="0" :max="spec?.pax || 600" placeholder="0" />
             </div>
             <div class="field" style="flex: 1">
-              <label class="label">货物，单位 kg，最多 40,000</label>
+              <label class="label">货物（kg，最多 40,000）</label>
               <input v-model="cForm.cargo" class="input" type="number" min="0" max="40000" placeholder="0" />
             </div>
           </div>
@@ -525,7 +525,7 @@ function toPirep(d) {
         <div class="card-title"><Icon name="briefcase" :size="16" /> 我的签派单</div>
         <div v-if="!dispatches.length" class="empty">
           <div class="empty-icon"><Icon name="briefcase" :size="22" /></div>
-          <div>还没有签派单</div>
+          <div>暂无签派单，可在上方新建</div>
         </div>
         <div v-for="d in dispatches" :key="d.id" class="list-item" style="flex-wrap: wrap">
           <div class="list-main">

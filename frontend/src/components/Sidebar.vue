@@ -231,7 +231,7 @@ async function logout() {
 </script>
 
 <template>
-  <!-- 移动端遮罩：抽屉唯一的「空白处」，点它才收起，点菜单项导航不收起，站长 2026-10-06 要求-->
+  <!-- 移动端遮罩：抽屉唯一的「空白处」，点它才收起，点菜单项导航不收起 -->
   <div class="side-overlay" :class="{ show: open }" @click="emit('close')"></div>
 
   <aside class="sidebar" :class="{ open, 'is-collapsed': isCollapsed }">

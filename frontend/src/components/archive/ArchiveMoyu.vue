@@ -101,7 +101,7 @@ onBeforeUnmount(stop);
   <div v-if="open" class="moyu-panel glass card">
     <div class="moyu-head">
       <div>
-        <div class="moyu-title">摸鱼时间 🎣</div>
+        <div class="moyu-title">摸鱼时间</div>
         <div class="moyu-sub">点中游动的小鱼，15 秒内看看能摸几条</div>
       </div>
       <button class="moyu-close" type="button" aria-label="关闭摸鱼彩蛋" @click="closeGame">×</button>

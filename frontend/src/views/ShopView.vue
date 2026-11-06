@@ -66,7 +66,7 @@ function badgeLabel(payload) {
 async function buy(item) {
   const ok = await confirmModal({
     title: '确认购买',
-    message: `花费 ${item.price} 购买「${item.name}」？购买后不可退款。当前余额 ${balance.value}。`,
+    message: `确定要花费 ${item.price} 购买「${item.name}」吗？购买后不可退款。当前余额 ${balance.value}。`,
     confirmText: '确认购买',
   });
   if (!ok) return;
@@ -158,7 +158,7 @@ async function toggleEquip(order) {
       </div>
 
       <div class="glass card" style="margin-top: 20px">
-        <div class="card-title">我的物品，{{ orders.length }}</div>
+        <div class="card-title">我的物品（{{ orders.length }}）</div>
         <div class="card-sub">称号与徽章各可装备一件，装备后会显示在你的用户名旁</div>
         <div v-for="o in orders" :key="o.id" class="list-item">
           <div class="list-main">
@@ -180,7 +180,7 @@ async function toggleEquip(order) {
         </div>
         <div v-if="!orders.length" class="empty">
           <div class="empty-icon"><Icon name="shop" :size="22" /></div>
-          <div>还没有购买任何物品</div>
+          <div>暂无购买记录，从上方商城选购</div>
         </div>
       </div>
     </template>

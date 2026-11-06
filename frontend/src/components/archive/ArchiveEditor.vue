@@ -155,7 +155,7 @@ defineExpose({ getPayload });
               {{ block.url ? '更换图片' : '上传图片' }}
               <input type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden @change="pickImage(block, $event)" />
             </label>
-            <input v-model="block.caption" class="input" maxlength="200" placeholder="图片说明，选填" />
+            <input v-model="block.caption" class="input" maxlength="200" placeholder="图片说明（选填）" />
           </div>
         </template>
         <textarea v-else v-model="block.text" class="input" rows="6" maxlength="8000" placeholder="事件经过、背景与结果" />

@@ -36,7 +36,7 @@ function goDispatch(r) {
     <div class="page-header">
       <div class="page-title">航线列表</div>
       <div class="page-desc">
-        {{ va.membership ? `${va.membership.name}，${va.membership.icao}· CEO 发布的航线` : '' }}
+        {{ va.membership ? `${va.membership.name}（${va.membership.icao}） · CEO 发布的航线` : '' }}
       </div>
     </div>
 

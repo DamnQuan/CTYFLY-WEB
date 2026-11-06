@@ -191,7 +191,7 @@ load();
             <router-link class="btn btn-primary btn-sm" :to="review('event', row.id)">编辑</router-link>
           </div>
         </div>
-        <div v-else class="glass card"><div class="empty">还没有事件</div></div>
+        <div v-else class="glass card"><div class="empty">暂无事件，可点击右上角新建</div></div>
       </div>
 
       <div v-if="tab === 'comments'">

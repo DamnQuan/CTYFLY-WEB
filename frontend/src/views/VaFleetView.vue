@@ -95,7 +95,7 @@ async function doFerry(f) {
       <div class="page-desc">
         公司机队与机型购置目录
         <template v-if="va.membership">
-          · {{ va.membership.name }}，{{ va.membership.icao }}· 在册 {{ fleet.length }} 架，可用 {{ availableCount }} 架
+          · {{ va.membership.name }}（{{ va.membership.icao }}） · 在册 {{ fleet.length }} 架，可用 {{ availableCount }} 架
         </template>
       </div>
     </div>
@@ -114,7 +114,7 @@ async function doFerry(f) {
       <div class="glass card">
         <div class="card-title"><Icon name="wings" :size="16" /> 在册机队</div>
         <div class="card-sub" style="margin-bottom: 10px">
-          飞机停在所属机场——签派要求飞机位于航线起飞机场，不在本场时先执行转场调机，无客货，按距离发放调机补贴
+          飞机停在所属机场。签派要求飞机位于航线起飞机场，不在本场时先执行转场调机；调机不载客货，按距离发放调机补贴
         </div>
         <div v-if="!fleet.length" class="card-sub">机队为空</div>
         <div v-for="f in fleet" :key="f.id" class="list-item" style="flex-wrap: wrap">
@@ -156,7 +156,7 @@ async function doFerry(f) {
         </div>
         <div class="card-sub" style="margin-bottom: 10px">
           规格与价格依据各厂商公开资料，ACAP 机场适配手册 / 价目表；
-          价格按真实目录价等比换算，A320neo 目录价 $110.6M = 600,000 为锚，实际成交价通常低于目录价。
+          价格按真实目录价等比换算，以 A320neo 目录价 $110.6M = 600,000 为基准，实际成交价通常低于目录价。
         </div>
         <div class="seg" style="margin-bottom: 14px">
           <button

@@ -71,7 +71,7 @@ function fmt(n) {
         </div>
         <div class="stat">
           <div class="stat-num">{{ fmt(stats.rewardEarned) }}</div>
-          <div class="stat-label">成就奖励，游戏币</div>
+          <div class="stat-label">成就奖励（游戏币）</div>
         </div>
       </div>
       <div class="ach-bar"><span :style="{ width: percent + '%' }"></span></div>
@@ -88,7 +88,7 @@ function fmt(n) {
       <div v-if="loading" class="loading">加载中…</div>
       <div v-else-if="!shown.length" class="empty">
         <div class="empty-icon"><Icon name="award" :size="22" /></div>
-        <div>这个分类下还没有徽章</div>
+        <div>该分类暂无徽章，可切换其他分类查看</div>
       </div>
 
       <div v-else class="ach-grid">

@@ -26,8 +26,6 @@
   --topbar-pill-bg: rgba(255, 255, 255, 0.9);
   /* 顶部栏下拉面板：比顶栏更实一点——里面是密集的菜单卡片，透出底下的表单会明显掉可读性 */
   --nav-panel-bg: #fbfbfd;
-  /* 修复：此前浅色模式自引用，--surface: var --surface 属非法值，
-     导致浅色下 .seg 无底色、--shadow 颜色失效*/
   --surface: rgba(0, 0, 0, 0.045);
   --surface-strong: rgba(0, 0, 0, 0.1);
   --border: rgba(0, 0, 0, 0.09);
@@ -37,7 +35,9 @@
   --btn-dark-bg: #1d1d1f;
   --btn-dark-fg: #ffffff;
   --topbar-h: 56px;
-  --aurora-bg: linear-gradient(180deg, #4f9de0 0%, #8fc3ea 45%, #d9e8f4 78%, #edf1ec 100%);
+  /* 大卡片阴影：玻璃卡片悬浮态统一走这两个 token，不再逐处手调*/
+  --shadow-lg: 0 18px 48px rgba(30, 90, 160, 0.11);
+  --shadow-lg-hover: 0 24px 58px rgba(30, 100, 170, 0.17);
 
   /* 液态玻璃 rim/缝，导航层专用；JS 引擎见 lib/liquidGlass.js
      rim = 玻璃上缘高光，rim-2 = 底缘回光/渐变描边暗端，seam = 玻璃厚度暗缝*/

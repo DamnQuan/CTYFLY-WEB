@@ -175,7 +175,7 @@ const qqAvatar = () =>
     <div class="auth-brand">
       <div class="logo-big"><img :src="logoMark" alt="CTYFLY" width="46" height="46" /></div>
       <h1>创建 CTY 账号</h1>
-      <p>加入 CTYFLY，开启您的连飞之旅</p>
+      <p>注册后即可报名连飞活动、加入虚拟航司</p>
     </div>
 
       <div v-if="error" class="alert alert-err">{{ error }}</div>
@@ -241,7 +241,7 @@ const qqAvatar = () =>
           <label class="label">QQ 号 <span class="optional">选填，填写后自动绑定 QQ 头像</span></label>
           <div class="input-row" style="align-items: center">
             <input v-model="form.qq" class="input" inputmode="numeric" placeholder="用于展示头像，可不填" @input="fb.input('qq')" />
-            <img v-if="qqAvatar()" :src="qqAvatar()" style="width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0" alt="QQ头像" />
+            <img v-if="qqAvatar()" :src="qqAvatar()" style="width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0" alt="QQ 头像" />
           </div>
           <div class="field-hint" :class="{ show: !!fb.errors.qq }">
             <div class="field-hint-text">{{ fb.errors.qq }}</div>
@@ -280,7 +280,7 @@ const qqAvatar = () =>
         <PoWCaptcha ref="powRef" />
 
         <button class="btn btn-primary btn-lg btn-block" :disabled="loading" type="submit">
-          {{ loading ? '注册中…' : '注 册' }}
+          {{ loading ? '注册中…' : '注册' }}
         </button>
       </form>
 

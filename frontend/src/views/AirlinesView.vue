@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { computed, ref, onMounted } from 'vue';
 import { api } from '../api.js';
 import { showToast } from '../utils.js';
@@ -102,14 +102,14 @@ async function transfer(a) {
   const reason = await promptModal({
     title: `跳槽到 ${a.icao}`,
     message: `将向 ${a.icao} ${a.name} 提交跳槽申请，由对方 CEO 审批。审批通过前你仍留在 ${mine.value.icao}。`,
-    inputPlaceholder: '跳槽理由，选填',
+    inputPlaceholder: '跳槽理由（选填）',
     confirmText: '提交申请',
   });
   if (reason === null) return;
   busyId.value = a.id;
   try {
     const data = await api.post(`/api/airlines/${a.id}/transfer`, { reason: reason || '' });
-    showToast(data.message || '跳槽申请已提交');
+    showToast(data.message || 'bingo~跳槽申请提交成功~');
     load();
   } catch (err) {
     showToast(err.message);
@@ -121,7 +121,7 @@ async function transfer(a) {
 async function cancelTransfer() {
   const ok = await confirmModal({
     title: '撤销跳槽申请', confirmText: '撤销',
-    message: `确认撤销到 ${myTransfer.value.to_icao} 的跳槽申请？`,
+    message: `确定要撤销到 ${myTransfer.value.to_icao} 的跳槽申请吗？`,
   });
   if (!ok) return;
   try {
@@ -138,8 +138,8 @@ async function leave() {
   const ok = await confirmModal({
     title: pending ? '撤销加入申请' : '退出航司',
     message: pending
-      ? `确认撤回向 ${mine.value.icao} ${mine.value.name} 提交的加入申请？`
-      : `确认退出 ${mine.value.icao} ${mine.value.name}？退出后可重新申请加入其他航司。`,
+      ? `确定要撤回向 ${mine.value.icao} ${mine.value.name} 提交的加入申请吗？`
+      : `确定要退出 ${mine.value.icao} ${mine.value.name} 吗？退出后可重新申请加入其他航司。`,
     danger: true,
     confirmText: pending ? '撤回申请' : '退出',
   });
@@ -156,7 +156,7 @@ async function leave() {
 async function disband() {
   const ok = await confirmModal({
     title: '解散航司',
-    message: `确认解散 ${mine.value.icao} ${mine.value.name}？所有成员与航线数据将被删除，不可恢复。`,
+    message: `确定要解散 ${mine.value.icao} ${mine.value.name} 吗？所有成员与航线数据将被删除，且无法恢复。`,
     danger: true,
     confirmText: '解散',
   });
@@ -186,7 +186,7 @@ function actionFor(a) {
     <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px">
       <div>
         <div class="page-title">虚拟航司</div>
-        <div class="page-desc">创建或加入虚拟航司，维护航线网络，打造你的航空公司</div>
+        <div class="page-desc">创建或加入虚拟航司，维护航线网络，经营你的航空公司</div>
       </div>
       <button class="btn btn-dark" @click="openCreate">
         <Icon :name="showCreate && canCreate ? 'x' : 'plus'" :size="15" />
@@ -235,7 +235,7 @@ function actionFor(a) {
             <div class="card-sub" style="margin-bottom: 0">
               <template v-if="mine.status === 'pending' && mine.role !== 'ceo'">加入申请审核中，请等待 CEO 审批</template>
               <template v-else-if="myTransfer">跳槽申请已提交，等待 {{ myTransfer.to_icao }} 审批</template>
-              <template v-else>你的身份：{{ mine.role === 'ceo' ? '首席执行官，CEO' : '飞行员' }}</template>
+              <template v-else>你的身份：{{ mine.role === 'ceo' ? '首席执行官（CEO）' : '飞行员' }}</template>
             </div>
           </div>
         </div>
@@ -277,10 +277,10 @@ function actionFor(a) {
       </div>
       <div class="field">
         <label class="label">航司简介 <span class="optional">选填</span></label>
-        <textarea v-model="form.description" class="textarea" rows="2" placeholder="介绍你们的航司定位、主基地与运营风格…"></textarea>
+        <textarea v-model="form.description" class="textarea" rows="2" placeholder="介绍航司定位、主基地与运营风格…"></textarea>
       </div>
       <div class="field">
-        <label class="label">航司 Logo <span class="optional">选填，从本地上传</span></label>
+        <label class="label">航司 Logo <span class="optional">选填（从本地上传）</span></label>
         <LogoUploader v-model="form.logoUrl" :fallback="(form.icao || '').toUpperCase()" />
       </div>
       <button class="btn btn-primary" :disabled="creating" @click="create">
@@ -290,16 +290,16 @@ function actionFor(a) {
     <div v-else-if="showCreate && mine" class="glass card" style="margin-bottom: 16px">
       <div class="card-title">暂时无法创建航司</div>
       <div class="card-sub" style="margin-bottom: 0">
-        你当前是 {{ mine.icao }} {{ mine.name }} 的成员。一位用户同时只能拥有一家航司，
+        你当前是 {{ mine.icao }} {{ mine.name }} 的成员。每个账号同时只能拥有一家航司，
         请先<template v-if="mine.role !== 'ceo'">「退出航司」</template><template v-else>「解散航司」</template>，
-        再回来创建新的航司。
+        再创建新的航司。
       </div>
     </div>
 
     <!-- 航司列表 -->
     <div class="glass card">
       <div class="card-title">航司列表</div>
-      <div class="card-sub">想换一家航司吗？直接点我要跳槽，由对方的CEO审批，通过前你还是留在这个航司，不过我觉得跳槽也是个不错的选择</div>
+      <div class="card-sub">想换一家航司？点击「我要跳槽」，由对方 CEO 审批，通过前你仍是当前航司成员</div>
       <div v-if="loading" class="loading">加载中…</div>
       <template v-else>
         <div v-for="a in airlines" :key="a.id" class="list-item">
@@ -335,7 +335,7 @@ function actionFor(a) {
 
             <!-- 跳槽审核中 -->
             <template v-else-if="actionFor(a) === 'transferring'">
-              <span class="tag tag-orange" style="align-self: center">bingo~跳槽申请提交成功~</span>
+              <span class="tag tag-orange" style="align-self: center">跳槽申请审核中</span>
               <button class="btn btn-ghost btn-sm" @click="cancelTransfer">撤销</button>
             </template>
 
@@ -370,7 +370,7 @@ function actionFor(a) {
   align-items: center;
   justify-content: center;
   border-radius: 14px;
-  background: linear-gradient(135deg, #0a84ff, #0071e3);
+  background: var(--blue);
   color: #fff;
   font-weight: 700;
   font-size: 13px;

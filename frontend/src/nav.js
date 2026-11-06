@@ -1,9 +1,7 @@
 /**
  * 主导航数据，侧边栏与顶部栏共用，唯一事实来源
  *
- * 之前这套定义写在 Sidebar.vue 里；顶部栏模式，2026-10-06 要在顶部横排同一套菜单，
- * 且二级项要「分列展示带图标和说明」，所以抽成模块，两个组件都从这里取，
- * 避免出现两份定义漂移。
+ * 侧边栏与顶部栏共用同一套菜单定义，抽成模块避免两份定义漂移。
  *
  * 字段约定：
  *   to 路由地址，有 children 的一级项没有 to，只作为分组
@@ -90,12 +88,12 @@ export function useNavItems() {
         icon: 'ticket',
         desc: '问题反馈与处理进度',
         children: [
-          { to: '/tickets/new', label: '提交工单', icon: 'plus', desc: '遇到问题在这里找我们' },
+          { to: '/tickets/new', label: '提交工单', icon: 'plus', desc: '遇到问题在这里提交' },
           { to: '/tickets', label: '工单历史', icon: 'ticket', desc: '查看处理进度与回复' },
         ],
       },
       { to: '/partners', label: '合作伙伴', icon: 'link', desc: '合作单位与友人站点' },
-      { to: '/acis', label: 'ACIS 事件检索', icon: 'book', image: acisLogo, desc: '飞圈事件智能检索与论坛' },
+      { to: '/acis', label: 'ACIS 事件检索', icon: 'book', image: acisLogo, desc: '飞圈事件检索与讨论' },
       {
         label: '管理后台',
         icon: 'shield',

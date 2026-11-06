@@ -49,7 +49,7 @@ async function load() {
 onMounted(load);
 
 async function unban(ip) {
-  if (!window.confirm(`确定解封 ${ip}？解除后该 IP 可以再次注册/登录。`)) return;
+  if (!window.confirm(`确定要解封 ${ip} 吗？解除后该 IP 可以再次注册 / 登录。`)) return;
   try {
     const r = await api.delete(`/api/admin/banned-ips/${encodeURIComponent(ip)}`);
     showToast(r.message || '已解封');
@@ -214,7 +214,7 @@ function expiryText(b) {
           <SelectMenu v-model="form.days" :options="dayOptions" />
         </div>
         <div class="field">
-          <label class="label">备注，可选</label>
+          <label class="label">备注（可选）</label>
           <input v-model="form.note" class="input" placeholder="留给自己看的说明" />
         </div>
       </div>
@@ -224,13 +224,13 @@ function expiryText(b) {
     </div>
 
     <div class="glass card" style="margin-top: 16px">
-      <div class="card-title">白名单，优先于黑名单</div>
+      <div class="card-title">白名单（优先于黑名单）</div>
       <div style="font-size: 13px; color: var(--gray); margin-bottom: 10px">
         误封后可把 IP 加白；加白会自动清除该 IP 的黑名单记录。办公室固定出口、服务器回连地址适合加白。
       </div>
       <div class="input-row" style="max-width: 560px">
         <input v-model="wl.ip" class="input" placeholder="IP 地址" />
-        <input v-model="wl.note" class="input" placeholder="备注，谁 / 为什么" />
+        <input v-model="wl.note" class="input" placeholder="备注（谁 / 为什么）" />
         <button class="btn btn-primary btn-sm" :disabled="wlSubmitting" @click="addWhitelist">加入</button>
       </div>
       <div v-if="whitelist.length" class="table-wrap" style="margin-top: 12px">

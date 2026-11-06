@@ -51,7 +51,7 @@ const {
   align-items: center;
   justify-content: center;
   border-radius: 14px;
-  background: linear-gradient(135deg, #0a84ff, #0071e3);
+  background: var(--blue);
   background-size: cover;
   color: #fff;
   font-weight: 700;

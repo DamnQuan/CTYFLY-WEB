@@ -127,7 +127,7 @@ const ceoPending = computed(() => orders.value.filter((o) => o.status === 'pendi
     <div class="page-header">
       <div class="page-title">航司商城</div>
       <div class="page-desc">
-        {{ va.membership ? `${va.membership.name}，${va.membership.icao}专属奖品 · 货款进公司账上` : '' }}
+        {{ va.membership ? `${va.membership.name}（${va.membership.icao}）专属奖品 · 货款进公司账上` : '' }}
       </div>
     </div>
 
@@ -153,7 +153,7 @@ const ceoPending = computed(() => orders.value.filter((o) => o.status === 'pendi
 
         <div v-if="showForm" style="margin-top: 10px">
           <div v-if="presets.length && !editingId" class="field">
-            <label class="label">奖品预设，点选后可改名改价</label>
+            <label class="label">奖品预设（点选后可改名改价）</label>
             <div class="input-row" style="flex-wrap: wrap; gap: 8px">
               <button
                 v-for="p in presets" :key="p.name"
@@ -163,7 +163,7 @@ const ceoPending = computed(() => orders.value.filter((o) => o.status === 'pendi
           </div>
           <div class="field">
             <label class="label">奖品名称</label>
-            <input v-model="form.name" class="input" maxlength="20" placeholder="如限量机模，1:200" />
+            <input v-model="form.name" class="input" maxlength="20" placeholder="如 限量机模（1:200）" />
           </div>
           <div class="field">
             <label class="label">奖品说明</label>
@@ -171,11 +171,11 @@ const ceoPending = computed(() => orders.value.filter((o) => o.status === 'pendi
           </div>
           <div class="input-row">
             <div class="field" style="flex: 1">
-              <label class="label">兑换价格，上限 500,000</label>
+              <label class="label">兑换价格（上限 500,000）</label>
               <input v-model="form.price" class="input" type="number" min="0" :max="maxPrice" />
             </div>
             <div class="field" style="flex: 1">
-              <label class="label">限量，-1 = 不限量</label>
+              <label class="label">限量（-1 表示不限量）</label>
               <input v-model="form.stock" class="input" type="number" min="-1" max="9999" />
             </div>
           </div>
@@ -191,7 +191,7 @@ const ceoPending = computed(() => orders.value.filter((o) => o.status === 'pendi
           <div class="list-main">
             <div class="list-title">{{ i.name }}</div>
             <div class="list-sub">
-              价格 {{ i.price }} · {{ i.stock < 0 ? '不限量' : `限量 ${i.stock}，已兑 ${i.sold}` }}
+              价格 {{ i.price }} · {{ i.stock < 0 ? '不限量' : `限量 ${i.stock}，已兑换 ${i.sold}` }}
               <template v-if="i.description"> · {{ i.description }}</template>
             </div>
           </div>
@@ -200,18 +200,18 @@ const ceoPending = computed(() => orders.value.filter((o) => o.status === 'pendi
             <button class="btn btn-ghost btn-sm" @click="removeItem(i)">下架</button>
           </div>
         </div>
-        <div v-if="!activeItems.length" class="card-sub">还没有上架奖品</div>
+        <div v-if="!activeItems.length" class="card-sub">暂无奖品，点击「上架新奖品」添加</div>
       </div>
 
       <!-- 成员：兑换 -->
       <div class="glass card" :style="va.isCEO ? 'margin-top: 16px' : ''">
         <div class="card-title">
           <Icon name="shop" :size="16" /> 可兑换奖品
-          <span class="card-sub" style="margin: 0 0 0 8px">我的余额 {{ balance }}</span>
+          <span class="card-sub" style="margin: 0 0 0 8px">余额 {{ balance }}</span>
         </div>
         <div v-if="!activeItems.length" class="empty">
           <div class="empty-icon"><Icon name="shop" :size="22" /></div>
-          <div>公司还没有上架奖品</div>
+          <div>公司暂未上架奖品</div>
         </div>
         <div v-for="i in activeItems" :key="i.id" class="list-item">
           <div class="list-main">
@@ -234,7 +234,7 @@ const ceoPending = computed(() => orders.value.filter((o) => o.status === 'pendi
       <div class="glass card" style="margin-top: 16px">
         <div class="card-title">
           <Icon name="ticket" :size="16" />
-          {{ va.isCEO ? '兑换订单，含全体成员' : '我的兑换记录' }}
+          {{ va.isCEO ? '兑换订单（含全体成员）' : '我的兑换记录' }}
           <span v-if="va.isCEO && ceoPending.length" class="tag tag-orange" style="margin-left: 8px">
             {{ ceoPending.length }} 单待发放
           </span>
@@ -250,7 +250,7 @@ const ceoPending = computed(() => orders.value.filter((o) => o.status === 'pendi
                 {{ o.status === 'delivered' ? '已发放' : o.status === 'pending' ? '待发放' : '已取消' }}
               </span>
               {{ o.item_name }}
-              <span v-if="va.isCEO" class="card-sub" style="margin-left: 6px">{{ o.username }}，{{ o.cid }}</span>
+              <span v-if="va.isCEO" class="card-sub" style="margin-left: 6px">{{ o.username }} · CID {{ o.cid }}</span>
             </div>
             <div class="list-sub">花费 {{ o.price }} · {{ fmtTime(o.created_at) }}</div>
           </div>

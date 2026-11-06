@@ -25,7 +25,7 @@ onMounted(load);
     <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px">
       <div>
         <div class="page-title">连飞活动</div>
-        <div class="page-desc">报名参加每周连飞活动，与大家一起翱翔蓝天</div>
+        <div class="page-desc">报名每周连飞活动，和飞友一起飞</div>
       </div>
       <div style="display: flex; gap: 10px; align-items: center">
 
@@ -33,7 +33,7 @@ onMounted(load);
     </div>
 
     <div v-if="loading" class="loading">加载中…</div>
-    <div v-else-if="!events.length" class="glass card empty">暂无活动</div>
+    <div v-else-if="!events.length" class="glass card empty">暂无活动，可稍后再来看看</div>
 
     <div v-else class="grid grid-2">
       <div v-for="e in events" :key="e.id" class="glass card">

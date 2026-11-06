@@ -282,7 +282,7 @@ onMounted(async () => {
         id="gmap-canvas"
         style="width: 100%; height: 560px; border-radius: 10px; cursor: grab; touch-action: none"
       ></canvas>
-      <div class="list-sub" style="margin-top: 8px">拖拽平移 · 滚轮缩放 · 数据源 X-Plane 机场场景 GIS，AIRAC 2609· 仅限模拟飞行娱乐使用</div>
+      <div class="list-sub" style="margin-top: 8px">拖拽平移 · 滚轮缩放 · 数据源 X-Plane 机场场景 GIS，AIRAC 2609 · 仅限模拟飞行娱乐使用</div>
     </div>
   </div>
 </template>

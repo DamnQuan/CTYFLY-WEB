@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
@@ -20,10 +20,20 @@
     <link rel="preconnect" href="https://q1.qlogo.cn" crossorigin />
     <link rel="dns-prefetch" href="https://q1.qlogo.cn" />
     <!--
-      飞控 AUTO 模式跟随系统，系统深色则自动深色，浅色则自动浅色——由 main.css 的 prefers-color-scheme 原生实现
-      欢迎使用 CTYFLY，祝大家飞行愉快
-      我们拥有虚拟商城系统，用飞行工资购买称号与徽章，展示在你的账号上
+      主题：下面的内联样式按系统偏好铺首屏底色；
+      这段脚本在 CSS 绘制前恢复已保存的主题，避免深色用户白闪。
+      JS 加载后 theme.js 接管，AUTO 跟随系统实时切换。
     -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('ctyfly_theme');
+          var dark = t === 'dark'
+            || ((t === 'auto' || !t) && matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        } catch (e) { /* 无存储权限时交给 theme.js 处理 */ }
+      })();
+    </script>
     <title>CTYFLY</title>
     <!-- 首屏最小关键样式：先铺底色与字体栈，避免 JS/CSS 到达前白屏闪烁 -->
     <style>
@@ -37,7 +47,7 @@
       }
       #app { min-height: 100vh; }
       @media (prefers-color-scheme: dark) {
-        body { background: #0b1120; color: #f5f5f7; }
+        body { background: #000000; color: #f5f5f7; }
       }
     </style>
   </head>

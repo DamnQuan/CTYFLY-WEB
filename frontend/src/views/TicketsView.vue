@@ -176,7 +176,7 @@ async function openAttachment(a) {
 }
 
 async function removeAttachment(a) {
-  if (!(await confirmModal({ title: '删除附件', danger: true, confirmText: '删除', message: `删除附件「${a.name}」？删除后不可恢复。` }))) return;
+  if (!(await confirmModal({ title: '删除附件', danger: true, confirmText: '删除', message: `确定要删除附件「${a.name}」吗？删除后不可恢复。` }))) return;
   try {
     await api.delete(`/api/attachments/${a.id}`);
     attachments.value = attachments.value.filter((x) => x.id !== a.id);
@@ -202,7 +202,7 @@ async function setStatus(t, status) {
     <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px">
       <div>
         <div class="page-title">工单中心</div>
-        <div class="page-desc">{{ showNew ? '提交工单，管理团队会尽快回复' : '您提交过的全部工单与处理进度' }}</div>
+        <div class="page-desc">{{ showNew ? '提交工单，管理团队会尽快回复' : '你提交过的全部工单与处理进度' }}</div>
       </div>
       <router-link class="btn btn-dark" :to="showNew ? '/tickets' : '/tickets/new'">
         {{ showNew ? '返回工单历史' : '+ 提交工单' }}
@@ -214,10 +214,10 @@ async function setStatus(t, status) {
       <div class="field"><label class="label">标题</label><input v-model="form.title" class="input" maxlength="20" placeholder="简要描述问题" /></div>
       <div class="field">
         <label class="label">问题描述</label>
-        <textarea v-model="form.content" class="textarea" rows="4" placeholder="详细描述您遇到的问题"></textarea>
+        <textarea v-model="form.content" class="textarea" rows="4" placeholder="详细描述你遇到的问题"></textarea>
       </div>
       <div class="field">
-        <label class="label">附件，可选</label>
+        <label class="label">附件（可选）</label>
         <label class="attach-pick" @click.prevent="pickVia($event)">
           <input type="file" multiple :accept="ALLOWED_EXT.map((e) => '.' + e).join(',')" @change="pickFiles($event, picked)" />
           选择文件
@@ -262,7 +262,7 @@ async function setStatus(t, status) {
       </div>
       <!-- 附件区：工单全部附件，含回复中的，主人可删除自己的-->
       <div v-if="attachments.length" class="attach-list">
-        <div class="attach-title">附件，{{ attachments.length }}</div>
+        <div class="attach-title">附件（{{ attachments.length }}）</div>
         <div v-for="a in attachments" :key="a.id" class="attach-item">
           <span class="tag">{{ kindLabel(a.kind) }}</span>
           <span class="attach-name" style="cursor: pointer" @click="openAttachment(a)">{{ a.name }}</span>

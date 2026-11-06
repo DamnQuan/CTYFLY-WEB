@@ -104,7 +104,7 @@ function hhmm(t) {
           <span v-if="auth.user?.is_controller" class="tag tag-blue">管制员 {{ auth.user?.rating }}</span>
           <span v-else class="tag">飞行员 {{ auth.user?.pilot_rank }}</span>
           <template v-if="me?.airline">
-            <span class="tag tag-blue">{{ me.airline.name }}，{{ me.airline.icao }}</span>
+            <span class="tag tag-blue">{{ me.airline.name }}（{{ me.airline.icao }}）</span>
             <span v-if="me.airline.position" class="tag">{{ me.airline.position }}</span>
           </template>
         </div>
@@ -137,19 +137,19 @@ function hhmm(t) {
       <div class="grid grid-4">
         <div class="stat">
           <div class="stat-num">{{ me ? me.hours.toFixed(1) : '0.0' }}<span class="stat-unit">h</span></div>
-          <div class="stat-label">我的累计时长</div>
+          <div class="stat-label">累计时长</div>
         </div>
         <div class="stat">
           <div class="stat-num">{{ me?.flights ?? 0 }}</div>
-          <div class="stat-label">我的已通过航班</div>
+          <div class="stat-label">已通过航班</div>
         </div>
         <div class="stat">
           <div class="stat-num">{{ (me?.balance ?? 0).toLocaleString() }}</div>
-          <div class="stat-label">我的钱包余额</div>
+          <div class="stat-label">钱包余额</div>
         </div>
         <div class="stat">
           <div class="stat-num stat-sm">{{ me?.airline ? me.airline.name : '未加入' }}</div>
-          <div class="stat-label">我的航司{{ me?.airline?.position ? ' · ' + me.airline.position : '' }}</div>
+          <div class="stat-label">所在航司{{ me?.airline?.position ? ' · ' + me.airline.position : '' }}</div>
         </div>
       </div>
 
@@ -203,7 +203,7 @@ function hhmm(t) {
               <span class="rank-hours">{{ f.hours }} h</span>
             </div>
           </template>
-          <div v-else class="empty">还没有飞行记录</div>
+          <div v-else class="empty">暂无飞行记录，从飞行签派页开始第一次飞行</div>
         </div>
 
         <!-- 飞行时长排行榜 -->
@@ -220,7 +220,7 @@ function hhmm(t) {
               <span class="rank-hours">{{ p.total_hours?.toFixed(1) }} h</span>
             </div>
           </template>
-          <div v-else class="empty">还没有飞行记录</div>
+          <div v-else class="empty">暂无飞行数据</div>
         </div>
       </div>
 
@@ -240,7 +240,7 @@ function hhmm(t) {
         </template>
         <div v-else class="empty">
           <div class="empty-icon"><Icon name="calendar" :size="22" /></div>
-          <div>暂无报名活动</div>
+          <div>暂无报名活动，去活动页看看排期</div>
         </div>
       </div>
 

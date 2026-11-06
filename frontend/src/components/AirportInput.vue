@@ -10,7 +10,7 @@ import { api } from '../api.js';
 
 const props = defineProps({
   modelValue: { type: String, default: '' },
-  placeholder: { type: String, default: '机场 ICAO，如 ZBAA' },
+  placeholder: { type: String, default: '机场 ICAO（如 ZBAA）' },
   multiple: { type: Boolean, default: false },
 });
 const emit = defineEmits(['update:modelValue', 'select']);

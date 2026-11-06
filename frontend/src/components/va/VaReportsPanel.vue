@@ -27,7 +27,7 @@ const {
 
         <!-- 成员提交表单 -->
         <div v-if="isMember" style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border)">
-          <div class="card-sub">飞完航司航线后提交报告，CEO 审核通过后自动发放工资，航线基础工资 + 时长 × 时薪{{ hourlyRate }}/h</div>
+          <div class="card-sub">飞完航司航线后提交报告，CEO 审核通过后自动发放工资，航线基础工资 + 时长 × 时薪 {{ hourlyRate }}/h</div>
           <div class="grid grid-2" style="gap: 12px">
             <div class="field" style="margin-bottom: 0">
               <label class="label">航线 <span style="color: var(--red)">*</span></label>
@@ -39,10 +39,10 @@ const {
             </div>
             <div class="field" style="margin-bottom: 0">
               <label class="label">机型</label>
-              <input v-model="reportForm.aircraft" class="input input-icao" maxlength="16" placeholder="如 A320，选填" />
+              <input v-model="reportForm.aircraft" class="input input-icao" maxlength="16" placeholder="如 A320（选填）" />
             </div>
             <div class="field" style="margin-bottom: 0">
-              <label class="label">飞行时长，小时<span style="color: var(--red)">*</span></label>
+              <label class="label">飞行时长（小时）<span style="color: var(--red)">*</span></label>
               <input v-model.number="reportForm.hours" class="input" type="number" step="0.1" min="0.1" max="24" />
             </div>
             <div class="field" style="margin-bottom: 0">
@@ -50,7 +50,7 @@ const {
               <DatePicker v-model="reportForm.flightDate" mode="date" placeholder="选择飞行日期" />
             </div>
           </div>
-          <input v-model="reportForm.notes" class="input" style="margin-top: 12px" placeholder="备注，选填" />
+          <input v-model="reportForm.notes" class="input" style="margin-top: 12px" placeholder="备注（选填）" />
           <div style="margin-top: 12px">
             <button class="btn btn-primary" :disabled="submitting" @click="submitReport">
               {{ submitting ? '提交中…' : '提交飞行报告' }}
@@ -63,7 +63,7 @@ const {
 
         <!-- 管理成员待审核，CEO / 部长-->
         <template v-if="canManage && pendingReports.length">
-          <div class="label" style="margin-bottom: 8px">待审核，{{ pendingReports.length }}</div>
+          <div class="label" style="margin-bottom: 8px">待审核（{{ pendingReports.length }}）</div>
           <div v-for="r in pendingReports" :key="r.id" class="list-item">
             <UserAvatar :user="r" :size="34" />
             <div class="list-main">

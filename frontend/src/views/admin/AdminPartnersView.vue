@@ -95,7 +95,7 @@ async function toggle(p) {
 async function remove(p) {
   const ok = await confirmModal({
     title: '删除合作伙伴', danger: true, confirmText: '删除',
-    message: `确认删除「${p.name}」？`,
+    message: `确定要删除「${p.name}」吗？删除后首页不再展示。`,
   });
   if (!ok) return;
   try {
@@ -127,7 +127,7 @@ async function remove(p) {
           <input v-model="form.url" class="input" placeholder="https://..." maxlength="200" />
         </div>
         <div class="field" style="flex: 0 0 140px">
-          <label class="label">排序，小在前</label>
+          <label class="label">排序（小的在前）</label>
           <input v-model="form.sort" class="input" type="number" min="0" max="999" />
         </div>
       </div>
@@ -136,7 +136,7 @@ async function remove(p) {
         <input v-model="form.description" class="input" maxlength="20" placeholder="一句话介绍这个合作伙伴" />
       </div>
       <div style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap">
-        <button class="btn btn-ghost btn-sm" @click="pickLogo">{{ form.logo ? '已上传 Logo ✓' : '上传 Logo' }}</button>
+        <button class="btn btn-ghost btn-sm" @click="pickLogo">{{ form.logo ? '已上传 Logo' : '上传 Logo' }}</button>
         <span v-if="form.logo" class="card-sub">{{ form.logo }}</span>
         <button class="btn btn-primary" :disabled="busy" @click="add">添加</button>
       </div>
@@ -144,7 +144,7 @@ async function remove(p) {
     </div>
 
     <div class="glass card">
-      <div class="card-title">合作伙伴，{{ partners.length }}</div>
+      <div class="card-title">合作伙伴（{{ partners.length }}）</div>
       <div v-if="loading" class="loading">加载中…</div>
       <template v-else-if="partners.length">
         <div v-for="p in partners" :key="p.id" class="list-item" style="flex-wrap: wrap">
@@ -155,7 +155,7 @@ async function remove(p) {
                 <input v-model="editForm.url" class="input" style="flex: 1" maxlength="200" />
                 <input v-model="editForm.sort" class="input" type="number" style="flex: 0 0 90px" min="0" max="999" />
               </div>
-              <input v-model="editForm.description" class="input" style="margin-top: 8px" maxlength="20" placeholder="简介，选填" />
+              <input v-model="editForm.description" class="input" style="margin-top: 8px" maxlength="20" placeholder="简介（选填）" />
             </template>
             <template v-else>
               <div class="list-title">

@@ -122,7 +122,7 @@ async function exportCsv() {
     </div>
 
     <div v-if="loading" class="glass card survey-empty">正在加载…</div>
-    <div v-else-if="!items.length" class="glass card survey-empty">还没有收到问卷反馈</div>
+    <div v-else-if="!items.length" class="glass card survey-empty">暂无问卷反馈</div>
 
     <div v-else class="survey-list">
       <div v-for="item in items" :key="item.id" class="glass card survey-item">
@@ -191,7 +191,7 @@ async function exportCsv() {
 .survey-bar {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--blue), color-mix(in srgb, var(--blue) 55%, transparent));
+  background: var(--blue);
 }
 .survey-bar-count { color: var(--text-2); font-size: 12px; text-align: right; }
 .survey-list { display: flex; flex-direction: column; gap: 12px; }

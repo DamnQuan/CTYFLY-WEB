@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 /**
  * 航路查询：AIRAC 导航数据 A* 规划，sidecar 服务
  * 机场联想 / SID·STAR 选择 / 备选航线 / 自定义航路分析
@@ -23,9 +23,8 @@ const starChoice = ref('');
 const planning = ref(false);
 const planError = ref('');
 // 航路数据，sidecar 状态查询失败时的提示。
-// 修复，2026-10-11，ESLint no-undef 抓出：这里原先只写 `statusError.value = err.message`
-// 却从未声明 statusError —— sidecar 挂掉时 catch 里会抛 ReferenceError，
-// 本该显示的「航路数据不可用」提示从未出现过，错误被静默吞掉。
+// 注意先声明再使用：sidecar 挂掉时 catch 里要写 statusError.value，
+// 未声明会抛 ReferenceError，导致「航路数据不可用」提示被静默吞掉。
 const statusError = ref('');
 const plan = ref(null);            // 推荐航路
 const alternatives = ref([]);      // 备选航路
@@ -246,7 +245,7 @@ onUnmounted(() => { clearInterval(progressTimer); clearTimeout(copyTimer); });
         <label class="label">起飞机场 ICAO</label>
         <AirportInput
           v-model="originQuery"
-          placeholder="输入 ICAO 或英文名，如 ZBAA"
+          placeholder="输入 ICAO 或英文名（如 ZBAA）"
           @select="(ap) => onAirportPicked('origin', ap)"
         />
       </div>
@@ -256,26 +255,26 @@ onUnmounted(() => { clearInterval(progressTimer); clearTimeout(copyTimer); });
         <label class="label">到达机场 ICAO</label>
         <AirportInput
           v-model="destQuery"
-          placeholder="输入 ICAO 或英文名，如 ZSPD"
+          placeholder="输入 ICAO 或英文名（如 ZSPD）"
           @select="(ap) => onAirportPicked('dest', ap)"
         />
       </div>
 
       <!-- SID / STAR -->
       <div class="field" style="margin-bottom: 0">
-        <label class="label">离场程序 <span class="optional">选填，默认自动</span></label>
+        <label class="label">离场程序 <span class="optional">选填（默认自动）</span></label>
         <SelectMenu
           v-model="sidChoice"
           :disabled="!sidOptions.length"
-          :options="[{ value: '', label: '自动选择，NO SID' }, ...sidOptions.map((s) => ({ value: s, label: s }))]"
+          :options="[{ value: '', label: '自动选择（NO SID）' }, ...sidOptions.map((s) => ({ value: s, label: s }))]"
         />
       </div>
       <div class="field" style="margin-bottom: 0">
-        <label class="label">进场程序 <span class="optional">选填，默认自动</span></label>
+        <label class="label">进场程序 <span class="optional">选填（默认自动）</span></label>
         <SelectMenu
           v-model="starChoice"
           :disabled="!starOptions.length"
-          :options="[{ value: '', label: '自动选择，NO STAR' }, ...starOptions.map((s) => ({ value: s, label: s }))]"
+          :options="[{ value: '', label: '自动选择（NO STAR）' }, ...starOptions.map((s) => ({ value: s, label: s }))]"
         />
       </div>
     </div>
@@ -303,7 +302,7 @@ onUnmounted(() => { clearInterval(progressTimer); clearTimeout(copyTimer); });
       <div v-if="displayRoute" style="margin-top: 16px">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px">
           <div class="card-title" style="margin: 0">
-            航路，{{ displayRoute.origin.icao }} → {{ displayRoute.destination.icao }}
+            航路（{{ displayRoute.origin.icao }} → {{ displayRoute.destination.icao }}）
           </div>
           <button class="btn btn-ghost btn-sm copy-btn" :class="{ 'is-copied': copied }" @click="copyRouteString">
             <span class="copy-icon"><Icon :name="copied ? 'check' : 'plus'" :size="13" /></span>
@@ -320,7 +319,7 @@ onUnmounted(() => { clearInterval(progressTimer); clearTimeout(copyTimer); });
       <div v-if="displayRoute" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px">
         <span class="tag tag-blue">离场 {{ nm(displayRoute.costs.sidDistance) }} NM<span v-if="displayRoute.sid.procedure">{{ displayRoute.sid.procedure }}</span></span>
         <span class="tag tag-orange">航路 {{ nm(displayRoute.costs.airwayDistance) }} NM</span>
-        <span v-if="displayRoute.costs.switchCount" class="tag">换路 {{ displayRoute.costs.switchCount }} 次，+{{ nm(displayRoute.costs.switchPenalty) }} NM</span>
+        <span v-if="displayRoute.costs.switchCount" class="tag">换路 {{ displayRoute.costs.switchCount }} 次（+{{ nm(displayRoute.costs.switchPenalty) }} NM）</span>
         <span class="tag tag-purple">进场 {{ nm(displayRoute.costs.starDistance) }} NM<span v-if="displayRoute.star.procedure">{{ displayRoute.star.procedure }}</span></span>
         <span class="tag tag-green">总距离 {{ nm(displayRoute.costs.total) }} NM</span>
         <span class="tag">{{ displayRoute.method === 'DCT' ? '直飞连接' : '高空航路' }}</span>
@@ -331,7 +330,7 @@ onUnmounted(() => { clearInterval(progressTimer); clearTimeout(copyTimer); });
         <div class="label" style="margin-bottom: 6px">可选航线</div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap">
           <button class="btn btn-sm" :class="activeIndex === -1 && !analyzed ? 'btn-dark' : 'btn-ghost'" @click="showRoute(-1)">
-            推荐，{{ nm(plan.costs.total) }} NM
+            推荐（{{ nm(plan.costs.total) }} NM）
           </button>
           <button
             v-for="(alt, i) in alternatives"
@@ -340,7 +339,7 @@ onUnmounted(() => { clearInterval(progressTimer); clearTimeout(copyTimer); });
             :class="activeIndex === i && !analyzed ? 'btn-dark' : 'btn-ghost'"
             @click="showRoute(i)"
           >
-            备选 {{ i + 1 }}，+{{ nm(alt.costDelta) }} NM
+            备选 {{ i + 1 }}（+{{ nm(alt.costDelta) }} NM）
           </button>
           <button v-if="analyzed" class="btn btn-sm btn-ghost" @click="analyzed = false">返回规划结果</button>
         </div>
@@ -364,7 +363,7 @@ onUnmounted(() => { clearInterval(progressTimer); clearTimeout(copyTimer); });
         </div>
         <template v-else>
           <div class="alert alert-ok" style="margin-top: 14px; margin-bottom: 0">
-            您的航路适合 AIRAC {{ analysis.cycle }} 导航数据 · 总距离 {{ nm(analysis.totalDistance) }} NM
+            你的航路适合 AIRAC {{ analysis.cycle }} 导航数据 · 总距离 {{ nm(analysis.totalDistance) }} NM
           </div>
           <div class="route-str" style="margin-top: 10px">{{ analysis.routeString }}</div>
         </template>
@@ -417,7 +416,7 @@ onUnmounted(() => { clearInterval(progressTimer); clearTimeout(copyTimer); });
   height: 100%;
   width: 34%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #0a84ff, #0071e3);
+  background: var(--blue);
   animation: plan-slide 1.15s ease-in-out infinite;
 }
 @keyframes plan-slide {

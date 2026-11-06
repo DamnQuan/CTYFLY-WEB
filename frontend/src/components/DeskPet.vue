@@ -437,7 +437,7 @@ async function sendChat() {
   chatInput.value = '';
   const seq = ++chatSeq;
   thinking.value = true;
-  say('……让我想想。', 30000);
+  say('…让我想想。', 30000);
   play(EVENTS.thinking, 'event');
   try {
     // 后端代理火山方舟；30 秒超时，模型实测 3-6 秒，留足余量

@@ -17,7 +17,7 @@ const {
 
 <template>
 <div class="glass card">
-        <div class="card-title">成员名单，{{ data.members.length }}</div>
+        <div class="card-title">成员名单（{{ data.members.length }}）</div>
         <div class="card-sub" v-if="canManage">职位按现实飞行部门阶梯设置：飞行教员 / 机长 / 副驾驶 / 二副 / 见习学员，留空即普通飞行员</div>
         <div v-for="m in data.members" :key="m.id" class="list-item">
           <UserAvatar :user="m" :size="34" />

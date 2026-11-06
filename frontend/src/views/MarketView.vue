@@ -2,7 +2,7 @@
 /**
  * 二手飞机市场
  *
- * 组件红线，见交接文档 §10 / §22 / §23：
+ * 组件红线：
  * - 零原生控件：机型筛选、排序、购买方航司、机况全部用自研 SelectMenu；
  *   确认动作走 confirmModal，promptModal 用于改价，页面上没有 <select>/<input type="date">，
  *   也没有 alert/confirm/prompt。
@@ -44,7 +44,7 @@ const aircraftOptions = computed(() => [
   { value: 'ALL', label: '全部机型' },
   ...aircraftCounts.value.map((c) => ({
     value: c.aircraft,
-    label: `${c.aircraft}，在售 ${c.count}`,
+    label: `${c.aircraft}（在售 ${c.count}）`,
   })),
 ]);
 const sortOptions = [
@@ -62,7 +62,7 @@ const conditionOptions = [
 ];
 const ceoAirlines = computed(() => myAirlines.value.filter((a) => a.role === 'ceo'));
 const airlineOptions = computed(() =>
-  ceoAirlines.value.map((a) => ({ value: a.id, label: `${a.name}，${a.icao}余额 ${a.balance}` })),
+  ceoAirlines.value.map((a) => ({ value: a.id, label: `${a.name}（${a.icao}） · 余额 ${a.balance}` })),
 );
 const fleetOptions = computed(() =>
   my.value.fleet.map((f) => ({ value: f.id, label: `${f.aircraft} · ${f.reg} · 位于 ${f.location || '未知'}` })),
@@ -176,7 +176,7 @@ async function confirmBuy() {
   const airline = myAirlines.value.find((a) => a.id === buyAirline.value);
   const ok = await confirmModal({
     title: '确认购买',
-    message: `将以 ${fmt(item.price)} 买入 ${item.aircraft_name || item.aircraft}，注册号 ${item.reg}，从「${airline?.name || ''}」余额扣除。手续费 ${feeRate.value}% 由卖家承担。`,
+    message: `确定要以 ${fmt(item.price)} 买入 ${item.aircraft_name || item.aircraft}（注册号 ${item.reg}）吗？将从「${airline?.name || ''}」余额扣除，手续费 ${feeRate.value}% 由卖家承担。`,
     confirmText: '确认买入',
   });
   if (!ok) return;
@@ -218,7 +218,7 @@ async function doSell() {
   }
   const ok = await confirmModal({
     title: '确认挂牌',
-    message: `挂牌价 ${fmt(price)}，成交后平台收取 ${feeRate.value}% 手续费。挂牌期间该飞机不可签派。`,
+    message: `确定要以 ${fmt(price)} 挂牌吗？成交后平台收取 ${feeRate.value}% 手续费，挂牌期间该飞机不可签派。`,
     confirmText: '确认挂牌',
   });
   if (!ok) return;
@@ -241,7 +241,7 @@ async function doSell() {
 async function cancelListing(row) {
   const ok = await confirmModal({
     title: '下架挂牌',
-    message: `确定下架 ${row.aircraft} ${row.reg} 吗？下架后飞机恢复可签派。`,
+    message: `确定要下架 ${row.aircraft} ${row.reg} 吗？下架后飞机恢复可签派。`,
     danger: true,
     confirmText: '确认下架',
   });
@@ -299,7 +299,7 @@ function statusTag(s) {
         >出售飞机</button>
       </div>
       <div v-if="ceoAirlines.length && !my.fleet.length" class="card-sub" style="margin: 8px 0 0">
-        本航司当前没有「可用且未挂牌」的飞机 —— 签派中的飞机需要先完成飞行报告才能挂牌。
+        本航司当前没有可用且未挂牌的飞机，签派中的飞机需先完成飞行报告才能挂牌。
       </div>
     </div>
 
@@ -325,7 +325,7 @@ function statusTag(s) {
             <span class="mc-reg">{{ item.reg }}</span>
           </div>
           <div class="mc-name">{{ item.aircraft_name || item.aircraft }}</div>
-          <div class="mc-meta">{{ item.aircraft }} · {{ item.seller_airline_name }}，{{ item.seller_icao }}</div>
+          <div class="mc-meta">{{ item.aircraft }} · {{ item.seller_airline_name }}（{{ item.seller_icao }}）</div>
           <div class="mc-meta">位于 {{ item.location || '未知' }} · 挂牌 {{ item.created_at?.slice(0, 10) }}</div>
           <div class="mc-price"><Icon name="diamond" :size="14" /> {{ fmt(item.price) }}</div>
         </article>
@@ -353,11 +353,11 @@ function statusTag(s) {
 
     <!-- 全部在售 -->
     <div class="glass card" style="margin-top: 16px">
-      <div class="card-title"><Icon name="trending" :size="16" /> 全部在售，{{ total }}</div>
+      <div class="card-title"><Icon name="trending" :size="16" /> 全部在售（{{ total }}）</div>
       <div v-if="loading" class="loading">加载中…</div>
       <div v-else-if="!items.length" class="empty">
         <div class="empty-icon"><Icon name="shop" :size="22" /></div>
-        <div>当前没有符合条件的在售飞机</div>
+        <div>暂无符合条件的在售飞机，可调整筛选条件</div>
       </div>
       <div v-else class="market-list">
         <div v-for="item in items" :key="item.id" class="list-item">
@@ -369,7 +369,7 @@ function statusTag(s) {
               {{ item.aircraft_name || item.aircraft }} · {{ item.reg }}
             </div>
             <div class="list-sub">
-              {{ item.aircraft }} · 卖家 {{ item.seller_airline_name }}，{{ item.seller_icao }}
+              {{ item.aircraft }} · 卖家 {{ item.seller_airline_name }}（{{ item.seller_icao }}）
               · 位于 {{ item.location || '未知' }} · 挂牌 {{ item.created_at?.slice(0, 16) }}
             </div>
             <div v-if="item.description" class="list-sub" style="opacity: .8">{{ item.description }}</div>
@@ -395,7 +395,7 @@ function statusTag(s) {
         <SelectMenu v-model="sellForm.fleetId" :options="fleetOptions" placeholder="请选择本航司可用飞机" />
       </div>
       <div class="field">
-        <div class="label">挂牌价，游戏币，10% ~ 150% 目录价</div>
+        <div class="label">挂牌价（游戏币，10% ~ 150% 目录价）</div>
         <input v-model="sellForm.price" class="input" inputmode="numeric" placeholder="例如 500000" maxlength="9" />
       </div>
       <div class="field">
@@ -403,7 +403,7 @@ function statusTag(s) {
         <SelectMenu v-model="sellForm.conditionPct" :options="conditionOptions" />
       </div>
       <div class="field">
-        <div class="label">挂牌说明，可选</div>
+        <div class="label">挂牌说明（可选）</div>
         <input v-model="sellForm.description" class="input" maxlength="200" placeholder="如：定期检修完毕，可立即投入运营" />
       </div>
       <div class="modal-actions">

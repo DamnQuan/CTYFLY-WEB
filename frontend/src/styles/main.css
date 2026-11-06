@@ -1,8 +1,9 @@
 /* 设计系统入口。按层拆分后由 Vite 按顺序内联，运行时分发行为不变。
-   顺序不能调换：主题变量 → 组件 → 诊断 → 深色 → 胶囊 → 无障碍 → 手机端覆盖，
+   顺序不能调换：主题变量 → 组件 → 顶栏 → 诊断 → 深色 → 胶囊 → 无障碍 → 手机端覆盖，
    手机端必须最后，否则会被前面的同优先级规则覆盖。 */
 @import './tokens.css';
 @import './components.css';
+@import './topbar.css';
 @import './diagnostics.css';
 @import './dark.css';
 @import './capsule.css';

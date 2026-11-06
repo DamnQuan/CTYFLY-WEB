@@ -51,7 +51,7 @@ async function add() {
 async function remove(n) {
   const ok = await confirmModal({
     title: '删除公告', danger: true, confirmText: '删除',
-    message: `确认删除公告「${n.title}」？`,
+    message: `确定要删除公告「${n.title}」吗？删除后前台不再显示。`,
   });
   if (!ok) return;
   try {
@@ -112,7 +112,7 @@ async function addChangelog() {
 async function removeChangelog(c) {
   const ok = await confirmModal({
     title: '删除更新日志', danger: true, confirmText: '删除',
-    message: `确认删除更新日志「${c.version || c.title}」？`,
+    message: `确定要删除更新日志「${c.version || c.title}」吗？删除后前台不再显示。`,
   });
   if (!ok) return;
   try {
@@ -154,7 +154,7 @@ function clSummary(c) {
       </div>
 
       <div class="glass card">
-        <div class="card-title">已有公告，{{ notices.length }}</div>
+        <div class="card-title">已有公告（{{ notices.length }}）</div>
         <div v-if="loading" class="loading">加载中…</div>
         <template v-else-if="notices.length">
           <div v-for="n in notices" :key="n.id" class="list-item">
@@ -189,7 +189,7 @@ function clSummary(c) {
       </div>
 
       <div class="glass card">
-        <div class="card-title">已有更新日志，{{ changelogs.length }}</div>
+        <div class="card-title">已有更新日志（{{ changelogs.length }}）</div>
         <div v-if="clLoading" class="loading">加载中…</div>
         <template v-else-if="changelogs.length">
           <div v-for="c in changelogs" :key="c.id" class="list-item">

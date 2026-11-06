@@ -128,7 +128,7 @@
   text-decoration: none;
 }
 
-/* ---------- 侧边栏收拢，图标栏，2026-10-16 站长要求 ----------
+/* ---------- 侧边栏收拢，图标栏 ----------
    桌面端 240px ⇄ 68px，宽度与内边距一起过渡，0.25s，与侧边栏既有节奏一致；
    内容区靠 .app-main 的 margin 跟随，且只在非布局切换时加过渡
    布局切换的 margin 240↔0 必须在内容不可见的那一帧瞬时完成，否则会看到滑动。*/
@@ -1093,7 +1093,7 @@ a {
   align-items: center;
   justify-content: center;
   border-radius: 13px;
-  background: linear-gradient(135deg, rgba(0, 113, 227, 0.12), rgba(191, 90, 242, 0.12));
+  background: rgba(0, 113, 227, 0.12);
   color: var(--blue);
   margin-bottom: 4px;
 }
@@ -1149,8 +1149,7 @@ a {
   left: 0;
   width: 36%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #0a84ff, #6aa9ff);
-  box-shadow: 0 0 8px rgba(10, 132, 255, 0.6);
+  background: var(--blue);
   animation: route-slide 1s ease-in-out infinite;
 }
 @keyframes route-slide {

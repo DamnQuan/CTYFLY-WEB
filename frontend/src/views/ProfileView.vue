@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { ref } from 'vue';
 import { api, setToken } from '../api.js';
 import { useAuthStore } from '../stores/auth.js';
@@ -73,13 +73,13 @@ async function changePwd() {
 </script>
 
 <template>
-  <!-- 横向布局，2026-10-17 站长要求：两列 Grid 平铺，一屏尽量多看；
+  <!-- 横向布局：两列 Grid 平铺，一屏尽量多看；
        单卡内容过长时在卡片内部滚动，.profile-card 的 max-height + overflow-y，
        不再把整页撑高；窄屏回退单列、取消限高，见底部 scoped 样式。-->
   <div class="page profile-page">
     <div class="page-header">
       <div class="page-title">个人中心</div>
-      <div class="page-desc">管理您的账号资料与安全设置</div>
+      <div class="page-desc">管理你的账号资料与安全设置</div>
     </div>
 
     <div class="profile-grid">
@@ -146,10 +146,10 @@ async function changePwd() {
       <div class="glass card profile-card">
         <div class="card-title">桌面小鲸灵</div>
         <div class="card-sub">
-          页面右下角的鲸宝，开源桌宠 dsh-pet 的网页版：三十多段手绘动画自己连播，
+          页面右下角的鲸宝，开源桌宠 dsh-pet 的网页版：三十多段手绘动画自动连播，
           会打瞌睡、玩魔方、写代码、涮火锅；点它有 Q 弹回应，拖着玩可以甩出去撞墙反弹。
-          <strong>右键，手机长按</strong>它还能点播动作、聊两句。
-          关掉后不会再出现，随时可以在这里召唤回来。
+          <strong>右键（手机长按）</strong>可点播动作、聊天。
+          关闭后不会再出现，可随时回到本页重新打开。
         </div>
         <button
           class="btn"
@@ -165,7 +165,7 @@ async function changePwd() {
             <div class="card-sub" style="margin: 2px 0 0">
               {{ petHover
                 ? '悬停：拖到哪里就停在哪里，可以停在半空或页面顶部'
-                : '落地：松手后按重力落回页面底部，像现实里的小宠物一样' }}
+                : '落地：松手后按重力落回页面底部' }}
             </div>
           </div>
           <button class="btn btn-ghost btn-sm" @click="toggleHover(!petHover)">
@@ -180,7 +180,7 @@ async function changePwd() {
           <div class="card-title">导航布局</div>
           <div class="card-sub">
             左侧边栏：竖向菜单，二级项就地展开；顶部栏：导航横排，鼠标悬停展开通栏面板，
-            子页面分列展示并带说明。窄屏，≤860px 会自动使用侧边抽屉。
+            子页面分列展示并带说明。窄屏（≤860px）会自动使用侧边抽屉。
           </div>
           <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
             <button
@@ -202,7 +202,7 @@ async function changePwd() {
         <div class="glass card profile-card">
           <div class="card-title">新手引导</div>
           <div class="card-sub">
-            带你过一遍侧边栏里的每个功能是干什么的，随时可以跳过。想再看一遍就点下面这个按钮。
+            快速了解侧边栏各功能的用途，可随时跳过，也可点击下方按钮重新播放。
           </div>
           <button class="btn btn-ghost" @click="replayTour">重新播放新手引导</button>
         </div>
