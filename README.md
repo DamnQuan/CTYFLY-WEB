@@ -265,6 +265,82 @@ sudo systemctl status ctyfly.service
 | [CWFLY-WEB](https://github.com/yuanshen-123-ui/CWFLY-WEB) | 同作者项目：模拟飞行社区主站 |
 | [CWFLY-FSD](https://github.com/yuanshen-123-ui/CWFLY-FSD) | 同作者项目：FSD 连线服务器 |
 
+## 项目亮点
+
+- **一体化社区平台**：账号、航情、活动、工单、虚拟航司、经济、成就与后台管理在同一套系统中闭环，减少多系统割裂。
+- **航空数据驱动**：METAR / TAF、AIRAC 航路规划、机场地面图与 VA 签派共用同一套数据与权限体系。
+- **完整的 VA 经济循环**：抢标、签派、飞行报告、工资结算、公司账本、机队与航线扩张形成可持续运营链路。
+- **ACIS 事件检索**：标题拼音全量浏览、最新最热精选、免登录投稿纠错、点赞收藏评论、举报与后台审核。
+- **自研安全能力**：PoW 人机验证、滑动窗口限流、双人复核审批、审计日志与上传隔离，不依赖第三方验证码。
+- **可维护的部署链路**：幂等迁移、生产/测试双环境、部署备份、回滚脚本与全站 smoke 检查。
+
+## 设计原则
+
+| 原则 | 落地方式 |
+|---|---|
+| 内容优先 | 页面层级服务于信息阅读，减少无意义装饰与跳转 |
+| 玻璃拟态 | 半透明材质、边缘高光、柔和阴影与深色模式统一设计变量 |
+| 渐进增强 | 原生能力之上做自定义组件，关键流程在低性能设备仍可完成 |
+| 安全默认 | 敏感配置只进 `.env`，高危操作双人复核，默认关闭文档与调试入口 |
+| 可恢复 | SQLite 单文件备份、幂等迁移、部署前快照与明确回滚路径 |
+
+## 常用命令速查
+
+| 场景 | 命令 |
+|---|---|
+| 安装前端依赖 | `cd frontend && npm install` |
+| 启动前端开发 | `cd frontend && npm run dev` |
+| 前端检查 | `cd frontend && npm run lint && npm run test` |
+| 启动后端 | `cd backend && python run.py` |
+| 后端测试 | `cd backend && pytest` |
+| 一键全检查 | `pwsh ./check-all.ps1` |
+| 构建前端 | `cd frontend && npm run build` |
+| 部署测试站 | `pwsh ./deploy/deploy-test.ps1 -Backend -Frontend` |
+| 部署生产 | `pwsh ./deploy/deploy.ps1` |
+| 全站冒烟 | `pwsh ./deploy/smoke.ps1` |
+
+## 常见问题
+
+**Q：没有配置 SMTP，注册验证码在哪里看？**  
+A：开发模式下验证码会直接返回在页面提示条，并打印到后端控制台。
+
+**Q：航情查询失败，提示上游不可达？**  
+A：服务器没有直连外网时，在 `backend/.env` 配置 `HTTPS_PROXY` 或可用的上游代理。
+
+**Q：数据库如何备份？**  
+A：停止写入后复制 `backend/data/ctyfly.db` 即可；生产环境优先使用 `deploy/step4-backup.sh` 生成带日期的数据库与 uploads 快照。
+
+**Q：为什么生产环境访问不到 API 文档？**  
+A：生产默认 `ENABLE_DOCS=false`，避免暴露接口结构；需要临时调试时在服务器环境中显式开启。
+
+**Q：ACIS 投稿为什么不需要登录？**  
+A：ACIS 定位为低门槛社区资料库，使用、投稿与纠错均可匿名完成，后台通过审核、限流与举报机制保证内容质量。
+
+## 开发路线图
+
+- [x] 账号体系、PoW 验证与双人复核审批
+- [x] 航情、航路规划与机场地图
+- [x] 连飞活动、工单与平台问卷
+- [x] 虚拟航司、经济系统与 PIREP 结算
+- [x] ACIS 事件检索、评论互动与后台审核
+- [ ] 更细粒度的事件标签与关注订阅
+- [ ] 移动端交互持续打磨与无障碍增强
+- [ ] 更多自动化端到端回归与性能基线
+
+## 关于作者
+
+**CTY**，CTYFLY 项目发起人与主要维护者，长期参与模拟飞行社区建设与航空类工具开发。
+
+- GitHub：[@yuanshen-123-ui](https://github.com/yuanshen-123-ui)
+- 代表项目：CTYFLY-WEB、CWFLY-WEB、CWFLY-FSD
+- 方向：Vue / FastAPI 全栈、航空数据可视化、社区产品与运营系统
+- 联系：优先通过 GitHub Issues 或站内工单反馈
+
+## 致谢
+
+感谢所有参与测试、提交反馈、提供航空数据与贡献代码的 CTYFLY 社区成员。  
+也感谢开源社区提供的 Vue、FastAPI、SQLite、Leaflet 等基础设施。
+
 ---
 
 ## 贡献
