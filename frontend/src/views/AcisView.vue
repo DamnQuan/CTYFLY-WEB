@@ -10,26 +10,62 @@ import AcisAgreementModal from '../components/acis/AcisAgreementModal.vue';
 import acisGlyph from '../assets/acis-glyph.png';
 
 const q = ref('');
-const sort = ref('latest');
+const sort = ref('pinyin');
 const items = ref([]);
 const total = ref(0);
 const loading = ref(false);
+const pinyinCollator = (() => {
+  try {
+    return new Intl.Collator('zh-Hans-CN', { usage: 'sort', sensitivity: 'base' });
+  } catch {
+    return { compare: (a, b) => String(a).localeCompare(String(b), 'zh-CN') };
+  }
+})();
 
 const sortOptions = [
+  { value: 'pinyin', label: '标题拼音' },
   { value: 'latest', label: '最新收录' },
   { value: 'hot', label: '热门事件' },
 ];
+
+async function fetchAll(params) {
+  const collected = [];
+  let serverTotal = 0;
+  for (let page = 1; page <= 60; page += 1) {
+    params.set('page', String(page));
+    const data = await api.get(`/api/archive?${params}`);
+    const batch = data.items || [];
+    collected.push(...batch);
+    serverTotal = data.total || 0;
+    if (!batch.length || collected.length >= serverTotal) break;
+  }
+  total.value = serverTotal;
+  return collected;
+}
+
+function titleRank(title) {
+  const first = String(title || '').trim().replace(/^[^\p{L}\p{N}]+/u, '').charAt(0);
+  return /[A-Za-z0-9]/.test(first) ? 0 : 1;
+}
+
+function sortItems(list) {
+  if (sort.value !== 'pinyin') return list;
+  return [...list].sort((a, b) => {
+    const rank = titleRank(a.title) - titleRank(b.title);
+    if (rank) return rank;
+    const diff = pinyinCollator.compare(a.title || '', b.title || '');
+    return diff || a.id - b.id;
+  });
+}
 
 async function load() {
   loading.value = true;
   try {
     const params = new URLSearchParams();
     if (q.value.trim()) params.set('q', q.value.trim());
-    if (sort.value !== 'latest') params.set('sort', sort.value);
-    params.set('page', '1');
-    const data = await api.get(`/api/archive?${params}`);
-    items.value = data.items || [];
-    total.value = data.total || 0;
+    if (sort.value !== 'pinyin' && sort.value !== 'latest') params.set('sort', sort.value);
+    const all = await fetchAll(params);
+    items.value = sortItems(all);
   } catch (err) {
     showToast(err.message);
   } finally {
@@ -88,6 +124,17 @@ load();
           @click="setSort(option.value)"
         >{{ option.label }}</button>
         <router-link class="acis-back" to="/archive">进入完整论坛 <Icon name="chevron" :size="12" /></router-link>
+      </div>
+
+      <div class="acis-list-head">
+        <div class="acis-list-head-main">
+          <span class="acis-list-title">{{ q.trim() ? '搜索结果' : '全部事件' }}</span>
+          <span class="acis-list-sub">
+            {{ sort === 'pinyin' ? '按标题拼音 A–Z 排列' : sort === 'hot' ? '按热度排列' : '按收录时间排列' }}
+            · 共 {{ total }} 条
+          </span>
+        </div>
+        <span class="acis-list-hint">无需搜索，向下滑动即可浏览</span>
       </div>
 
       <div v-if="loading" class="loading acis-loading">检索中…</div>
@@ -473,6 +520,18 @@ load();
 }
 .acis-back:hover { color: var(--blue); opacity: 1; }
 .acis-loading { padding: 38px 0; }
+.acis-list-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 0 2px 10px;
+}
+.acis-list-head-main { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.acis-list-title { color: var(--text); font-size: 14px; font-weight: 700; letter-spacing: 0.01em; }
+.acis-list-sub { color: var(--text-2); font-size: 11.5px; opacity: 0.78; }
+.acis-list-hint { color: var(--text-2); font-size: 11px; opacity: 0.62; letter-spacing: 0.02em; }
 
 .acis-list { display: flex; flex-direction: column; gap: 12px; }
 .acis-card {
