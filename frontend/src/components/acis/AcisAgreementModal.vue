@@ -4,7 +4,7 @@
  * 必须点击同意后关闭，状态写入 localStorage。
  */
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
-import acisLogo from '../../assets/acis-mark.png';
+import acisLogo from '../../assets/acis-glyph.png';
 
 const OPEN_KEY = 'acis_agreed';
 const ANON_KEY = 'acis_anon_id';
@@ -130,7 +130,7 @@ onBeforeUnmount(unlockScroll);
   padding: 20px 24px 16px;
   border-bottom: 1px solid rgba(10, 132, 255, 0.14);
 }
-.acis-modal-logo { width: 54px; height: 50px; object-fit: contain; border-radius: 12px; }
+.acis-modal-logo { width: 102px; height: 38px; object-fit: contain; }
 .acis-modal-title { font-size: 21px; font-weight: 700; letter-spacing: 0.2px; }
 .acis-modal-sub { margin-top: 3px; color: var(--text-2); font-size: 12.5px; }
 .acis-modal-body {

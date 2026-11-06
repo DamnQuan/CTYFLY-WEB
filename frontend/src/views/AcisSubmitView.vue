@@ -7,8 +7,7 @@ import { api } from '../api.js';
 import { acisAnonId, showToast } from '../utils.js';
 import ArchiveEditor from '../components/archive/ArchiveEditor.vue';
 import AcisAgreementModal from '../components/acis/AcisAgreementModal.vue';
-import AcisWordmark from '../components/acis/AcisWordmark.vue';
-import acisLogo from '../assets/acis-mark.png';
+import acisLogo from '../assets/acis-glyph.png';
 
 acisAnonId();
 
@@ -41,10 +40,7 @@ async function submit() {
       <div class="page-header">
         <div class="acis-submit-brand">
           <img :src="acisLogo" alt="ACIS" class="acis-submit-logo" />
-          <div>
-            <AcisWordmark />
-            <div class="acis-submit-sub">投稿新事件 · 无需登录</div>
-          </div>
+          <div class="acis-submit-sub">投稿新事件 · 无需登录</div>
         </div>
         <router-link class="btn btn-ghost btn-sm" to="/acis">返回 ACIS</router-link>
       </div>
@@ -87,7 +83,7 @@ async function submit() {
 }
 .acis-submit-inner { max-width: clamp(760px, 62vw, 1120px); }
 .acis-submit-brand { display: flex; align-items: center; gap: 12px; }
-.acis-submit-logo { width: 52px; height: 48px; object-fit: contain; border-radius: 12px; }
+.acis-submit-logo { width: 138px; height: 44px; object-fit: contain; }
 .acis-submit-sub { margin-top: 4px; color: var(--text-2); font-size: 12.5px; }
 .acis-submit-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border); }
 .acis-submit-note { color: var(--gray); font-size: 12px; }

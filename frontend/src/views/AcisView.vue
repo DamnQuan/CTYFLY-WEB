@@ -6,9 +6,8 @@ import { ref } from 'vue';
 import { api } from '../api.js';
 import { fmtMonth, showToast } from '../utils.js';
 import Icon from '../components/Icon.vue';
-import AcisWordmark from '../components/acis/AcisWordmark.vue';
 import AcisAgreementModal from '../components/acis/AcisAgreementModal.vue';
-import acisMark from '../assets/acis-mark.png';
+import acisGlyph from '../assets/acis-glyph.png';
 
 const q = ref('');
 const sort = ref('latest');
@@ -51,17 +50,13 @@ load();
     <AcisAgreementModal />
     <div class="page acis-inner">
       <section class="acis-hero">
-        <img :src="acisMark" alt="" class="acis-watermark" aria-hidden="true" />
+        <img :src="acisGlyph" alt="" class="acis-watermark" aria-hidden="true" />
         <div class="acis-hero-glow" aria-hidden="true"></div>
 
         <div class="acis-brand">
-          <div class="acis-mark-shell">
-            <span class="acis-mark-halo" aria-hidden="true"></span>
-            <img :src="acisMark" alt="ACIS" class="acis-mark" />
-          </div>
           <div class="acis-brand-copy">
             <div class="acis-kicker">CTY · INCIDENT INTELLIGENCE</div>
-            <AcisWordmark />
+            <img :src="acisGlyph" alt="ACIS" class="acis-hero-glyph" />
             <div class="acis-tagline">
               <span class="acis-tagline-en">Air Community Incident Search</span>
               <span class="acis-tagline-dot" aria-hidden="true"></span>
@@ -218,71 +213,33 @@ load();
 .acis-watermark {
   position: absolute;
   z-index: -1;
-  top: -44%;
-  right: -5%;
-  width: min(42%, 430px);
-  opacity: 0.075;
-  transform: rotate(-8deg);
+  top: -22%;
+  right: -4%;
+  width: min(46%, 540px);
+  opacity: 0.065;
+  transform: rotate(-6deg);
   pointer-events: none;
   user-select: none;
-  filter: saturate(0.7);
+  filter: saturate(0.65);
 }
-[data-theme="dark"] .acis-watermark { opacity: 0.12; filter: saturate(0.5) brightness(1.6); }
+[data-theme="dark"] .acis-watermark { opacity: 0.11; filter: saturate(0.5) brightness(1.6); }
 
-/* ---------- 图标与字标组合 ---------- */
+/* ---------- 字标组合 ---------- */
 .acis-brand {
   position: relative;
-  display: flex;
-  align-items: center;
-  gap: clamp(18px, 2.4vw, 30px);
-  flex-wrap: wrap;
 }
-.acis-mark-shell {
-  position: relative;
-  flex: none;
-  width: clamp(78px, 8vw, 104px);
-  height: clamp(78px, 8vw, 104px);
-  display: grid;
-  place-items: center;
-  border-radius: 30%;
-  border: 1px solid rgba(255, 255, 255, 0.82);
-  background:
-    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.95), transparent 58%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.72), rgba(176, 218, 255, 0.30));
-  box-shadow:
-    0 18px 38px rgba(25, 101, 180, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    inset 0 -8px 20px rgba(53, 145, 230, 0.10);
-  backdrop-filter: blur(14px) saturate(160%);
-  -webkit-backdrop-filter: blur(14px) saturate(160%);
+.acis-hero-glyph {
+  display: block;
+  width: min(560px, 74%);
+  height: auto;
+  margin: 2px 0 0;
+  filter: drop-shadow(0 14px 30px rgba(10, 110, 210, 0.22));
+  animation: acis-glyph-in 0.9s cubic-bezier(0.2, 0.9, 0.3, 1.15) both, acis-glyph-float 5.4s ease-in-out infinite;
 }
-[data-theme="dark"] .acis-mark-shell {
-  border-color: rgba(170, 215, 255, 0.2);
-  background:
-    radial-gradient(circle at 28% 18%, rgba(210, 238, 255, 0.18), transparent 58%),
-    linear-gradient(145deg, rgba(40, 70, 108, 0.66), rgba(18, 36, 58, 0.42));
-  box-shadow:
-    0 18px 42px rgba(0, 0, 0, 0.38),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16),
-    inset 0 -8px 20px rgba(10, 90, 180, 0.2);
+[data-theme="dark"] .acis-hero-glyph {
+  filter: drop-shadow(0 16px 36px rgba(15, 120, 230, 0.35)) brightness(1.12);
 }
-.acis-mark-halo {
-  position: absolute;
-  inset: -18%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(80, 178, 255, 0.26), transparent 66%);
-  filter: blur(10px);
-  animation: acis-halo 4.2s ease-in-out infinite;
-}
-.acis-mark {
-  position: relative;
-  width: 66%;
-  height: 66%;
-  object-fit: contain;
-  filter: drop-shadow(0 8px 14px rgba(10, 90, 180, 0.24));
-}
-[data-theme="dark"] .acis-mark { filter: drop-shadow(0 8px 18px rgba(20, 120, 230, 0.35)); }
-.acis-brand-copy { flex: 1; min-width: 0; }
+.acis-brand-copy { min-width: 0; }
 .acis-kicker {
   margin-bottom: 4px;
   color: var(--text-2);
@@ -698,23 +655,25 @@ load();
   letter-spacing: 0.015em;
 }
 
+@keyframes acis-glyph-in {
+  from { opacity: 0; transform: translateY(18px) scale(0.97); filter: blur(6px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+@keyframes acis-glyph-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
 @keyframes acis-orb-breathe {
   0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 12px 30px rgba(30, 110, 190, 0.16), 0 0 0 8px rgba(90, 180, 255, 0.05), inset 0 1px 0 #fff; }
   50% { transform: translateY(-2px) scale(1.025); box-shadow: 0 18px 38px rgba(30, 120, 210, 0.24), 0 0 0 12px rgba(90, 180, 255, 0.08), inset 0 1px 0 #fff; }
 }
-@keyframes acis-halo {
-  0%, 100% { opacity: 0.55; transform: scale(0.98); }
-  50% { opacity: 0.95; transform: scale(1.06); }
-}
 @media (prefers-reduced-motion: reduce) {
-  .acis-empty-orb, .acis-mark-halo { animation: none; }
+  .acis-empty-orb, .acis-hero-glyph { animation: none; }
 }
 @media (max-width: 720px) {
   .acis-inner { padding-left: 18px; padding-right: 18px; padding-top: 20px; }
   .acis-hero { padding: 24px 20px; border-radius: 24px; }
-  .acis-brand { gap: 14px; }
-  .acis-brand-copy :deep(.acis-wordmark) { font-size: clamp(54px, 16vw, 76px); }
-  .acis-mark-shell { width: 72px; height: 72px; }
+  .acis-hero-glyph { width: 94%; }
   .acis-tagline { gap: 7px; }
   .acis-tagline-en { font-size: 9.5px; letter-spacing: 0.12em; }
   .acis-tagline-cn { font-size: 11px; }
