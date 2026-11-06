@@ -4,7 +4,7 @@
  * 必须点击同意后关闭，状态写入 localStorage。
  */
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
-import acisLogo from '../../assets/acis-logo.png';
+import acisLogo from '../../assets/acis-mark.png';
 
 const OPEN_KEY = 'acis_agreed';
 const ANON_KEY = 'acis_anon_id';

@@ -18,7 +18,7 @@
 import { computed } from 'vue';
 import { useAuthStore } from './stores/auth.js';
 import { useVaStore } from './stores/va.js';
-import acisLogo from './assets/acis-logo.png';
+import acisLogo from './assets/acis-mark.png';
 
 export { acisLogo };
 

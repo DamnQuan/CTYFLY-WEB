@@ -8,7 +8,7 @@ import { acisAnonId, showToast } from '../utils.js';
 import ArchiveEditor from '../components/archive/ArchiveEditor.vue';
 import AcisAgreementModal from '../components/acis/AcisAgreementModal.vue';
 import AcisWordmark from '../components/acis/AcisWordmark.vue';
-import acisLogo from '../assets/acis-logo.png';
+import acisLogo from '../assets/acis-mark.png';
 
 acisAnonId();
 

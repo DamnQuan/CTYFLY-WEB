@@ -32,12 +32,13 @@ const letters = ['A', 'C', 'I', 'S'];
   display: inline-block;
   opacity: 0;
   transform: translateY(20px);
-  background: linear-gradient(115deg, #0a84ff 0%, #64d2ff 35%, #ffffff 55%, #0a84ff 100%);
-  background-size: 240% 100%;
+  background: linear-gradient(135deg, #ffffff 0%, #d5f1ff 8%, #8fd6ff 20%, #43adf7 42%, #117fd8 68%, #074f9f 100%);
+  background-size: 160% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 6px 18px rgba(10, 132, 255, 0.24));
+  text-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.38)) drop-shadow(0 1px 1px rgba(255, 255, 255, 0.28));
   animation:
     acis-in 0.62s cubic-bezier(0.2, 0.9, 0.3, 1.2) both,
     acis-wave 2.6s ease-in-out infinite,
